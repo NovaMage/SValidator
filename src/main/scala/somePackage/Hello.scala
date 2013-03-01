@@ -6,7 +6,7 @@ object Hello extends IncreasesNumbers {
   }
 
   def increase(number:Int) = {
-    number + 1
+    number ++
   }
 }
 
