@@ -4,21 +4,28 @@
     <list default="true" id="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" name="Default" comment="" />
     <ignored path="SValidator.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/fragment.java" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362082762136" ignored="false" />
+    <file path="/fragment.java" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362114862307" ignored="false" />
     <file path="/Hi.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362082818413" ignored="false" />
     <file path="/HelloSpec.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362084017361" ignored="false" />
-    <file path="/Hello.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362084249983" ignored="false" />
-    <file path="/Observes.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362083802762" ignored="false" />
-    <file path="/a.dummy" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362084004442" ignored="false" />
+    <file path="/Hello.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362106422840" ignored="false" />
+    <file path="/Observes.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362114689257" ignored="false" />
+    <file path="/a.dummy" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362118167778" ignored="false" />
     <file path="/IValidator.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362086532186" ignored="false" />
-    <file path="/ValidationResult.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362088866918" ignored="false" />
+    <file path="/ValidationResult.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362114093492" ignored="false" />
     <file path="/ValidationFailure.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362086702120" ignored="false" />
     <file path="/AbstractValidator.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362090076184" ignored="false" />
     <file path="/IValidationRule.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362088771551" ignored="false" />
-    <file path="/SimpleValidator.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362089824991" ignored="false" />
+    <file path="/SimpleValidator.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362113892387" ignored="false" />
     <file path="/ExampleValidatedClass.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362087508603" ignored="false" />
-    <file path="/ExampleValidator.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362089908252" ignored="false" />
+    <file path="/ExampleValidator.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362113763935" ignored="false" />
     <file path="/RuleBuilder.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362089947366" ignored="false" />
+    <file path="/Main.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362101920513" ignored="false" />
+    <file path="/ValidationSummary.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362113394431" ignored="false" />
+    <file path="/IValidate.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362103945647" ignored="false" />
+    <file path="/ValidationSummarySpecs.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362113374398" ignored="false" />
+    <file path="/SimpleValidationRuleBuilder.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362115017825" ignored="false" />
+    <file path="/SimpleValidationRuleSpecs.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362118989788" ignored="false" />
+    <file path="/SimpleValidationRule.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362118787045" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,55 +87,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="IValidate.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidate.scala">
+      <file leaf-file-name="SimpleValidator.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidator.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="6" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0">
+            <state line="22" column="0" selection-start="772" selection-end="772" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SimpleValidator.scala" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/SimpleValidator.scala">
+      <file leaf-file-name="FieldRequiringSimpleValidationRuleBuilder.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/FieldRequiringSimpleValidationRuleBuilder.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="23" selection-start="776" selection-end="776" vertical-scroll-proportion="0.57740587">
+            <state line="2" column="0" selection-start="58" selection-end="58" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IRuleBuilder.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IRuleBuilder.scala">
+      <file leaf-file-name="SimpleValidationRuleBuilder.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleBuilder.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="6" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0">
+            <state line="31" column="62" selection-start="1937" selection-end="1937" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExampleValidator.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidator.scala">
+      <file leaf-file-name="SimpleValidationRule.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRule.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="32" selection-start="218" selection-end="218" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HelloSpec.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/scala/somePackage/HelloSpec.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="31" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ExampleValidatedClass.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidatedClass.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="0" selection-start="156" selection-end="156" vertical-scroll-proportion="0.0">
+            <state line="6" column="0" selection-start="402" selection-end="402" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -137,26 +126,19 @@
       <file leaf-file-name="IValidationRule.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidationRule.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="42" selection-start="121" selection-end="121" vertical-scroll-proportion="0.0">
+            <state line="2" column="6" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="package.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.1-RC2-sources.jar!/scala/package.scala">
+      <file leaf-file-name="SimpleValidationRuleSpecs.scala" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleSpecs.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="61" column="45" selection-start="2764" selection-end="2764" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ValidationSummary.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationSummary.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="54" selection-start="105" selection-end="105" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="88" column="0" selection-start="3659" selection-end="3659" vertical-scroll-proportion="0.94602275">
+              <folding>
+                <element signature="e#58#83#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -164,7 +146,36 @@
       <file leaf-file-name="ValidationResult.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationResult.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="5" selection-start="356" selection-end="356" vertical-scroll-proportion="0.0">
+            <state line="9" column="11" selection-start="154" selection-end="154" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ExampleValidator.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidator.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="61" selection-start="375" selection-end="375" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Observes.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/scala/testUtils/Observes.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="16" column="6" selection-start="383" selection-end="383" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#19#44#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ValidationSummarySpecs.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/ValidationSummarySpecs.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="37" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -180,22 +191,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/scala/Hi.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/somePackage/Hi.scala" />
-        <option value="$PROJECT_DIR$/src/test/scala/testUtils/Observes.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/somePackage/Hello.scala" />
-        <option value="$PROJECT_DIR$/src/test/scala/somePackage/HelloSpec.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidator.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidate.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationFailure.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/AbstractValidator.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidatedClass.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidationRule.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationSummary.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationResult.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidator.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/RuleBuilder.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/Main.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidate.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/somePackage/Hello.scala" />
+        <option value="$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/ValidationSummarySpecs.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationSummary.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidator.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/SimpleValidator.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationResult.scala" />
+        <option value="$PROJECT_DIR$/src/test/scala/testUtils/Observes.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidator.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/FieldRequiringSimpleValidationRuleBuilder.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleBuilder.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRule.scala" />
+        <option value="$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleSpecs.scala" />
       </list>
     </option>
   </component>
@@ -204,6 +215,25 @@
     <option name="y" value="-8" />
     <option name="width" value="1696" />
     <option name="height" value="921" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Scala: General</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>NameBooleanParameters</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -232,6 +262,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -267,6 +298,14 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -282,11 +321,79 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
+              <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="svalidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="validation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SValidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SValidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="svalidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="validation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="simple" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SValidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SValidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="svalidator" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -317,6 +424,40 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="validation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SValidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SValidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="svalidator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="validation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="simple" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -378,66 +519,34 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/scala" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="options.lastSelected" value="project.propCompiler" />
+    <property name="options.lastSelected" value="org.jetbrains.plugins.scala.compiler.ScalacConfigurable" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="GoToClass.includeJavaFiles" value="false" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.github.novamage.svalidator.validation.simple" />
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="ScalaTest.HelloSpec">
-    <configuration default="false" name="Hi" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="somePackage.Hi" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="SValidator" />
-      <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="Hello" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="somePackage.Hello" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="SValidator" />
-      <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="ScalaTest.SimpleValidationRuleSpecs">
     <configuration default="false" name="HelloSpec" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true">
       <module name="SValidator" />
       <setting name="path" value="somePackage.HelloSpec" />
@@ -450,6 +559,74 @@
       <setting name="testKind" value="Class" />
       <setting name="showProgressMessages" value="true" />
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="ExampleValidator" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="com.github.novamage.svalidator.samples.ExampleValidator" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="SValidator" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="com.github.novamage.svalidator.Main" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="SValidator" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="ValidationSummarySpecs" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true">
+      <module name="SValidator" />
+      <setting name="path" value="com.github.novamage.svalidator.validation.ValidationSummarySpecs" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="SimpleValidationRuleSpecs" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true">
+      <module name="SValidator" />
+      <setting name="path" value="com.github.novamage.svalidator.validation.simple.SimpleValidationRuleSpecs" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -501,17 +678,20 @@
       <setting name="showProgressMessages" value="true" />
       <method />
     </configuration>
-    <list size="3">
-      <item index="0" class="java.lang.String" itemvalue="Application.Hi" />
-      <item index="1" class="java.lang.String" itemvalue="Application.Hello" />
-      <item index="2" class="java.lang.String" itemvalue="ScalaTest.HelloSpec" />
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="ScalaTest.HelloSpec" />
+      <item index="1" class="java.lang.String" itemvalue="Application.ExampleValidator" />
+      <item index="2" class="java.lang.String" itemvalue="Application.Main" />
+      <item index="3" class="java.lang.String" itemvalue="ScalaTest.ValidationSummarySpecs" />
+      <item index="4" class="java.lang.String" itemvalue="ScalaTest.SimpleValidationRuleSpecs" />
     </list>
     <recent_temporary>
-      <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="ScalaTest.HelloSpec" />
-        <item index="1" class="java.lang.String" itemvalue="Application.Hello" />
-        <item index="2" class="java.lang.String" itemvalue="Application.Hi" />
-        <item index="3" class="java.lang.String" itemvalue="Application.Hi" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="ScalaTest.SimpleValidationRuleSpecs" />
+        <item index="1" class="java.lang.String" itemvalue="ScalaTest.ValidationSummarySpecs" />
+        <item index="2" class="java.lang.String" itemvalue="Application.Main" />
+        <item index="3" class="java.lang.String" itemvalue="Application.ExampleValidator" />
+        <item index="4" class="java.lang.String" itemvalue="ScalaTest.HelloSpec" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="JUnit" default="true" selected="false">
@@ -535,6 +715,26 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1696" height="921" extended-state="6" />
     <editor active="true" />
@@ -542,13 +742,13 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32853404" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32984293" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24984913" sideWeight="0.671466" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24984913" sideWeight="0.32591623" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39921466" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32953104" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.67408377" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -615,117 +815,119 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/README.md">
+    <entry file="jar://$USER_HOME$/.sbt/boot/scala-2.10.1-RC2/lib/scala-reflect.jar!/scala/reflect/api/Universe.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.sbt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.sbt/boot/scala-2.10.1-RC2/lib/scala-library.jar!/scala/collection/immutable/List$.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="5" selection-start="6" selection-end="6" vertical-scroll-proportion="0.024324324">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.1-RC2-sources.jar!/scala/collection/immutable/List.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="85" column="22" selection-start="3938" selection-end="3938" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.1-RC2-sources.jar!/scala/package.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="61" column="45" selection-start="2764" selection-end="2764" vertical-scroll-proportion="0.0">
+        <state line="1" column="633" selection-start="659" selection-end="659" vertical-scroll-proportion="-0.72">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidate.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="6" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0">
+        <state line="7" column="0" selection-start="123" selection-end="123" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidatedClass.scala">
+    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.1-RC2-sources.jar!/scala/PartialFunction.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="0" selection-start="156" selection-end="156" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.1-RC2-sources.jar!/scala/util/Either.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="100" column="4" selection-start="3703" selection-end="3703" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidationRule.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="42" selection-start="121" selection-end="121" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationSummary.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="54" selection-start="105" selection-end="105" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationResult.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="5" selection-start="356" selection-end="356" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/scala/somePackage/HelloSpec.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="31" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidator.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="32" selection-start="218" selection-end="218" vertical-scroll-proportion="0.0">
+        <state line="129" column="6" selection-start="6013" selection-end="6013" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IRuleBuilder.scala">
       <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="24" selection-start="100" selection-end="100" vertical-scroll-proportion="0.09756097">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationSummary.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="16" selection-start="144" selection-end="144" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidatedClass.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="11" selection-start="59" selection-end="59" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidator.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="61" selection-start="375" selection-end="375" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/ValidationSummarySpecs.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="37" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/FieldRequiringSimpleValidationRuleBuilder.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="0" selection-start="58" selection-end="58" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidator.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="0" selection-start="772" selection-end="772" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleBuilder.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="62" selection-start="1937" selection-end="1937" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidationRule.scala">
+      <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="6" selection-start="57" selection-end="57" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/SimpleValidator.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationResult.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="23" selection-start="776" selection-end="776" vertical-scroll-proportion="0.57740587">
+        <state line="9" column="11" selection-start="154" selection-end="154" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/testUtils/Observes.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="6" selection-start="383" selection-end="383" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#19#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRule.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="0" selection-start="402" selection-end="402" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleSpecs.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="0" selection-start="3659" selection-end="3659" vertical-scroll-proportion="0.94602275">
+          <folding>
+            <element signature="e#58#83#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -794,7 +996,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>scala-compiler</last-edited>
+          <last-edited>SBT: scala:2.9.2</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

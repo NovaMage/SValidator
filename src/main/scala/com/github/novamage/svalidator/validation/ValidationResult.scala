@@ -7,13 +7,12 @@ sealed abstract class ValidationResult {
 
 }
 
-final case class Invalid(fieldName: String, errorMessage: String) extends ValidationResult {
+case class ValidationFailure(fieldName: String, errorMessage: String) extends ValidationResult {
   def isValid = false
   def message = errorMessage
 }
 
-object Valid extends ValidationResult {
+object ValidationPass extends ValidationResult {
   def isValid = true
   def message = ""
 }
-

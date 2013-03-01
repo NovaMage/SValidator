@@ -12,14 +12,6 @@ class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers {
     Mockito.when(method_call)
   }
 
-  def verify[T](mock: T) = {
-    Mockito.verify(mock)
-  }
-
-  def verifyNever[T](mock: T) = {
-    Mockito.verify(mock, never())
-  }
-
   def spy[T](spied: T) = Mockito.spy(spied)
 
   def reset[T](mock: T) = {
@@ -27,20 +19,21 @@ class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers {
     mock
   }
 
-  implicit def TestingExtensions[T](aTestObject: T) = new TestExtensions[T](aTestObject)
-}
+  implicit class ObservedTestExtensions[A](aMockObject: A) {
 
-class TestExtensions[T](aTestObject: T) {
+    def wasToldTo(methodCall: A => Unit) {
+      methodCall(verify(aMockObject, atLeastOnce()))
+    }
 
-  def wasToldTo(methodCall: T => Unit) {
-    methodCall(verify(aTestObject, atLeastOnce()))
+    def wasNeverToldTo(methodCall: A => Unit) {
+      methodCall(verify(aMockObject, never()))
+    }
+
   }
 
-  def wasNeverToldTo(methodCall: T => Unit) {
-    methodCall(verify(aTestObject, never()))
-  }
-
 }
+
+
 
 
 
