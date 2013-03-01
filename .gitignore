@@ -11,3 +11,8 @@ project/plugins/project/
 
 # Scala-IDE specific
 .scala_dependencies
+
+#Intellij-IDEA specific
+.idea/workspace.xml
+.idea/tasks.xml
+
