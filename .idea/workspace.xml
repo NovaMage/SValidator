@@ -8,8 +8,8 @@
     <file path="/Hi.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362082818413" ignored="false" />
     <file path="/HelloSpec.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362084017361" ignored="false" />
     <file path="/Hello.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362106422840" ignored="false" />
-    <file path="/Observes.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362114689257" ignored="false" />
-    <file path="/a.dummy" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362118167778" ignored="false" />
+    <file path="/Observes.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362122724160" ignored="false" />
+    <file path="/a.dummy" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362121383735" ignored="false" />
     <file path="/IValidator.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362086532186" ignored="false" />
     <file path="/ValidationResult.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362114093492" ignored="false" />
     <file path="/ValidationFailure.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362086702120" ignored="false" />
@@ -24,8 +24,9 @@
     <file path="/IValidate.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362103945647" ignored="false" />
     <file path="/ValidationSummarySpecs.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362113374398" ignored="false" />
     <file path="/SimpleValidationRuleBuilder.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362115017825" ignored="false" />
-    <file path="/SimpleValidationRuleSpecs.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362118989788" ignored="false" />
-    <file path="/SimpleValidationRule.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362118787045" ignored="false" />
+    <file path="/SimpleValidationRuleSpecs.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362122636647" ignored="false" />
+    <file path="/SimpleValidationRule.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362122923108" ignored="false" />
+    <file path="/FunctionStubbingHelpers.scala" changelist="309aaf02-9ee0-4ffe-8fff-8aeea90b488f" time="1362122712262" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +118,16 @@
       <file leaf-file-name="SimpleValidationRule.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRule.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="0" selection-start="402" selection-end="402" vertical-scroll-proportion="0.0">
+            <state line="10" column="57" selection-start="621" selection-end="621" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Function2.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.1-RC2-sources.jar!/scala/Function2.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="38" column="6" selection-start="1679" selection-end="1679" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -135,7 +145,7 @@
       <file leaf-file-name="SimpleValidationRuleSpecs.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleSpecs.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="88" column="0" selection-start="3659" selection-end="3659" vertical-scroll-proportion="0.94602275">
+            <state line="17" column="10" selection-start="611" selection-end="611" vertical-scroll-proportion="0.6666667">
               <folding>
                 <element signature="e#58#83#0" expanded="true" />
               </folding>
@@ -152,19 +162,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExampleValidator.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidator.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="61" selection-start="375" selection-end="375" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Observes.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/scala/testUtils/Observes.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="6" selection-start="383" selection-end="383" vertical-scroll-proportion="0.0">
+            <state line="7" column="0" selection-start="185" selection-end="185" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="e#19#44#0" expanded="true" />
               </folding>
@@ -172,10 +173,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ValidationSummarySpecs.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/ValidationSummarySpecs.scala">
+      <file leaf-file-name="FunctionStubbingHelpers.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/scala/testUtils/FunctionStubbingHelpers.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="37" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0">
+            <state line="12" column="0" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -191,7 +192,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidationRule.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/RuleBuilder.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/Main.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidate.scala" />
@@ -201,10 +201,11 @@
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/samples/ExampleValidator.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/SimpleValidator.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/ValidationResult.scala" />
-        <option value="$PROJECT_DIR$/src/test/scala/testUtils/Observes.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidator.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/FieldRequiringSimpleValidationRuleBuilder.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleBuilder.scala" />
+        <option value="$PROJECT_DIR$/src/test/scala/testUtils/FunctionStubbingHelpers.scala" />
+        <option value="$PROJECT_DIR$/src/test/scala/testUtils/Observes.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRule.scala" />
         <option value="$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleSpecs.scala" />
       </list>
@@ -304,6 +305,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="testUtils" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -748,7 +753,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39921466" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.67408377" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.67408377" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -815,20 +820,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$USER_HOME$/.sbt/boot/scala-2.10.1-RC2/lib/scala-reflect.jar!/scala/reflect/api/Universe.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="633" selection-start="659" selection-end="659" vertical-scroll-proportion="-0.72">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/IValidate.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="123" selection-end="123" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.1-RC2-sources.jar!/scala/PartialFunction.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state line="129" column="6" selection-start="6013" selection-end="6013" vertical-scroll-proportion="0.0">
@@ -908,23 +899,37 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/testUtils/Observes.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="6" selection-start="383" selection-end="383" vertical-scroll-proportion="0.0">
+        <state line="7" column="0" selection-start="185" selection-end="185" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#19#44#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/testUtils/FunctionStubbingHelpers.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="0" selection-start="439" selection-end="439" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.1-RC2-sources.jar!/scala/Function2.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="6" selection-start="1679" selection-end="1679" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRule.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="0" selection-start="402" selection-end="402" vertical-scroll-proportion="0.0">
+        <state line="10" column="57" selection-start="621" selection-end="621" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/com/github/novamage/svalidator/validation/simple/SimpleValidationRuleSpecs.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="88" column="0" selection-start="3659" selection-end="3659" vertical-scroll-proportion="0.94602275">
+        <state line="17" column="10" selection-start="611" selection-end="611" vertical-scroll-proportion="0.6666667">
           <folding>
             <element signature="e#58#83#0" expanded="true" />
           </folding>

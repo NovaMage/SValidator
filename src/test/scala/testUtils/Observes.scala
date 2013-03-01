@@ -6,7 +6,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.mockito.Mockito
 import org.mockito.Mockito._
 
-class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers {
+class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers with FunctionStubbingHelpers {
 
   def when[T](method_call: T) = {
     Mockito.when(method_call)
@@ -28,8 +28,8 @@ class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers {
     def wasNeverToldTo(methodCall: A => Unit) {
       methodCall(verify(aMockObject, never()))
     }
-
   }
+
 
 }
 
