@@ -26,7 +26,7 @@ class SimpleValidationRuleBuilder[A, B](propertyExpression: A => B, validationEx
     new SimpleValidationRuleBuilder(propertyExpression, validationExpressions, fieldName, errorMessages :+ errorMessageBuilder, conditionedValidation)
   }
 
-  def buildRules = {
+  override def buildRules = {
     val defaultErrorMessageBuilder: ((String, B) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
     validationExpressions.zipWithIndex.map {
       case (ruleExpression, index) => new SimpleValidationRule(propertyExpression, ruleExpression, fieldName, if (index < errorMessages.size) errorMessages(index) else defaultErrorMessageBuilder, conditionedValidation)

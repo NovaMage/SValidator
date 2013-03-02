@@ -2,6 +2,10 @@ package testUtils
 
 import org.scalatest.exceptions.TestFailedException
 
+/**
+ * Group of stubbing helpers to make up for mockito's lack of function stubs until ScalaMock is mixable into
+ * the ScalaTest FunSpec trait.
+ */
 trait FunctionStubbingHelpers {
 
   def stubFunction[A, R](expectedParameter: A, resultOnSuccess: R) = {

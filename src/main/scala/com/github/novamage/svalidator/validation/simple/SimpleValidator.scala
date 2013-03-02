@@ -2,25 +2,27 @@ package com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.validation._
 
-abstract class SimpleValidator[T] extends IValidate[T] {
+abstract class SimpleValidator[A] extends IValidate[A] {
 
-  def buildRules: List[IRuleBuilder[T]]
+  def buildRules: List[IRuleBuilder[A]]
 
-  override def validate(instance: T) = {
+  override def validate(instance: A) = {
     val rules = buildRules
-    val unflattenedValidationRules = rules.map(_.buildRules.toStream)
-    val firstFailingResultForEachGroup = unflattenedValidationRules.map(ruleStream =>
-      ruleStream.map(_.apply(instance)).collectFirst {
-        case result: ValidationFailure => result
-      }).filter(_.isDefined).map(_.get)
+    val unflattenedValidationRuleStreams = rules map {_.buildRules.toStream}
+    val firstFailingResultForEachGroup =
+      unflattenedValidationRuleStreams map {
+        ruleStream => ruleStream map {_.apply(instance)} collectFirst {
+          case result: ValidationFailure => result
+        }
+      } collect {
+        case Some(x) => x
+      }
     ValidationSummary(firstFailingResultForEachGroup)
   }
 
-  def For[R](propertyExpression: T => R) = {
-    new FieldRequiringSimpleValidationRuleBuilder[T, R](propertyExpression, Nil, Nil)
+  def For[B](propertyExpression: A => B): FieldRequiringSimpleValidationRuleBuilder[A, B] = {
+    new FieldRequiringSimpleValidationRuleBuilder[A, B](propertyExpression, Nil, Nil)
   }
-
-
 
 
 }
