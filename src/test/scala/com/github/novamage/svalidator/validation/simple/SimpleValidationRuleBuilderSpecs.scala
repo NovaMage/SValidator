@@ -16,7 +16,7 @@ class SimpleValidationRuleBuilderSpecs extends Observes {
 
       val sut = new SimpleValidationRuleBuilder[SampleValidatedClass, Long](property_expression, Nil, "", Nil, x => true)
 
-      val result = sut.buildRules
+      lazy val result = sut.buildRules
 
       it("should return an empty list") {
         result should be('empty)

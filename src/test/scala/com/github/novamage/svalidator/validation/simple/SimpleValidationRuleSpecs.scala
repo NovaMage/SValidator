@@ -22,7 +22,7 @@ class SimpleValidationRuleSpecs extends Observes {
 
       val sut: IValidationRule[TestClass] = new SimpleValidationRule(property_extractor_expression, rule_expression, field_name, error_message_builder, conditioned_validation)
 
-      val result = sut.apply(instance)
+      lazy val result = sut.apply(instance)
 
       it("should have returned ValidationPass as the validation result") {
         result should equal(ValidationPass)
@@ -44,7 +44,7 @@ class SimpleValidationRuleSpecs extends Observes {
 
         val sut: IValidationRule[TestClass] = new SimpleValidationRule(property_extractor_expression, rule_expression, field_name, error_message_builder, conditioned_validation)
 
-        val result = sut.apply(instance)
+        lazy val result = sut.apply(instance)
 
         it("should have returned a ValidationPass as the validation result") {
           result should equal(ValidationPass)
@@ -58,7 +58,7 @@ class SimpleValidationRuleSpecs extends Observes {
 
         val sut: IValidationRule[TestClass] = new SimpleValidationRule(property_extractor_expression, rule_expression, field_name, error_message_builder, conditioned_validation)
 
-        val result = sut.apply(instance)
+        lazy val result = sut.apply(instance)
 
         it("should have returned a validation failure") {
           result.asInstanceOf[ValidationFailure] should not be null

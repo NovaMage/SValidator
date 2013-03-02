@@ -71,7 +71,7 @@ class SimpleValidatorSpecs extends Observes {
       when(rule_11.apply(instance)) thenReturn ValidationPass
       when(rule_12.apply(instance)) thenReturn failure_3
 
-      val result = sut.validate(instance)
+      lazy val result = sut.validate(instance)
 
       it("return the first validation failure in each rule list") {
         result.validationFailures should equal(List(failure_1, failure_2, failure_3))
@@ -98,7 +98,7 @@ class SimpleValidatorSpecs extends Observes {
       when(rule_11.apply(instance)) thenReturn ValidationPass
       when(rule_12.apply(instance)) thenReturn ValidationPass
 
-      val result = sut.validate(instance)
+      lazy val result = sut.validate(instance)
 
       it("return no validation failures") {
         result.validationFailures should be('empty)
@@ -113,7 +113,7 @@ class SimpleValidatorSpecs extends Observes {
 
     val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
 
-    val result = sut.For(property_expression)
+    lazy val result = sut.For(property_expression)
 
     //Don't know how to test this yet, i don't want to make the properties public
     it("should return a field requiring rule builder with the passed in property expression, using empty lists " +

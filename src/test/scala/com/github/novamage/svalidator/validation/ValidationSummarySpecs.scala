@@ -10,7 +10,7 @@ class ValidationSummarySpecs extends Observes {
 
       val sut = ValidationSummary(List())
 
-      val result = sut.isValid
+      lazy val result = sut.isValid
 
       it("should return true") {
         result should be(true)
@@ -21,7 +21,7 @@ class ValidationSummarySpecs extends Observes {
 
       val sut = ValidationSummary(List(new ValidationFailure("someFieldName", "someErrorMessage")))
 
-      val result = sut.isValid
+      lazy val result = sut.isValid
 
       it("should return false") {
         result should be(false)
