@@ -19,6 +19,7 @@ class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers with F
     mock
   }
 
+
   implicit class ObservedTestExtensions[A](aMockObject: A) {
 
     def wasToldTo(methodCall: A => Unit) {
