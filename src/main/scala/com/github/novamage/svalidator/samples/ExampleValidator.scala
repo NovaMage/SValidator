@@ -6,10 +6,8 @@ object ExampleValidator extends SimpleValidator[ExampleValidatedClass] {
 
   def buildRules = List(
     For(_.age).ForField("age")
-      .Must(_ > 0).WithMessage("%s must be greater than zero")
-      .Must(_ < 100).WithMessage("%s must be greater than zero")
-    ,
+      .must(_ > 0).withMessage("%s must be greater than zero")
+      .must(_ < 100).withMessage("%s must be greater than zero"),
     For(_.name).ForField("name")
-      .Must(_.trim.length > 0)
-  )
+      .must(_.trim.length > 0))
 }

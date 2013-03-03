@@ -1,6 +1,6 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.{ValidationFailure, ValidationPass, IValidationRule}
+import com.github.novamage.svalidator.validation.{ ValidationFailure, ValidationPass, IValidationRule }
 
 class SimpleValidationRule[A, R](propertyExtractor: A => R, ruleExpression: R => Boolean, fieldName: String, errorMessage: (String, R) => String, conditionedValidation: A => Boolean) extends IValidationRule[A] {
   def apply(instance: A) = {

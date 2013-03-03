@@ -7,12 +7,11 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   def buildRules: List[IRuleBuilder[A]]
 
   override def validate(instance: A) = {
-    ???
     val rules = buildRules
-    val unflattenedValidationRuleStreams = rules map {_.buildRules.toStream}
+    val unflattenedValidationRuleStreams = rules map { _.buildRules.toStream }
     val firstFailingResultForEachGroup =
-      unflattenedValidationRuleStreams map {
-        ruleStream => ruleStream map {_.apply(instance)} collectFirst {
+      unflattenedValidationRuleStreams map { ruleStream =>
+        ruleStream map { _.apply(instance) } collectFirst {
           case result: ValidationFailure => result
         }
       } collect {
@@ -24,7 +23,6 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   def For[B](propertyExpression: A => B): FieldRequiringSimpleValidationRuleBuilder[A, B] = {
     new FieldRequiringSimpleValidationRuleBuilder[A, B](propertyExpression, Nil, Nil)
   }
-
 
 }
 

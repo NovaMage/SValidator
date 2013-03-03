@@ -1,7 +1,7 @@
 package com.github.novamage.svalidator.validation.simple
 
 import testUtils.Observes
-import com.github.novamage.svalidator.validation.{ValidationFailure, IValidationRule, ValidationPass}
+import com.github.novamage.svalidator.validation.{ ValidationFailure, IValidationRule, ValidationPass }
 
 class SimpleValidationRuleSpecs extends Observes {
 

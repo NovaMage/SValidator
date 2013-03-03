@@ -3,7 +3,7 @@ package com.github.novamage.svalidator.validation
 sealed abstract class ValidationResult {
 
   def isValid: Boolean
-  def message : String
+  def message: String
 
 }
 

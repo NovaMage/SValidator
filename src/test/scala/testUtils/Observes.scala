@@ -5,7 +5,10 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.matchers.ShouldMatchers
 import org.mockito.Mockito
 import org.mockito.Mockito._
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers with FunctionStubbingHelpers {
 
   def when[T](method_call: T) = {
@@ -19,7 +22,6 @@ class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers with F
     mock
   }
 
-
   implicit class ObservedTestExtensions[A](aMockObject: A) {
 
     def wasToldTo(methodCall: A => Unit) {
@@ -31,11 +33,5 @@ class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers with F
     }
   }
 
-
 }
-
-
-
-
-
 

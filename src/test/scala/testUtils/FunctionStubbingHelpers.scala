@@ -3,7 +3,7 @@ package testUtils
 import org.scalatest.exceptions.TestFailedException
 
 /**
- * Group of stubbing helpers to make up for mockito's lack of function stubs until ScalaMock is mixable into
+ * Group of stubbing helpers to make up for mockito's lack of function stubs until ScalaMock can be mixed into
  * the ScalaTest FunSpec trait.
  */
 trait FunctionStubbingHelpers {

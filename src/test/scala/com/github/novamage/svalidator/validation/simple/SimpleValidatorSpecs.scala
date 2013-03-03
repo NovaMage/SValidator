@@ -19,7 +19,6 @@ class SimpleValidatorSpecs extends Observes {
     def buildRules = List(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
   }
 
-
   describe("when performing validation assisted by an instance of a child class of simple validator") {
 
     val sut: IValidate[SampleValidatedClass] = new SampleSimpleValidator
@@ -51,7 +50,6 @@ class SimpleValidatorSpecs extends Observes {
     when(rule_2.apply(instance)) thenReturn ValidationPass
     when(rule_3.apply(instance)) thenReturn ValidationPass
 
-
     when(rule_builder_2.buildRules) thenReturn rule_list_2
     when(rule_builder_3.buildRules) thenReturn rule_list_3
     when(rule_builder_4.buildRules) thenReturn rule_list_4
@@ -78,9 +76,9 @@ class SimpleValidatorSpecs extends Observes {
       }
 
       it("should have applied any rules in the lists after the first validation failure") {
-        rule_5 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
-        rule_6 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
-        rule_9 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
+        rule_5 wasNeverToldTo { _.apply(any[SampleValidatedClass]) }
+        rule_6 wasNeverToldTo { _.apply(any[SampleValidatedClass]) }
+        rule_9 wasNeverToldTo { _.apply(any[SampleValidatedClass]) }
       }
     }
 
