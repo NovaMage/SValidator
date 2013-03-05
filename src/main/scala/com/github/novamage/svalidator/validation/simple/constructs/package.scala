@@ -19,10 +19,10 @@ package object constructs {
     def must(haveConstruct: HaveConstruct) = {
       haveConstruct.prepareConstructWithRule(builder)
     }
-    
+
     private def applyNotFunctor(expression: B => Boolean) = {
-        val notFunctor: (B => Boolean) => (B => Boolean) = originalExpression => parameter => !originalExpression(parameter)
-        notFunctor(expression)
+      val notFunctor: (B => Boolean) => (B => Boolean) = originalExpression => parameter => !originalExpression(parameter)
+      notFunctor(expression)
     }
 
     def mustNot(ruleExpression: B => Boolean) = {
@@ -31,17 +31,17 @@ package object constructs {
 
     def mustNot(beConstruct: BeConstruct) = {
       val negatedBuilder = new NegatedSimpleValidationRuleBuilder(builder)
-      beConstruct.prepareConstructWithRule(builder)
+      beConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
     def mustNot(haveConstruct: HaveConstruct) = {
       val negatedBuilder = new NegatedSimpleValidationRuleBuilder(builder)
-      haveConstruct.prepareConstructWithRule(builder)
+      haveConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
     private class NegatedSimpleValidationRuleBuilder(builder: SimpleValidationRuleBuilder[A, B]) extends SimpleValidationRuleBuilder[A, B](null, null, null, null, null) {
 
-      protected[validation] override def must(ruleExpression: B => Boolean) = {
+      override def must(ruleExpression: B => Boolean) = {
         builder.must(applyNotFunctor(ruleExpression))
       }
 
