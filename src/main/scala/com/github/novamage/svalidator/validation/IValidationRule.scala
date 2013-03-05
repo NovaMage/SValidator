@@ -1,7 +1,7 @@
 package com.github.novamage.svalidator.validation
 
-trait IValidationRule[T] {
+trait IValidationRule[A] {
 
-  def apply(instance: T): ValidationResult
+  def apply(instance: A): ValidationResult
 
 }

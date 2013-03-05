@@ -1,10 +1,10 @@
 package integration
 
-import testUtils.Observes
 import com.github.novamage.svalidator.validation.{ ValidationFailure, IValidate, simple }
-import simple.{ SimpleValidator, constructs }
-import constructs.be
+import simple.{ SimpleValidator }
+import simple.constructs._
 import language.postfixOps
+import testUtils.Observes
 
 case class Person(name: String, age: Long, isSingle: Boolean) {}
 
@@ -16,9 +16,15 @@ class PersonValidator extends SimpleValidator[Person] {
   val b = 'a
 
   def buildRules = List(
-    For { _.name }
-      ForField ("name")
-      must be empty () withMessage "someMessage")
+    For { _.name } ForField "name" mustNot be empty() withMessage "i rock" //    For { _.name } ForField "name"
+    //      must be empty () withMessage "someMessage"
+    //      must have maxLength 10 withMessage "someMessage",
+    //    For { _.age } ForField "age"
+    //      must { _ > 0 } withMessage "Must be greater than zero",
+    //    For { _.name }.ForField("name")
+    //      must be empty() withMessage "hola"
+    )
+
 }
 
 class ValidationTest extends Observes {

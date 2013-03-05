@@ -5,9 +5,6 @@ import com.github.novamage.svalidator.validation.{ ValidationFailure, IValidatio
 
 class SimpleValidationRuleSpecs extends Observes {
 
-  case class TestClass(name: String, age: Long, single: Boolean) {
-
-  }
 
   describe("when using a simple validation rule to validate a specific property on an object with a given field name") {
     val field_name = "someFieldNameHere"
@@ -52,6 +49,8 @@ class SimpleValidationRuleSpecs extends Observes {
       }
 
       describe("and the rule expression returns false") {
+        
+        val a = List(1,2,3,4).map(_.toString + "hola").map(_.size)
 
         val rule_expression = stubFunction(some_property_value, false)
         val error_message_builder = stubFunction(field_name, some_property_value, some_error_message)
@@ -76,5 +75,9 @@ class SimpleValidationRuleSpecs extends Observes {
       }
 
     }
+  }
+  
+  case class TestClass(name: String, age: Long, single: Boolean) {
+
   }
 }

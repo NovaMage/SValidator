@@ -3,7 +3,13 @@ package com.github.novamage.svalidator.validation.simple
 import com.github.novamage.svalidator.validation.IRuleBuilder
 import constructs.{ HaveConstruct, BeConstruct }
 
-class SimpleValidationRuleBuilder[A, B](propertyExpression: A => B, validationExpressions: List[B => Boolean], fieldName: String, errorMessages: List[(String, B) => String], conditionedValidation: A => Boolean) extends IRuleBuilder[A] {
+class SimpleValidationRuleBuilder[A, B](
+  propertyExpression: A => B,
+  validationExpressions: List[B => Boolean],
+  fieldName: String,
+  errorMessages: List[(String, B) => String],
+  conditionedValidation: A => Boolean)
+    extends IRuleBuilder[A] {
 
   def when(conditionedValidation: A => Boolean) = {
     new SimpleValidationRuleBuilder(propertyExpression, validationExpressions, fieldName, errorMessages, conditionedValidation)
@@ -13,12 +19,9 @@ class SimpleValidationRuleBuilder[A, B](propertyExpression: A => B, validationEx
     new SimpleValidationRuleBuilder(propertyExpression, validationExpressions :+ ruleExpression, fieldName, errorMessages, conditionedValidation)
   }
 
-  def must(beConstruct: BeConstruct) = {
-    beConstruct.prepareConstructWithRule(this)
-  }
-
-  def must(haveConstruct: HaveConstruct) = {
-    haveConstruct.prepareConstructWithRule(this)
+  def mustNot(ruleExpression: B => Boolean) = {
+    val notFunctor: (B => Boolean) => (B => Boolean) = originalExpression => parameter => !originalExpression(parameter)
+    new SimpleValidationRuleBuilder(propertyExpression, validationExpressions :+ notFunctor(ruleExpression), fieldName, errorMessages, conditionedValidation)
   }
 
   def withMessage(aFormatStringReceivingFieldNameAndValue: String) = {
@@ -32,7 +35,12 @@ class SimpleValidationRuleBuilder[A, B](propertyExpression: A => B, validationEx
   }
 
   def withMessage(expressionReceivingFieldNameAndValue: (String, B) => String) = {
-    new SimpleValidationRuleBuilder(propertyExpression, validationExpressions, fieldName, errorMessages :+ expressionReceivingFieldNameAndValue, conditionedValidation)
+    new SimpleValidationRuleBuilder(
+      propertyExpression,
+      validationExpressions,
+      fieldName,
+      errorMessages :+ expressionReceivingFieldNameAndValue,
+      conditionedValidation)
   }
 
   protected[validation] override def buildRules = {
