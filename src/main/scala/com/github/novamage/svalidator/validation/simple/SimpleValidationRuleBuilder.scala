@@ -19,11 +19,6 @@ class SimpleValidationRuleBuilder[A, B](
     new SimpleValidationRuleBuilder(propertyExpression, validationExpressions :+ ruleExpression, fieldName, errorMessages, conditionedValidation)
   }
 
-  def mustNot(ruleExpression: B => Boolean) = {
-    val notFunctor: (B => Boolean) => (B => Boolean) = originalExpression => parameter => !originalExpression(parameter)
-    new SimpleValidationRuleBuilder(propertyExpression, validationExpressions :+ notFunctor(ruleExpression), fieldName, errorMessages, conditionedValidation)
-  }
-
   def withMessage(aFormatStringReceivingFieldNameAndValue: String) = {
     val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, fieldValue) => aFormatStringReceivingFieldNameAndValue.format(fieldName, fieldValue)
     new SimpleValidationRuleBuilder(propertyExpression, validationExpressions, fieldName, errorMessages :+ errorMessageAlternateBuilder, conditionedValidation)

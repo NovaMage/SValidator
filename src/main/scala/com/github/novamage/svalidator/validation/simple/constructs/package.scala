@@ -70,9 +70,9 @@ package object constructs {
   }
 
   implicit class BeConstructWithRuleBuilderForStringExtensions[A](construct: BeConstructWithRuleBuilder[A, String]) {
-
+    
     def empty() = {
-      construct.builder must { _.length == 0 }
+      construct.builder must { x => x == null || x.length == 0 }
     }
 
   }

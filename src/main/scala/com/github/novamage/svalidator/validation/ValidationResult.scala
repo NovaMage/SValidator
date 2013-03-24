@@ -7,7 +7,7 @@ sealed abstract class ValidationResult {
 
 }
 
-case class ValidationFailure(fieldName: String, errorMessage: String) extends ValidationResult {
+case class ValidationFailure(fieldName: String, private val errorMessage: String) extends ValidationResult {
   def isValid = false
   def message = errorMessage
 }

@@ -23,6 +23,24 @@ class SimpleValidationRuleBuilderSpecs extends Observes {
 
     }
 
+    describe("and build rules is called with a list that has a rule") {
+      val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
+      val rule_expression = stubUnCallableFunction[Long, Boolean]
+
+      val sut = new SimpleValidationRuleBuilder[SampleValidatedClass, Long](property_expression, List(rule_expression), "", Nil, x => true)
+
+      val result = sut.buildRules
+
+      it("should return a list with as many rules as rule expressions passed in") {
+        result should have size (1)
+      }
+    }
+
+    /*
+     * Other behavior of this class is tested on integration tests.  
+     * Testing more behavior as a unit test would imply making some members public which 
+     * is not desired at this time.
+     */
   }
 
 }

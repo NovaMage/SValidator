@@ -70,7 +70,7 @@ class SimpleValidationRuleSpecs extends Observes {
 
         it("should have set the error message to the value generated using the field name and value") {
           val resultFailure = result.asInstanceOf[ValidationFailure]
-          resultFailure.errorMessage should equal(some_error_message)
+          resultFailure.message should equal(some_error_message)
         }
       }
 
