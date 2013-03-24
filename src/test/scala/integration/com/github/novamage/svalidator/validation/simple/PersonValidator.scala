@@ -1,13 +1,15 @@
 package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.validation.simple.SimpleValidator
+import com.github.novamage.svalidator.validation.IRuleBuilder
 import com.github.novamage.svalidator.validation.simple.constructs._
 
 class PersonValidator extends SimpleValidator[Person] {
 
-  override def buildRules = List(
+  override def buildRules: List[IRuleBuilder[Person]] = List(
 
     For { _.firstName } ForField 'firstName
+      must { _.length > 0 }
       mustNot be empty () withMessage "First name is required"
       must have maxLength 32 withMessage "Must have 32 characters or less",
 
@@ -24,5 +26,5 @@ class PersonValidator extends SimpleValidator[Person] {
     For { _.hasJob } ForField 'hasJob
       must be(false) when { _.age < 21 } withMessage "Must be 21 years or older to allow marking a job"
       
-  )
+    )
 }
