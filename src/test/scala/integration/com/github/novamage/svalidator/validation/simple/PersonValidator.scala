@@ -9,7 +9,6 @@ class PersonValidator extends SimpleValidator[Person] {
   override def buildRules: List[IRuleBuilder[Person]] = List(
 
     For { _.firstName } ForField 'firstName
-      must { _.length > 0 }
       mustNot be empty () withMessage "First name is required"
       must have maxLength 32 withMessage "Must have 32 characters or less",
 
