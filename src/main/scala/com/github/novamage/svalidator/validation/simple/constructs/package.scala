@@ -8,7 +8,11 @@ package object constructs {
 
   def be = new BeConstruct
 
+  def be[A](value: A): (A => Boolean) = _ == value
+
   def have = new HaveConstruct
+
+  def equal[A](value: A): (A => Boolean) = _ == value
 
   implicit class SimpleValidationRuleBuilderConstructExtensions[A, B](builder: SimpleValidationRuleBuilder[A, B]) {
 
@@ -70,9 +74,29 @@ package object constructs {
   }
 
   implicit class BeConstructWithRuleBuilderForStringExtensions[A](construct: BeConstructWithRuleBuilder[A, String]) {
-    
+
     def empty() = {
       construct.builder must { x => x == null || x.length == 0 }
+    }
+
+  }
+
+  implicit class BeConstructWithRuleBuilderForNumbersExtensions[A, B <% Double](construct: BeConstructWithRuleBuilder[A, B]) {
+
+    def negative() = {
+      construct.builder must { _ < 0 }
+    }
+
+    def positive() = {
+      construct.builder must { _ > 0 }
+    }
+
+    def greaterThan(value: B) = {
+      construct.builder must { _ > value }
+    }
+    
+    def lessThan(value: B) = {
+      construct.builder must { _ < value }
     }
 
   }
