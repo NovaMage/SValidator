@@ -181,7 +181,7 @@ case class ValidationFailure(fieldName: String, private val errorMessage: String
 A validation summary contains a list of the ValidationFailures extracted from the validation.  A `ValidationFailure` is a type of validation result that contains a fieldName and a message property(the field provided using `ForField`, and the error message provided using `withMessage`).  This list provides us with informaiton of the failures, and can be used to determine how should we proceed depending on whether the instance is valid or not.  Also, it provides for information necessary for the HTML builders to display the errors with their offending fields.  As a conveniency, the ValidationSummary has the method `isValid` that tells use whether any failures actually occurred.
 
 Using SValidation Constructs
-============================
+----------------------------
 
 While using the `must` method for building is great, there are certain common operations performed when validating.  To make this easier, and to maintain a very concise and fluent syntax, let us introduce *constructs*.  Constructs are a series of helper classes that provide views(aka 'extension methods') to enable easy building of common validation rules.  Currently, the following constructs are available:
 
@@ -227,7 +227,7 @@ Finally, the `equal(value:A)` function construct simply returns an equality func
 
 
 Conditional Validation
-======================
+----------------------
 
 It is possible to enforce validation of a field only if another field, or the instance as a whole, meets certain requirements.  For instance, take this example:
 
