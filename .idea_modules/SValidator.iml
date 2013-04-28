@@ -4,7 +4,7 @@
     <facet type="scala" name="Scala">
       <configuration>
         <option name="compilerLibraryLevel" value="Project" />
-        <option name="compilerLibraryName" value="SBT: scala:2.10.1-RC2" />
+        <option name="compilerLibraryName" value="SBT: scala:2.10.1" />
         <option name="compilerOptions" value="-feature" />
         <option name="fsc" value="true" />
       </configuration>
@@ -25,8 +25,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="SBT: org.scala-lang:scala-library:2.10.1-RC2" level="project" />
-    <orderEntry type="library" name="SBT: org.scala-lang:scala-reflect:2.10.1-RC2" level="project" />
+    <orderEntry type="library" name="SBT: org.scala-lang:scala-library:2.10.1" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.scalatest:scalatest_2.10:2.0.M5b:test" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: junit:junit:4.6:test" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.mockito:mockito-all:1.9.5:test" level="project" />
