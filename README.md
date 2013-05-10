@@ -255,8 +255,6 @@ It is possible to enforce validation of a field only if another field, or the in
 
 By using the `when` clause, you can add conditional stamenents to fields only under specific circumstances, as shown.
 
-**IMPORTANT : Implementation is not working properly and will be changed.  However, this interface of functionality will remain**
-
 Final Notes
 ===========
 
