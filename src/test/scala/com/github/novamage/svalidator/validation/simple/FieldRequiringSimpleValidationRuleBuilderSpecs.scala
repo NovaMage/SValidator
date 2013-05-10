@@ -14,7 +14,7 @@ class FieldRequiringSimpleValidationRuleBuilderSpecs extends Observes {
     val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
     val field_name = "someFieldName"
 
-    val sut = new FieldRequiringSimpleValidationRuleBuilder(property_expression, Nil, Nil)
+    val sut = new FieldRequiringSimpleValidationRuleBuilder(property_expression)
 
     lazy val result = sut.ForField(field_name)
 

@@ -1,11 +1,10 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.simple.constructs.SimpleValidationRuleBuilderConstructExtensions
 
-class FieldRequiringSimpleValidationRuleBuilder[A, B](propertyExpression: A => B, validationExpressions: List[B => Boolean], errorMessages: List[(String, B) => String]) {
+class FieldRequiringSimpleValidationRuleBuilder[A, B](propertyExpression: A => B) {
 
   def ForField(fieldName: String) = {
-    new SimpleValidationRuleBuilder[A, B](propertyExpression, validationExpressions, fieldName, errorMessages, x => true)
+    new SimpleValidationRuleBuilder[A, B](propertyExpression, null, List(), fieldName)
   }
 
   def ForField(fieldName: Symbol): SimpleValidationRuleBuilder[A, B] = {

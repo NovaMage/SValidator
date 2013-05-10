@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea_modules/SValidator.iml" filepath="$PROJECT_DIR$/.idea_modules/SValidator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea_modules/SValidator-build.iml" filepath="$PROJECT_DIR$/.idea_modules/SValidator-build.iml" />
     </modules>
   </component>
 </project>
