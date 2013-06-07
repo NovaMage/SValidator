@@ -48,6 +48,6 @@ and make a fluent and elegant validation by overriding the buildRules method of 
 To perform the actual validation, create an instance of your validator class, and call the method validate on the instance
  to validate.
 
- Check the wiki for more details :D
+ Check the [wiki](https://github.com/NovaMage/SValidator/wiki/SValidator) for more details :D
 
 
