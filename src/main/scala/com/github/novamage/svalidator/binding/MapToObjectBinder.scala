@@ -2,11 +2,16 @@ package com.github.novamage.svalidator.binding
 
 import scala.reflect.runtime.{universe => ru}
 import scala.collection.mutable.ListBuffer
+import com.github.novamage.svalidator.binding.exceptions.NoBinderFoundException
 
 
 object MapToObjectBinder {
 
-  def performBind[T: ru.TypeTag](dataMap: Map[String, Seq[String]]): BindingResult[T] = {
+  def bind[T: ru.TypeTag](dataMap: Map[String, Seq[String]]): BindingResult[T] = {
+    bind[T](None, dataMap)
+  }
+
+  protected[binding] def bind[T: ru.TypeTag](fieldPrefix: Option[String], dataMap: Map[String, Seq[String]]): BindingResult[T] = {
     val tag = ru.typeTag[T]
     val mirror = ru.runtimeMirror(getClass.getClassLoader)
     val scalaType = tag.tpe
@@ -16,10 +21,11 @@ object MapToObjectBinder {
     val paramSymbols = constructor.paramss
     val argList = ListBuffer[Any]()
     val errorList = ListBuffer[FieldError]()
+    val prefix = fieldPrefix.map(_ + ".").getOrElse("")
     paramSymbols.flatten foreach {
       symbol =>
         val paramTermSymbol = symbol.asTerm
-        val parameterName = paramTermSymbol.name.decoded
+        val parameterName = prefix + paramTermSymbol.name.decoded
         val parameterType = paramTermSymbol.typeSignature
         val typeBinder = TypeBinderRegistry.getBinderForType(parameterType)
         typeBinder match {
@@ -29,7 +35,7 @@ object MapToObjectBinder {
               case BindingFailure(errors) => errorList.appendAll(errors)
             }
           }
-          case None => throw new Exception("No binder found for type: " + parameterType.toString)
+          case None => throw new NoBinderFoundException(parameterType)
         }
     }
 

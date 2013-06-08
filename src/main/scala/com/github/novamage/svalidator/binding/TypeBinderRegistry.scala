@@ -15,11 +15,16 @@ object TypeBinderRegistry {
   }
 
   def initializeBinders(config: BindingConfig) {
+    binders.clear()
     registerBinder(new StringBinder(config))
     registerBinder(new IntBinder(config))
     registerBinder(new LongBinder(config))
     registerBinder(new BooleanBinder(config))
     registerBinder(new TimestampBinder(config))
+  }
+
+  def clearBinders() {
+    binders.clear()
   }
 
 
@@ -43,9 +48,12 @@ object TypeBinderRegistry {
 
   }
 
+  def registerBinder[A: ru.TypeTag](binder: ITypeBinder[A]) {
+    binders.append((binder, ru.typeTag[A]))
+  }
 
-  def registerBinder[T: ru.TypeTag](binder: ITypeBinder[T]) {
-    binders.append((binder, ru.typeTag[T]))
+  def allowRecursiveBindingForType[A: ru.TypeTag]() {
+    binders.append((new RecursiveBinderWrapper[A](), ru.typeTag[A]))
   }
 
 }

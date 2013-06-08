@@ -1,6 +1,5 @@
 package integration.com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.simple.SimpleValidator
 import com.github.novamage.svalidator.testing._
 import testUtils.Observes
 import com.github.novamage.svalidator.validation.IValidate
