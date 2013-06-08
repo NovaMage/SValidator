@@ -14,8 +14,7 @@ class MapToObjectBinder {
     val constructor = scalaType.declaration(ru.nme.CONSTRUCTOR).asMethod
     val paramSymbols = constructor.paramss
     val argList = ListBuffer[Any]()
-    val errorList = ListBuffer[String]()
-    println(paramSymbols)
+    val errorList = ListBuffer[FieldError]()
     paramSymbols.flatten foreach {
       symbol =>
         val paramTermSymbol = symbol.asTerm
@@ -25,23 +24,22 @@ class MapToObjectBinder {
         typeBinder match {
           case Some(binder) => {
             binder.bind(parameterName, dataMap) match {
-              case BindingResult(_, Some(value)) => argList.append(value)
-              case BindingResult(failures, None) => errorList.appendAll(failures)
+              case BindingPass(value) => argList.append(value)
+              case BindingFailure(errors) => errorList.appendAll(errors)
             }
           }
-          case None => {
-            errorList.append("No binder found for type:" + parameterType.toString)
-          }
+          case None => throw new Exception("No binder found for type:" + parameterType.toString)
         }
     }
 
     val constructorMirror = reflectClass.reflectConstructor(constructor)
 
     if (errorList.isEmpty) {
-      BindingResult(List(), Some(constructorMirror.apply(argList.toList: _*).asInstanceOf[T]))
+      BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])
     }
     else {
-      BindingResult[T](errorList.toList, None)
+      BindingFailure[T](errorList.toList)
     }
   }
+
 }

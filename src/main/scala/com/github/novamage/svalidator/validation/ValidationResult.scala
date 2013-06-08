@@ -4,7 +4,6 @@ sealed abstract class ValidationResult {
 
   def isValid: Boolean
   def message: String
-
 }
 
 case class ValidationFailure(fieldName: String, private val errorMessage: String) extends ValidationResult {
