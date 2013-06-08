@@ -2,13 +2,15 @@ name := "SValidator"
 
 version := "0.0.1"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.2"
 
 scalacOptions += "-feature"
 
 mainClass := Some("com.github.novamage.svalidator.Main")
 
-libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.1"
+parallelExecution in Test := false
+
+libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.2"
 
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test"
 

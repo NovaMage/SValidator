@@ -9,9 +9,6 @@ sealed abstract class BindingResult[A] {
   def fieldErrors: List[FieldError]
 }
 
-sealed case class FieldError(fieldName: String, errorMessage: String) {
-
-}
 
 case class BindingPass[A](private val boundValue: A) extends BindingResult[A] {
   def isValid = true

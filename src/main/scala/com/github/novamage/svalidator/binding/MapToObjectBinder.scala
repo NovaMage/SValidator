@@ -4,13 +4,14 @@ import scala.reflect.runtime.{universe => ru}
 import scala.collection.mutable.ListBuffer
 
 
-class MapToObjectBinder {
+object MapToObjectBinder {
 
-  def performBind[T](dataMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
-    val mirror = ru.runtimeMirror(tag.tpe.getClass.getClassLoader)
+  def performBind[T: ru.TypeTag](dataMap: Map[String, Seq[String]]): BindingResult[T] = {
+    val tag = ru.typeTag[T]
+    val mirror = ru.runtimeMirror(getClass.getClassLoader)
     val scalaType = tag.tpe
-    val classPerson = scalaType.typeSymbol.asClass
-    val reflectClass = mirror.reflectClass(classPerson)
+    val classToBind = scalaType.typeSymbol.asClass
+    val reflectClass = mirror.reflectClass(classToBind)
     val constructor = scalaType.declaration(ru.nme.CONSTRUCTOR).asMethod
     val paramSymbols = constructor.paramss
     val argList = ListBuffer[Any]()
@@ -28,17 +29,17 @@ class MapToObjectBinder {
               case BindingFailure(errors) => errorList.appendAll(errors)
             }
           }
-          case None => throw new Exception("No binder found for type:" + parameterType.toString)
+          case None => throw new Exception("No binder found for type: " + parameterType.toString)
         }
     }
 
-    val constructorMirror = reflectClass.reflectConstructor(constructor)
 
-    if (errorList.isEmpty) {
-      BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])
-    }
-    else {
-      BindingFailure[T](errorList.toList)
+    errorList.toList match {
+      case Nil => {
+        val constructorMirror = reflectClass.reflectConstructor(constructor)
+        BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])
+      }
+      case nonEmptyList => BindingFailure[T](nonEmptyList)
     }
   }
 
