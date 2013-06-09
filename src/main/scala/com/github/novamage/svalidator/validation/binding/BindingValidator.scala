@@ -6,7 +6,7 @@ import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
 import com.github.novamage.svalidator.validation.ValidationFailure
 import com.github.novamage.svalidator.binding.{BindingPass, BindingFailure}
 
-abstract class BindingValidator[A: ru.TypeTag] extends SimpleValidator[A] {
+abstract class BindingValidator[A: ru.TypeTag] extends SimpleValidator[A] with IBindingValidator[A] {
 
   def bindAndValidate(valuesMap: Map[String, Seq[String]]): BindingAndValidationSummary[A] = {
     val bindingResult = MapToObjectBinder.bind[A](valuesMap)
