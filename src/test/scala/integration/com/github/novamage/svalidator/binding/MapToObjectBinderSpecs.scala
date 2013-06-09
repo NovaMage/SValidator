@@ -1,10 +1,11 @@
 package integration.com.github.novamage.svalidator.binding
 
 import testUtils.Observes
-import com.github.novamage.svalidator.binding.{BindingPass, TypeBinderRegistry, MapToObjectBinder}
+import com.github.novamage.svalidator.binding.{BindingPass, TypeBinderRegistry}
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import com.github.novamage.svalidator.binding.exceptions.NoBinderFoundException
+import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
 
 case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boolean, aTimestamp: Timestamp, optionalText: Option[String], optionalInt: Option[Int], intList: List[Int])
 

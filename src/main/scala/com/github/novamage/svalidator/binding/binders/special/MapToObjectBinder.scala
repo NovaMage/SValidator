@@ -1,8 +1,12 @@
-package com.github.novamage.svalidator.binding
+package com.github.novamage.svalidator.binding.binders.special
 
 import scala.reflect.runtime.{universe => ru}
 import scala.collection.mutable.ListBuffer
 import com.github.novamage.svalidator.binding.exceptions.NoBinderFoundException
+import com.github.novamage.svalidator.binding._
+import com.github.novamage.svalidator.binding.BindingPass
+import com.github.novamage.svalidator.binding.FieldError
+import scala.Some
 
 
 object MapToObjectBinder {
@@ -11,7 +15,7 @@ object MapToObjectBinder {
     bind[T](None, dataMap)
   }
 
-  protected[binding] def bind[T: ru.TypeTag](fieldPrefix: Option[String], dataMap: Map[String, Seq[String]]): BindingResult[T] = {
+  protected[special] def bind[T: ru.TypeTag](fieldPrefix: Option[String], dataMap: Map[String, Seq[String]]): BindingResult[T] = {
     val tag = ru.typeTag[T]
     val mirror = ru.runtimeMirror(getClass.getClassLoader)
     val scalaType = tag.tpe

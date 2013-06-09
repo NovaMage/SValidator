@@ -4,7 +4,7 @@ import scala.reflect.runtime.{universe => ru}
 import scala.collection.mutable.ListBuffer
 import com.github.novamage.svalidator.binding.binders.typed._
 import com.github.novamage.svalidator.binding.binders.ITypedBinder
-import com.github.novamage.svalidator.binding.binders.special.{ListBinderWrapper, OptionBinderWrapper}
+import com.github.novamage.svalidator.binding.binders.special.{RecursiveBinderWrapper, ListBinderWrapper, OptionBinderWrapper}
 
 object TypeBinderRegistry {
 
@@ -19,6 +19,9 @@ object TypeBinderRegistry {
     registerBinder(new StringBinder(config))
     registerBinder(new IntBinder(config))
     registerBinder(new LongBinder(config))
+    registerBinder(new FloatBinder(config))
+    registerBinder(new DoubleBinder(config))
+    registerBinder(new BigDecimalBinder(config))
     registerBinder(new BooleanBinder(config))
     registerBinder(new TimestampBinder(config))
   }
@@ -28,7 +31,7 @@ object TypeBinderRegistry {
   }
 
 
-  def getBinderForType(typeTag: ru.Type): Option[ITypedBinder[_]] = {
+  protected[binding] def getBinderForType(typeTag: ru.Type): Option[ITypedBinder[_]] = {
     if (typeTag.erasure == ru.typeOf[Option[Any]].erasure) {
       binders collectFirst {
         case (binder, tag) if tag.tpe =:= typeTag.asInstanceOf[ru.TypeRef].args.head => new OptionBinderWrapper(binder)
