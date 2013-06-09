@@ -12,6 +12,12 @@ trait BindingLanguageConfig {
 
   def invalidLongMessage(fieldName: String, fieldValue: String): String
 
+  def invalidFloatMessage(fieldName: String, fieldValue: String): String
+
+  def invalidDoubleMessage(fieldName: String, fieldValue: String): String
+
+  def invalidDecimalMessage(fieldName: String, fieldValue: String): String
+
   def invalidTimestampMessage(fieldName: String, fieldValue: String): String
 
 }

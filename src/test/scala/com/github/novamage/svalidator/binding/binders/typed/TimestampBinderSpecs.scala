@@ -4,11 +4,11 @@ import testUtils.Observes
 import java.sql.Timestamp
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingPass}
 import java.text.SimpleDateFormat
-import com.github.novamage.svalidator.binding.binders.ITypeBinder
+import com.github.novamage.svalidator.binding.binders.ITypedBinder
 
 class TimestampBinderSpecs extends Observes {
 
-  val sut: ITypeBinder[Timestamp] = new TimestampBinder(BindingConfig.defaultConfig)
+  val sut: ITypedBinder[Timestamp] = new TimestampBinder(BindingConfig.defaultConfig)
 
   describe("when testing the binding of a class with a simple constructor with a timestamp argument") {
 

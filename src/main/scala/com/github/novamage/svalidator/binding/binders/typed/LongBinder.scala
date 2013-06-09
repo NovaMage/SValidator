@@ -1,9 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
-import com.github.novamage.svalidator.binding.binders.ITypeBinder
+import com.github.novamage.svalidator.binding.binders.ITypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
 
-class LongBinder(config: BindingConfig) extends ITypeBinder[Long] {
+class LongBinder(config: BindingConfig) extends ITypedBinder[Long] {
 
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Long] = {
     try {

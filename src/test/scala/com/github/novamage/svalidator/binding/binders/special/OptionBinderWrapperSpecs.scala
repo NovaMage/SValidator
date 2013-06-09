@@ -1,13 +1,13 @@
 package com.github.novamage.svalidator.binding.binders.special
 
 import testUtils.Observes
-import com.github.novamage.svalidator.binding.binders.ITypeBinder
+import com.github.novamage.svalidator.binding.binders.ITypedBinder
 import com.github.novamage.svalidator.binding.{BindingPass, BindingFailure}
 
 class OptionBinderWrapperSpecs extends Observes {
 
-  val wrappedBinder = mock[ITypeBinder[Long]]
-  val sut: ITypeBinder[Option[_]] = new OptionBinderWrapper(wrappedBinder)
+  val wrappedBinder = mock[ITypedBinder[Long]]
+  val sut: ITypedBinder[Option[_]] = new OptionBinderWrapper(wrappedBinder)
 
   describe("when performing the binding of an option type") {
 

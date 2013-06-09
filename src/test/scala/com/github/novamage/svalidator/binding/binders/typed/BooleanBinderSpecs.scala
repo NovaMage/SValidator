@@ -1,12 +1,12 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
 import testUtils.Observes
-import com.github.novamage.svalidator.binding.binders.ITypeBinder
+import com.github.novamage.svalidator.binding.binders.ITypedBinder
 import com.github.novamage.svalidator.binding.{BindingPass, BindingConfig}
 
 class BooleanBinderSpecs extends Observes {
 
-  val sut: ITypeBinder[Boolean] = new BooleanBinder(BindingConfig.defaultConfig)
+  val sut: ITypedBinder[Boolean] = new BooleanBinder(BindingConfig.defaultConfig)
 
   describe("when testing the binding of a class with a simple constructor with a boolean argument") {
 

@@ -1,13 +1,13 @@
 package com.github.novamage.svalidator.binding.binders.special
 
 import testUtils.Observes
-import com.github.novamage.svalidator.binding.binders.ITypeBinder
+import com.github.novamage.svalidator.binding.binders.ITypedBinder
 import com.github.novamage.svalidator.binding.{BindingPass, BindingFailure}
 
 class ListBinderWrapperSpecs extends Observes {
 
-  val wrappedBinder = mock[ITypeBinder[Long]]
-  val sut: ITypeBinder[List[_]] = new ListBinderWrapper(wrappedBinder)
+  val wrappedBinder = mock[ITypedBinder[Long]]
+  val sut: ITypedBinder[List[_]] = new ListBinderWrapper(wrappedBinder)
 
   describe("when binding a list of values of a specific type") {
 

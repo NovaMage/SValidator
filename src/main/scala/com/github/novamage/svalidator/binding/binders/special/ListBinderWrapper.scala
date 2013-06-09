@@ -1,9 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import com.github.novamage.svalidator.binding.binders.ITypeBinder
+import com.github.novamage.svalidator.binding.binders.ITypedBinder
 import com.github.novamage.svalidator.binding.{BindingPass, BindingResult}
 
-class ListBinderWrapper(wrappedBinder: ITypeBinder[_]) extends ITypeBinder[List[Any]] {
+class ListBinderWrapper(wrappedBinder: ITypedBinder[_]) extends ITypedBinder[List[Any]] {
 
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[List[Any]] = {
     val valueList = valueMap.get(fieldName).map(_.toList).getOrElse(Nil) map {
