@@ -18,7 +18,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
       } collect {
         case Some(x) => x
       }
-    ValidationSummary(firstFailingResultForEachGroup)
+    new ValidationSummary(firstFailingResultForEachGroup)
   }
 
   def For[B](propertyExpression: A => B): FieldRequiringSimpleValidationRuleBuilder[A, B] = {
