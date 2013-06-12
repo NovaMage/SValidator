@@ -31,7 +31,7 @@ class LongBinderSpecs extends Observes {
     describe("and the argument is present in the values map") {
       val result = sut.bind(fieldName, Map(fieldName -> List("49")))
 
-      it("should have bound the value properly") {
+      it("should have bound the valueGetter properly") {
         result should equal(BindingPass(49L))
       }
     }

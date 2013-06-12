@@ -34,7 +34,7 @@ class BigDecimalBinderSpecs extends Observes {
 
       val result = sut.bind(fieldName, Map(fieldName -> List("170.5000")))
 
-      it("should have bound the value  properly") {
+      it("should have bound the valueGetter  properly") {
         result should equal(BindingPass(BigDecimal("170.5000")))
       }
     }

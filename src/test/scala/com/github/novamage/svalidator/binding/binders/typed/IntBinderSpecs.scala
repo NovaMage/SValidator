@@ -34,7 +34,7 @@ class IntBinderSpecs extends Observes {
 
       val result = sut.bind(fieldName, Map(fieldName -> List("18")))
 
-      it("should have bound the value  properly") {
+      it("should have bound the valueGetter  properly") {
         result should equal(BindingPass(18))
       }
     }

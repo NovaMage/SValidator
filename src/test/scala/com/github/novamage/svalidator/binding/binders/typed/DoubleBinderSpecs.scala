@@ -34,7 +34,7 @@ class DoubleBinderSpecs extends Observes {
 
       val result = sut.bind(fieldName, Map(fieldName -> List("170.5")))
 
-      it("should have bound the value  properly") {
+      it("should have bound the valueGetter  properly") {
         result should equal(BindingPass(170.5D))
       }
     }

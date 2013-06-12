@@ -34,7 +34,7 @@ class FloatBinderSpecs extends Observes {
 
       val result = sut.bind(fieldName, Map(fieldName -> List("90.8")))
 
-      it("should have bound the value  properly") {
+      it("should have bound the valueGetter  properly") {
         result should equal(BindingPass(90.8F))
       }
     }

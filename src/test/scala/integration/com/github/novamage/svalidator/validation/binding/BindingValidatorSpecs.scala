@@ -44,7 +44,7 @@ class BindingValidatorSpecs extends Observes {
       result.isValid should be(true)
     }
 
-    it("should have returned the proper value") {
+    it("should have returned the proper valueGetter") {
       result.instance.get should equal(ATestingClass("someString", 90, 88.5F, BigDecimal("900.0000009"), Some(99.87D), Some("anotherString")))
     }
   }

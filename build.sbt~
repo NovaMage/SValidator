@@ -1,14 +1,12 @@
 name := "SValidator"
 
-version := "0.1.0"
+version := "0.0.1"
 
 scalaVersion := "2.10.2"
 
 scalacOptions += "-feature"
 
 mainClass := Some("com.github.novamage.svalidator.Main")
-
-exportJars := true
 
 parallelExecution in Test := false
 

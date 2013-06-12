@@ -1,6 +1,6 @@
 package com.github.novamage.svalidator.binding
 
-trait BindingLanguageConfig {
+trait IBindingLanguageConfig {
 
   def noValueProvidedMessage(fieldName: String): String
 

@@ -38,10 +38,10 @@ class StringBinderSpecs extends Observes {
         }
       }
 
-      describe("and the value is a non-whitespace string with spaces on the edges") {
+      describe("and the valueGetter is a non-whitespace string with spaces on the edges") {
         val result = sut.bind(fieldName, Map(fieldName -> List(" someValue ")))
 
-        it("should have bound the trimmed value  properly") {
+        it("should have bound the trimmed valueGetter  properly") {
           result should equal(BindingPass("someValue"))
         }
       }

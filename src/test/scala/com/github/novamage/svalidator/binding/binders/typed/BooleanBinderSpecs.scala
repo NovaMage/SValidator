@@ -16,31 +16,31 @@ class BooleanBinderSpecs extends Observes {
     describe("and the argument is not present in the values map") {
       val result = sut.bind(fieldName, Map("someOtherBoolean" -> List("true")))
 
-      it("should have returned a Binding Pass with the value set to false") {
+      it("should have returned a Binding Pass with the valueGetter set to false") {
         result should equal(BindingPass(false))
       }
     }
 
-    describe("and the argument is present in the values map with a false value") {
+    describe("and the argument is present in the values map with a false valueGetter") {
       val result = sut.bind(fieldName, Map(fieldName -> List("false")))
 
-      it("should have returned a Binding Pass with the value set to false") {
+      it("should have returned a Binding Pass with the valueGetter set to false") {
         result should equal(BindingPass(false))
       }
     }
 
-    describe("and the argument is present in the values map with a true value") {
+    describe("and the argument is present in the values map with a true valueGetter") {
       val result = sut.bind(fieldName, Map(fieldName -> List("true")))
 
-      it("should have returned a Binding Pass with the value set to false") {
+      it("should have returned a Binding Pass with the valueGetter set to false") {
         result should equal(BindingPass(true))
       }
     }
 
-    describe("and the argument is present in the values map with a value that is not a Boolean") {
+    describe("and the argument is present in the values map with a valueGetter that is not a Boolean") {
       val result = sut.bind(fieldName, Map(fieldName -> List("18")))
 
-      it("should have returned a Binding Pass with the value set to false") {
+      it("should have returned a Binding Pass with the valueGetter set to false") {
         result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
       }
     }

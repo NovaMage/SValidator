@@ -63,12 +63,12 @@ class SimpleValidationRuleSpecs extends Observes {
           result.asInstanceOf[ValidationFailure] should not be null
         }
 
-        it("should have set the field name to the passed in field name value") {
+        it("should have set the field name to the passed in field name valueGetter") {
           val resultFailure = result.asInstanceOf[ValidationFailure]
           resultFailure.fieldName should equal(field_name)
         }
 
-        it("should have set the error message to the value generated using the field name and value") {
+        it("should have set the error message to the valueGetter generated using the field name and valueGetter") {
           val resultFailure = result.asInstanceOf[ValidationFailure]
           resultFailure.message should equal(some_error_message)
         }

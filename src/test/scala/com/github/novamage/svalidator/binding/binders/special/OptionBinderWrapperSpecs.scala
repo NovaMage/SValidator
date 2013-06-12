@@ -20,7 +20,7 @@ class OptionBinderWrapperSpecs extends Observes {
 
       val result = sut.bind(fieldName, valueMap)
 
-      it("should return a BindingPass with a value of None") {
+      it("should return a BindingPass with a valueGetter of None") {
         result should equal(BindingPass(None))
       }
     }
@@ -35,7 +35,7 @@ class OptionBinderWrapperSpecs extends Observes {
 
       val result = sut.bind(fieldName, valueMap)
 
-      it("should return a BindingPass with the value returned from the wrapped binder wrapped in Option") {
+      it("should return a BindingPass with the valueGetter returned from the wrapped binder wrapped in Option") {
         result should equal(BindingPass(Option(boundValue)))
       }
     }
