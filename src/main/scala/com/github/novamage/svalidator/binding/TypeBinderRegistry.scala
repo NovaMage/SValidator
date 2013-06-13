@@ -4,7 +4,7 @@ import scala.reflect.runtime.{universe => ru}
 import scala.collection.mutable.ListBuffer
 import com.github.novamage.svalidator.binding.binders.typed._
 import com.github.novamage.svalidator.binding.binders.ITypedBinder
-import com.github.novamage.svalidator.binding.binders.special.{RecursiveBinderWrapper, ListBinderWrapper, OptionBinderWrapper}
+import com.github.novamage.svalidator.binding.binders.special.{EnumerationBinder, RecursiveBinderWrapper, ListBinderWrapper, OptionBinderWrapper}
 
 object TypeBinderRegistry {
 
@@ -30,21 +30,20 @@ object TypeBinderRegistry {
     binders.clear()
   }
 
+  protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror): Option[ITypedBinder[_]] = {
 
-  protected[binding] def getBinderForType(typeTag: ru.Type): Option[ITypedBinder[_]] = {
-    if (typeTag.erasure == ru.typeOf[Option[Any]].erasure) {
-      binders collectFirst {
-        case (binder, tag) if tag.tpe =:= typeTag.asInstanceOf[ru.TypeRef].args.head => new OptionBinderWrapper(binder)
-      }
+    if (runtimeType.asInstanceOf[ru.TypeRef].pre.baseClasses.exists(x => x == ru.typeOf[Enumeration].typeSymbol.asClass)) {
+      Some(new EnumerationBinder(runtimeType, mirror))
     }
-    else if (typeTag.erasure == ru.typeOf[List[Any]].erasure) {
-      binders collectFirst {
-        case (binder, tag) if tag.tpe =:= typeTag.asInstanceOf[ru.TypeRef].args.head => new ListBinderWrapper(binder)
-      }
+    else if (runtimeType.erasure =:= ru.typeOf[Option[_]].erasure) {
+      getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new OptionBinderWrapper(_))
+    }
+    else if (runtimeType.erasure =:= ru.typeOf[List[_]].erasure) {
+      getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new ListBinderWrapper(_))
     }
     else {
       binders collectFirst {
-        case (binder, tag) if tag.tpe =:= typeTag => binder
+        case (binder, tag) if tag.tpe =:= runtimeType => binder
       }
     }
 

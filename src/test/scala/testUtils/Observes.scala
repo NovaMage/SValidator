@@ -12,10 +12,6 @@ import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
 @RunWith(classOf[JUnitRunner])
 class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers with FunctionStubbingHelpers {
 
-  {
-    MapToObjectBinder.initializeModelClassLoader(getClass.getClassLoader)
-  }
-
   def when[T](method_call: T) = {
     Mockito.when(method_call)
   }

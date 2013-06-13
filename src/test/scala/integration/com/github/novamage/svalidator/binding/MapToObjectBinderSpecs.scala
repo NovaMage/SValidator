@@ -7,7 +7,15 @@ import java.text.SimpleDateFormat
 import com.github.novamage.svalidator.binding.exceptions.NoBinderFoundException
 import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
 
-case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boolean, aTimestamp: Timestamp, optionalText: Option[String], optionalInt: Option[Int], intList: List[Int])
+object AnEnumType extends Enumeration {
+  type AnEnumType = Value
+
+  val anExampleEnumValue = Value(1, "Just an example value")
+  val anotherExampleEnumValue = Value(2, "Just another example value")
+}
+
+case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boolean, aTimestamp: Timestamp, optionalText: Option[String], optionalInt: Option[Int], intList: List[Int],
+                         enumeratedList: AnEnumType.Value)
 
 case class ASimpleRecursiveClass(anotherString: String, recursiveClass: ClassUsedInRecursiveClass)
 
@@ -27,12 +35,13 @@ class MapToObjectBinderSpecs extends Observes {
     "aTimestamp" -> List("2008-09-05"),
     "optionalText" -> List("someText"),
     "optionalInt" -> List("9"),
-    "intList" -> List("10", "20", "30")
+    "intList" -> List("10", "20", "30"),
+    "enumeratedList" -> List("1")
   )
 
   val formatter = new SimpleDateFormat("yyyy-MM-dd")
 
-  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30))
+  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30),AnEnumType.anExampleEnumValue)
 
   describe("when binding a complex class with many types in the constructor") {
 

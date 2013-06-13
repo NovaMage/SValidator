@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import scala.reflect.runtime.{universe => ru}
 import scala.collection.mutable.ListBuffer
-import com.github.novamage.svalidator.binding.exceptions.{ClassLoaderInitializationException, NoBinderFoundException}
+import com.github.novamage.svalidator.binding.exceptions.NoBinderFoundException
 import com.github.novamage.svalidator.binding._
 import com.github.novamage.svalidator.binding.BindingPass
 import com.github.novamage.svalidator.binding.FieldError
@@ -11,22 +11,13 @@ import scala.Some
 
 object MapToObjectBinder {
 
-  private var classLoader: ClassLoader = _
-
-  def initializeModelClassLoader(loader:ClassLoader){
-    classLoader = loader
-  }
-
   def bind[T: ru.TypeTag](dataMap: Map[String, Seq[String]]): BindingResult[T] = {
     bind[T](None, dataMap)
   }
 
   protected[special] def bind[T: ru.TypeTag](fieldPrefix: Option[String], dataMap: Map[String, Seq[String]]): BindingResult[T] = {
     val tag = ru.typeTag[T]
-    if(classLoader == null){
-      throw new ClassLoaderInitializationException
-    }
-    val mirror = ru.runtimeMirror(classLoader)
+    val mirror = tag.mirror
     val scalaType = tag.tpe
     val classToBind = scalaType.typeSymbol.asClass
     val reflectClass = mirror.reflectClass(classToBind)
@@ -40,7 +31,7 @@ object MapToObjectBinder {
         val paramTermSymbol = symbol.asTerm
         val parameterName = prefix + paramTermSymbol.name.decoded
         val parameterType = paramTermSymbol.typeSignature
-        val typeBinder = TypeBinderRegistry.getBinderForType(parameterType)
+        val typeBinder = TypeBinderRegistry.getBinderForType(parameterType, mirror)
         typeBinder match {
           case Some(binder) => {
             binder.bind(parameterName, dataMap) match {
