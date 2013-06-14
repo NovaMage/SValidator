@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.validation.binding
 
 import com.github.novamage.svalidator.validation.{ValidationFailure, ValidationSummary}
 
-class BindingAndValidationSummary[A](private val failures: List[ValidationFailure], val instance: Option[A], val valuesMap: Map[String, Seq[String]]) extends ValidationSummary(failures) {
+class BindingAndValidationSummary[+A](private val failures: List[ValidationFailure], val instance: Option[A], val valuesMap: Map[String, Seq[String]]) extends ValidationSummary(failures) {
 
   override def equals(obj: Any) = {
 

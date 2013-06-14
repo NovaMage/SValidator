@@ -17,11 +17,10 @@ object MapToObjectBinder {
 
   protected[special] def bind[T: ru.TypeTag](fieldPrefix: Option[String], dataMap: Map[String, Seq[String]]): BindingResult[T] = {
     val tag = ru.typeTag[T]
-    val mirror = tag.mirror
-    val scalaType = tag.tpe
-    val classToBind = scalaType.typeSymbol.asClass
-    val reflectClass = mirror.reflectClass(classToBind)
-    val constructor = scalaType.declaration(ru.nme.CONSTRUCTOR).asMethod
+    val runtimeMirror = tag.mirror
+    val runtimeType = tag.tpe
+    val classToBind = runtimeType.typeSymbol.asClass
+    val constructor = runtimeType.declaration(ru.nme.CONSTRUCTOR).asMethod
     val paramSymbols = constructor.paramss
     val argList = ListBuffer[Any]()
     val errorList = ListBuffer[FieldError]()
@@ -31,7 +30,7 @@ object MapToObjectBinder {
         val paramTermSymbol = symbol.asTerm
         val parameterName = prefix + paramTermSymbol.name.decoded
         val parameterType = paramTermSymbol.typeSignature
-        val typeBinder = TypeBinderRegistry.getBinderForType(parameterType, mirror)
+        val typeBinder = TypeBinderRegistry.getBinderForType(parameterType, runtimeMirror)
         typeBinder match {
           case Some(binder) => {
             binder.bind(parameterName, dataMap) match {
@@ -46,6 +45,7 @@ object MapToObjectBinder {
 
     errorList.toList match {
       case Nil => {
+        val reflectClass = runtimeMirror.reflectClass(classToBind)
         val constructorMirror = reflectClass.reflectConstructor(constructor)
         BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])
       }
