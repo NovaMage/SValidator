@@ -2,13 +2,14 @@ package com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.validation._
 
-abstract class SimpleValidator[A] extends IValidate[A] {
+abstract class SimpleValidator[A] extends IValidate[A] with IRuleStackBuilder[A] {
 
   def buildRules: List[IRuleBuilder[A]]
 
-  override def validate(instance: A) = {
-    val rules = buildRules
-    val unflattenedValidationRuleStreams = rules map {_.buildRules.toStream}
+  private lazy val rules = buildRules.map(_.buildRules)
+
+  override def validate(instance: A): ValidationSummary = {
+    val unflattenedValidationRuleStreams = rules.map(_.toStream)
     val firstFailingResultForEachGroup =
       unflattenedValidationRuleStreams map {
         ruleStream =>
@@ -21,9 +22,6 @@ abstract class SimpleValidator[A] extends IValidate[A] {
     new ValidationSummary(firstFailingResultForEachGroup)
   }
 
-  def For[B](propertyExpression: A => B): FieldRequiringSimpleValidationRuleBuilder[A, B] = {
-    new FieldRequiringSimpleValidationRuleBuilder[A, B](propertyExpression)
-  }
 
 }
 

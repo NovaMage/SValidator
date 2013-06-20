@@ -12,7 +12,30 @@ class SimpleValidationRuleBuilder[A, B](propertyExpression: A => B,
     new SimpleValidationRuleBuilder(propertyExpression, currentRuleStructure.copy(conditionalValidation = Some(conditionedValidation)), validationExpressions, fieldName)
   }
 
-  def must(ruleExpression: B => Boolean) = {
+  def must(ruleExpression: B => Boolean): SimpleValidationRuleBuilder[A, B] = {
+    addRuleExpressionToList(ruleExpression)
+  }
+
+
+  def mustNot(ruleExpression: B => Boolean): SimpleValidationRuleBuilder[A, B] = {
+    addRuleExpressionToList(applyNotFunctor(ruleExpression))
+  }
+
+  def withMessage(aFormatStringReceivingFieldNameAndValue: String): SimpleValidationRuleBuilder[A, B] = {
+    val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, fieldValue) => aFormatStringReceivingFieldNameAndValue.format(fieldName, fieldValue)
+    new SimpleValidationRuleBuilder(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
+  }
+
+  def withMessage(anExpressionReceivingFieldValue: B => String): SimpleValidationRuleBuilder[A, B] = {
+    val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, value) => anExpressionReceivingFieldValue(value)
+    new SimpleValidationRuleBuilder(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
+  }
+
+  def withMessage(expressionReceivingFieldNameAndValue: (String, B) => String): SimpleValidationRuleBuilder[A, B] = {
+    new SimpleValidationRuleBuilder(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(expressionReceivingFieldNameAndValue)), validationExpressions, fieldName)
+  }
+
+  private def addRuleExpressionToList(ruleExpression: (B) => Boolean): SimpleValidationRuleBuilder[A, B] = {
     val ruleList = currentRuleStructure match {
       case null => validationExpressions
       case x => validationExpressions :+ x
@@ -20,18 +43,9 @@ class SimpleValidationRuleBuilder[A, B](propertyExpression: A => B,
     new SimpleValidationRuleBuilder(propertyExpression, SimpleValidationRuleStructureContainer[A, B](ruleExpression, None, None), ruleList, fieldName)
   }
 
-  def withMessage(aFormatStringReceivingFieldNameAndValue: String) = {
-    val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, fieldValue) => aFormatStringReceivingFieldNameAndValue.format(fieldName, fieldValue)
-    new SimpleValidationRuleBuilder(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
-  }
-
-  def withMessage(anExpressionReceivingFieldValue: B => String) = {
-    val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, value) => anExpressionReceivingFieldValue(value)
-    new SimpleValidationRuleBuilder(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
-  }
-
-  def withMessage(expressionReceivingFieldNameAndValue: (String, B) => String) = {
-    new SimpleValidationRuleBuilder(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(expressionReceivingFieldNameAndValue)), validationExpressions, fieldName)
+  private def applyNotFunctor(expression: B => Boolean) = {
+    val notFunctor: (B => Boolean) => (B => Boolean) = originalExpression => parameter => !originalExpression(parameter)
+    notFunctor(expression)
   }
 
   protected[validation] override def buildRules = {
