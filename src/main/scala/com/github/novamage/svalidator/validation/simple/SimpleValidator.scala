@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.validation._
 
-abstract class SimpleValidator[A] extends IValidate[A] with IRuleStackBuilder[A] {
+abstract class SimpleValidator[A] extends IValidate[A] {
 
   def buildRules: List[IRuleBuilder[A]]
 
@@ -20,6 +20,10 @@ abstract class SimpleValidator[A] extends IValidate[A] with IRuleStackBuilder[A]
         case Some(x) => x
       }
     new ValidationSummary(firstFailingResultForEachGroup)
+  }
+
+  def For[B](propertyExpression: A => B) = {
+    new FieldRequiringSimpleValidationRuleBuilder[A, B](propertyExpression)
   }
 
 
