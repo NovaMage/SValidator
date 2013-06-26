@@ -17,4 +17,6 @@ object BindingAndValidationSummary {
 
   def empty[A] = new BindingAndValidationSummary[A](Nil, None, Map())
 
+  def filled[A](instance: A) = new BindingAndValidationSummary[A](Nil, Some(instance), Map())
+
 }
