@@ -13,7 +13,7 @@ object MapToObjectBinder {
 
   private def normalizeKeys(map: Map[String, Seq[String]]): Map[String, Seq[String]] = {
     map map {
-      case (key, value) => {
+      case (key, value) if key.contains("[") => {
         val dotNotationKey = key.replace("]", "").replace("[", ".")
         val tokens = dotNotationKey.split("\\.")
         val normalizedKey = tokens.zipWithIndex map {
@@ -21,6 +21,7 @@ object MapToObjectBinder {
         } mkString ""
         (normalizedKey, value)
       }
+      case (key, value) => (key, value)
     }
   }
 
