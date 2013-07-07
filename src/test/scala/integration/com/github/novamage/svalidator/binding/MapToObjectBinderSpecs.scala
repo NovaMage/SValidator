@@ -200,6 +200,33 @@ class MapToObjectBinderSpecs extends Observes {
         ))))
       }
     }
+
+    describe("when binding a class that has a list of a custom type and it is indexed and the value map is not normalized") {
+
+      TypeBinderRegistry.allowRecursiveBindingForType[AnIndexedListValue]()
+
+      val value_map = Map(
+        "anIndexedList[0][stringField]" -> List("alpha"),
+        "anIndexedList[0][longField]" -> List("3"),
+        "anIndexedList[1][stringField]" -> List("beta"),
+        "anIndexedList[1][longField]" -> List("9"),
+        "anIndexedList[2][stringField]" -> List("gamma"),
+        "anIndexedList[2][longField]" -> List("1"),
+        "anIndexedList[3][stringField]" -> List("lambda"),
+        "anIndexedList[3][longField]" -> List("39")
+      )
+
+      val result = sut.bind[AClassWithAnIndexedList](value_map)
+
+      it("should have bound properly the list and the recursive values") {
+        result should equal(BindingPass(AClassWithAnIndexedList(List(
+          AnIndexedListValue("alpha", 3),
+          AnIndexedListValue("beta", 9),
+          AnIndexedListValue("gamma", 1),
+          AnIndexedListValue("lambda", 39)
+        ))))
+      }
+    }
   }
 
 }

@@ -11,11 +11,25 @@ import scala.Some
 
 object MapToObjectBinder {
 
+  private def normalizeKeys(map: Map[String, Seq[String]]): Map[String, Seq[String]] = {
+    map map {
+      case (key, value) => {
+        val dotNotationKey = key.replace("]", "").replace("[", ".")
+        val tokens = dotNotationKey.split("\\.")
+        val normalizedKey = tokens.zipWithIndex map {
+          case (element, index) => if (index == 0) element else if (element.forall(_.isDigit)) "[" + element + "]" else "." + element
+        } mkString ""
+        (normalizedKey, value)
+      }
+    }
+  }
+
   def bind[T: ru.TypeTag](dataMap: Map[String, Seq[String]]): BindingResult[T] = {
     bind[T](None, dataMap)
   }
 
   protected[special] def bind[T: ru.TypeTag](fieldPrefix: Option[String], dataMap: Map[String, Seq[String]]): BindingResult[T] = {
+    val normalizedMap = normalizeKeys(dataMap)
     val tag = ru.typeTag[T]
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
@@ -33,7 +47,7 @@ object MapToObjectBinder {
         val typeBinder = TypeBinderRegistry.getBinderForType(parameterType, runtimeMirror)
         typeBinder match {
           case Some(binder) => {
-            binder.bind(parameterName, dataMap) match {
+            binder.bind(parameterName, normalizedMap) match {
               case BindingPass(value) => argList.append(value)
               case BindingFailure(errors) => errorList.appendAll(errors)
             }
