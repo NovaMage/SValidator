@@ -18,7 +18,7 @@ class ListBinderWrapper(wrappedBinder: ITypedBinder[_]) extends ITypedBinder[Lis
         (for {
           i <- 0 until indexedKeys.size
         } yield {
-          wrappedBinder.bind(fieldName + s"[$i]", valueMap)
+          wrappedBinder.bind(s"$fieldName[$i]", valueMap)
         }) collect {
           case BindingPass(value) => value
         }
