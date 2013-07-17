@@ -11,7 +11,7 @@ abstract class BindingValidator[A: ru.TypeTag] extends SimpleValidator[A] with I
   def bindAndValidate(valuesMap: Map[String, Seq[String]]): BindingAndValidationSummary[A] = {
     val bindingResult = MapToObjectBinder.bind[A](valuesMap)
     bindingResult match {
-      case BindingFailure(errors) => BindingAndValidationSummary(errors.map(error => ValidationFailure(error.fieldName, error.errorMessage)), None, valuesMap)
+      case BindingFailure(errors, cause) => BindingAndValidationSummary(errors.map(error => ValidationFailure(error.fieldName, error.errorMessage)), None, valuesMap)
       case BindingPass(value) => BindingAndValidationSummary(validate(value).validationFailures, Some(value), valuesMap)
     }
 

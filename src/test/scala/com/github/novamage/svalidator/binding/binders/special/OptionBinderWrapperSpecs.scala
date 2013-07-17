@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import testUtils.Observes
 import com.github.novamage.svalidator.binding.binders.ITypedBinder
-import com.github.novamage.svalidator.binding.{BindingPass, BindingFailure}
+import com.github.novamage.svalidator.binding.{FieldError, BindingPass, BindingFailure}
 
 class OptionBinderWrapperSpecs extends Observes {
 
@@ -13,15 +13,35 @@ class OptionBinderWrapperSpecs extends Observes {
 
     describe("and the wrapped type binder returns a BindingFailure") {
 
-      val fieldName = "fieldName"
-      val valueMap = mock[Map[String, Seq[String]]]
-      val binding_result = mock[BindingFailure[Long]]
-      when(wrappedBinder.bind(fieldName, valueMap)) thenReturn binding_result
+      describe("and the binding failure was caused by a no such element exception") {
+        val fieldName = "fieldName"
+        val valueMap = mock[Map[String, Seq[String]]]
+        val errors = mock[List[FieldError]]
+        val binding_result = BindingFailure[Long](errors, Some(new NoSuchElementException))
+        when(wrappedBinder.bind(fieldName, valueMap)) thenReturn binding_result
 
-      val result = sut.bind(fieldName, valueMap)
+        val result = sut.bind(fieldName, valueMap)
 
-      it("should return a BindingPass with a valueGetter of None") {
-        result should equal(BindingPass(None))
+        it("should return a Binding Pass with a value of None") {
+          result should equal(BindingPass(None))
+        }
+
+      }
+
+      describe("and the binding failure was not caused by a no such element exception") {
+        val fieldName = "fieldName"
+        val valueMap = mock[Map[String, Seq[String]]]
+        val errors = mock[List[FieldError]]
+        val exception  = new RuntimeException
+        val binding_result = BindingFailure[Long](errors, Some(exception))
+        when(wrappedBinder.bind(fieldName, valueMap)) thenReturn binding_result
+
+        val result = sut.bind(fieldName, valueMap)
+
+        it("should return a Binding failure with the error and exception provided") {
+          result should equal(BindingFailure(errors, Some(exception)))
+        }
+
       }
     }
 

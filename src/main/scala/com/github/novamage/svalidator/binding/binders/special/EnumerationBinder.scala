@@ -15,8 +15,8 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror) extends ITypedB
     try {
       BindingPass(applyMethod(valueMap(fieldName).head.toInt))
     } catch {
-      case ex: NoSuchElementException => new BindingFailure(fieldName, "Invalid enumeration value")
-      case ex: NumberFormatException => new BindingFailure(fieldName, "Invalid enumeration value")
+      case ex: NoSuchElementException => new BindingFailure(fieldName, "Invalid enumeration value", Some(ex))
+      case ex: NumberFormatException => new BindingFailure(fieldName, "Invalid enumeration value", Some(ex))
     }
   }
 }

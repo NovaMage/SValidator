@@ -8,8 +8,8 @@ class IntBinder(config: BindingConfig) extends ITypedBinder[Int] {
     try {
       BindingPass(valueMap(fieldName).head.toInt)
     } catch {
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidIntegerMessage(fieldName, valueMap(fieldName).head.toString))
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName))
+      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidIntegerMessage(fieldName, valueMap(fieldName).head.toString), Some(ex))
+      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
     }
   }
 }

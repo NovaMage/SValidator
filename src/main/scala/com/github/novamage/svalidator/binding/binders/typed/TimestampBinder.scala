@@ -11,8 +11,8 @@ class TimestampBinder(config: BindingConfig) extends ITypedBinder[Timestamp] {
     try {
       BindingPass(new Timestamp(formatter.parse(valueMap(fieldName).head).getTime))
     } catch {
-      case ex: ParseException => new BindingFailure(fieldName, config.languageConfig.invalidTimestampMessage(fieldName, valueMap(fieldName).head.toString))
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName))
+      case ex: ParseException => new BindingFailure(fieldName, config.languageConfig.invalidTimestampMessage(fieldName, valueMap(fieldName).head.toString),Some(ex))
+      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName),Some(ex))
     }
   }
 }

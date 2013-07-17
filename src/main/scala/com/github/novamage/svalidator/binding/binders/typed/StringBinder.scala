@@ -8,7 +8,7 @@ class StringBinder(config: BindingConfig) extends ITypedBinder[String] {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).get)
     } catch {
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.invalidNonEmptyTextMessage(fieldName))
+      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.invalidNonEmptyTextMessage(fieldName), Some(ex))
     }
   }
 }

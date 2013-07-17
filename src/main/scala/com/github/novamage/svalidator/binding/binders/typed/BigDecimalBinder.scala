@@ -9,8 +9,8 @@ class BigDecimalBinder(config: BindingConfig) extends ITypedBinder[BigDecimal] {
     try {
       BindingPass(BigDecimal(valueMap(fieldName).head))
     } catch {
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidDecimalMessage(fieldName, valueMap(fieldName).head.toString))
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName))
+      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidDecimalMessage(fieldName, valueMap(fieldName).head.toString), Some(ex))
+      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
     }
   }
 }

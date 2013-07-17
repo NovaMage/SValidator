@@ -18,9 +18,9 @@ case class BindingPass[A](private val boundValue: A) extends BindingResult[A] {
   def fieldErrors = Nil
 }
 
-case class BindingFailure[A](private val errors: List[FieldError]) extends BindingResult[A] {
+case class BindingFailure[A](private val errors: List[FieldError], cause: Option[Throwable]) extends BindingResult[A] {
 
-  def this(fieldName: String, error: String) = this(List(new FieldError(fieldName, error)))
+  def this(fieldName: String, error: String, cause: Option[Throwable]) = this(List(new FieldError(fieldName, error)), cause)
 
   def isValid = false
 

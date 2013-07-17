@@ -9,8 +9,8 @@ class LongBinder(config: BindingConfig) extends ITypedBinder[Long] {
     try {
       BindingPass(valueMap(fieldName).head.toLong)
     } catch {
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidLongMessage(fieldName, valueMap(fieldName).head))
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName))
+      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidLongMessage(fieldName, valueMap(fieldName).head), Some(ex))
+      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
     }
   }
 }

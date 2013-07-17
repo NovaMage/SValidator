@@ -50,7 +50,7 @@ object MapToObjectBinder {
           case Some(binder) => {
             binder.bind(parameterName, normalizedMap) match {
               case BindingPass(value) => argList.append(value)
-              case BindingFailure(errors) => errorList.appendAll(errors)
+              case BindingFailure(errors, cause) => errorList.appendAll(errors)
             }
           }
           case None => throw new NoBinderFoundException(parameterType)
@@ -64,7 +64,7 @@ object MapToObjectBinder {
         val constructorMirror = reflectClass.reflectConstructor(constructor)
         BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])
       }
-      case nonEmptyList => BindingFailure[T](nonEmptyList)
+      case nonEmptyList => BindingFailure[T](nonEmptyList, None)
     }
   }
 
