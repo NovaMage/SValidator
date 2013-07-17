@@ -1,7 +1,7 @@
 package com.github.novamage.svalidator.validation.simple
 
 import testUtils.Observes
-import com.github.novamage.svalidator.validation.{ ValidationFailure, IValidationRule, ValidationPass }
+import com.github.novamage.svalidator.validation.{ ValidationFailure, IValidationRule }
 
 class SimpleValidationRuleSpecs extends Observes {
 
@@ -21,8 +21,8 @@ class SimpleValidationRuleSpecs extends Observes {
 
       lazy val result = sut.apply(instance)
 
-      it("should have returned ValidationPass as the validation result") {
-        result should equal(ValidationPass)
+      it("should have returned an empty list as the validation result") {
+        result should equal(Nil)
       }
 
     }
@@ -43,8 +43,8 @@ class SimpleValidationRuleSpecs extends Observes {
 
         lazy val result = sut.apply(instance)
 
-        it("should have returned a ValidationPass as the validation result") {
-          result should equal(ValidationPass)
+        it("should have returned an empty list as the validation result") {
+          result should equal(Nil)
         }
       }
 
@@ -59,17 +59,17 @@ class SimpleValidationRuleSpecs extends Observes {
 
         lazy val result = sut.apply(instance)
 
-        it("should have returned a validation failure") {
-          result.asInstanceOf[ValidationFailure] should not be null
+        it("should have returned a non empty list containing a single validation failure") {
+          result.asInstanceOf[List[ValidationFailure]] should have size 1
         }
 
         it("should have set the field name to the passed in field name valueGetter") {
-          val resultFailure = result.asInstanceOf[ValidationFailure]
+          val resultFailure = result.asInstanceOf[List[ValidationFailure]].head
           resultFailure.fieldName should equal(field_name)
         }
 
         it("should have set the error message to the valueGetter generated using the field name and valueGetter") {
-          val resultFailure = result.asInstanceOf[ValidationFailure]
+          val resultFailure = result.asInstanceOf[List[ValidationFailure]].head
           resultFailure.message should equal(some_error_message)
         }
       }

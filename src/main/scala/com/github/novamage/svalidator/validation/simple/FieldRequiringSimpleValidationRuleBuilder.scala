@@ -8,7 +8,9 @@ class FieldRequiringSimpleValidationRuleBuilder[A, B](propertyExpression: A => B
   }
 
   def ForField(fieldName: Symbol): SimpleValidationRuleBuilder[A, B] = {
-    ForField(fieldName.name)
+    new SimpleValidationRuleBuilder[A, B](propertyExpression, null, List(), fieldName.name)
   }
+
+
 }
 

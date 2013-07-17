@@ -46,9 +46,9 @@ class SimpleValidatorSpecs extends Observes {
     val rule_list_4 = List(rule_10, rule_11, rule_12)
 
     when(rule_builder_1.buildRules) thenReturn rule_list_1
-    when(rule_1.apply(instance)) thenReturn ValidationPass
-    when(rule_2.apply(instance)) thenReturn ValidationPass
-    when(rule_3.apply(instance)) thenReturn ValidationPass
+    when(rule_1.apply(instance)) thenReturn Nil
+    when(rule_2.apply(instance)) thenReturn Nil
+    when(rule_3.apply(instance)) thenReturn Nil
 
     when(rule_builder_2.buildRules) thenReturn rule_list_2
     when(rule_builder_3.buildRules) thenReturn rule_list_3
@@ -59,20 +59,21 @@ class SimpleValidatorSpecs extends Observes {
       val failure_1 = ValidationFailure("fieldNameInSet2", "errorMessageInRule4")
       val failure_2 = ValidationFailure("fieldNameInSet3", "errorMessageInRule8")
       val failure_3 = ValidationFailure("fieldNameInSet4", "errorMessageInRule12")
+      val failure_4 = ValidationFailure("fieldNameInSet5", "errorMessageInRule8 second time")
 
-      when(rule_4.apply(instance)) thenReturn failure_1
+      when(rule_4.apply(instance)) thenReturn List(failure_1)
 
-      when(rule_7.apply(instance)) thenReturn ValidationPass
-      when(rule_8.apply(instance)) thenReturn failure_2
+      when(rule_7.apply(instance)) thenReturn Nil
+      when(rule_8.apply(instance)) thenReturn List(failure_2, failure_4)
 
-      when(rule_10.apply(instance)) thenReturn ValidationPass
-      when(rule_11.apply(instance)) thenReturn ValidationPass
-      when(rule_12.apply(instance)) thenReturn failure_3
+      when(rule_10.apply(instance)) thenReturn Nil
+      when(rule_11.apply(instance)) thenReturn Nil
+      when(rule_12.apply(instance)) thenReturn List(failure_3)
 
       lazy val result = sut.validate(instance)
 
       it("return the first validation failure in each rule list") {
-        result.validationFailures should equal(List(failure_1, failure_2, failure_3))
+        result.validationFailures should equal(List(failure_1, failure_2, failure_4, failure_3))
       }
 
       it("should have applied any rules in the lists after the first validation failure") {
@@ -84,17 +85,17 @@ class SimpleValidatorSpecs extends Observes {
 
     describe("and some of the rule sets return validation failures") {
 
-      when(rule_4.apply(instance)) thenReturn ValidationPass
-      when(rule_5.apply(instance)) thenReturn ValidationPass
-      when(rule_6.apply(instance)) thenReturn ValidationPass
+      when(rule_4.apply(instance)) thenReturn Nil
+      when(rule_5.apply(instance)) thenReturn Nil
+      when(rule_6.apply(instance)) thenReturn Nil
 
-      when(rule_7.apply(instance)) thenReturn ValidationPass
-      when(rule_8.apply(instance)) thenReturn ValidationPass
-      when(rule_9.apply(instance)) thenReturn ValidationPass
+      when(rule_7.apply(instance)) thenReturn Nil
+      when(rule_8.apply(instance)) thenReturn Nil
+      when(rule_9.apply(instance)) thenReturn Nil
 
-      when(rule_10.apply(instance)) thenReturn ValidationPass
-      when(rule_11.apply(instance)) thenReturn ValidationPass
-      when(rule_12.apply(instance)) thenReturn ValidationPass
+      when(rule_10.apply(instance)) thenReturn Nil
+      when(rule_11.apply(instance)) thenReturn Nil
+      when(rule_12.apply(instance)) thenReturn Nil
 
       lazy val result = sut.validate(instance)
 
@@ -105,16 +106,16 @@ class SimpleValidatorSpecs extends Observes {
     }
   }
 
-  describe("when using the For helper method to generate a rule builder") {
-
-    val sut = new SampleSimpleValidator
-
-    val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
-
-    lazy val result = sut.For(property_expression)
-
-    //Don't know how to test this yet, i don't want to make the properties public
-    it("should return a field requiring rule builder with the passed in property expression, using empty lists " +
-      "for validation expressions and error messages")(pending)
-  }
+//  describe("when using the For helper method to generate a rule builder") {
+//
+//    val sut = new SampleSimpleValidator
+//
+//    val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
+//
+//    lazy val result = sut.For(property_expression)
+//
+//    //Don't know how to test this yet, i don't want to make the properties public
+//    it("should return a field requiring rule builder with the passed in property expression, using empty lists " +
+//      "for validation expressions and error messages")(pending)
+//  }
 }
