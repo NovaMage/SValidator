@@ -7,7 +7,7 @@ class BigDecimalBinder(config: BindingConfig) extends ITypedBinder[BigDecimal] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]) = {
 
     try {
-      BindingPass(BigDecimal(valueMap(fieldName).head))
+      BindingPass(BigDecimal(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).get))
     } catch {
       case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidDecimalMessage(fieldName, valueMap(fieldName).head.toString), Some(ex))
       case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
