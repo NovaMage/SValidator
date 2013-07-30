@@ -26,11 +26,11 @@ object MapToObjectBinder {
   }
 
   def bind[T: ru.TypeTag](dataMap: Map[String, Seq[String]]): BindingResult[T] = {
-    bind[T](None, dataMap)
+    val normalizedMap = normalizeKeys(dataMap)
+    bind[T](None, normalizedMap)
   }
 
-  protected[special] def bind[T: ru.TypeTag](fieldPrefix: Option[String], dataMap: Map[String, Seq[String]]): BindingResult[T] = {
-    val normalizedMap = normalizeKeys(dataMap)
+  protected[special] def bind[T: ru.TypeTag](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]]): BindingResult[T] = {
     val tag = ru.typeTag[T]
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
