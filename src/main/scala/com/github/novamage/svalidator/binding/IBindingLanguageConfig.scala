@@ -20,5 +20,7 @@ trait IBindingLanguageConfig {
 
   def invalidTimestampMessage(fieldName: String, fieldValue: String): String
 
+  def invalidEnumerationMessage(fieldName: String): String
+
 }
 

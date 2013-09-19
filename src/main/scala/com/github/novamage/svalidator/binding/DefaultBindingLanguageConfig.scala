@@ -20,5 +20,6 @@ object DefaultBindingLanguageConfig extends IBindingLanguageConfig {
 
   def invalidTimestampMessage(fieldName: String, fieldValue: String) = s"The value '$fieldValue' is not a valid timestamp"
 
+  def invalidEnumerationMessage(fieldName: String): String = s"The value provided for '$fieldName' is not valid"
 }
 

@@ -9,6 +9,7 @@ import com.github.novamage.svalidator.binding.binders.special.{EnumerationBinder
 object TypeBinderRegistry {
 
   private val binders = ListBuffer[(ITypedBinder[_], ru.TypeTag[_])]()
+  private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
 
   def initializeBinders() {
     initializeBinders(BindingConfig.defaultConfig)
@@ -24,6 +25,7 @@ object TypeBinderRegistry {
     registerBinder(new BigDecimalBinder(config))
     registerBinder(new BooleanBinder(config))
     registerBinder(new TimestampBinder(config))
+    currentBindingConfig = config
   }
 
   def clearBinders() {
@@ -33,7 +35,7 @@ object TypeBinderRegistry {
   protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror): Option[ITypedBinder[_]] = {
 
     if (runtimeType.asInstanceOf[ru.TypeRef].pre.baseClasses.exists(x => x == ru.typeOf[Enumeration].typeSymbol.asClass)) {
-      Some(new EnumerationBinder(runtimeType, mirror))
+      Some(new EnumerationBinder(runtimeType, mirror, currentBindingConfig))
     }
     else if (runtimeType.erasure =:= ru.typeOf[Option[_]].erasure) {
       getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new OptionBinderWrapper(_))
