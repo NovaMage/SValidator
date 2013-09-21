@@ -5,24 +5,20 @@ import com.github.novamage.svalidator.validation.IValidationRule
 class SimpleOptionValidationRuleBuilder[A, B](propertyOptionExpression: A => Option[B],
                                               currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
                                               validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
-                                              fieldName: String) extends SimpleValidationRuleBuilder[A, B](null, currentRuleStructure, validationExpressions, fieldName) {
+                                              fieldName: String,
+                                              previousMappedBuilder: Option[SimpleValidationRuleBuilder[A, _]] = None) extends AbstractValidationRuleBuilder[A, Option[B], B](propertyOptionExpression, currentRuleStructure, validationExpressions, fieldName) {
 
-  protected[validation] override def buildNextInstanceInChain(propertyExpression: A => B,
+  protected[validation] override def buildNextInstanceInChain(propertyExpression: A => Option[B],
                                                               currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
                                                               validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
-                                                              fieldName: String): SimpleValidationRuleBuilder[A, B] = {
+                                                              fieldName: String,
+                                                              previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]] = None): AbstractValidationRuleBuilder[A, Option[B], B] = {
     new SimpleOptionValidationRuleBuilder(propertyOptionExpression, currentRuleStructure, validationExpressions, fieldName)
   }
 
-  protected[validation] override def buildRules(instance: A): Stream[IValidationRule[A]] = {
-    val ruleStructures = currentRuleStructure match {
-      case null => validationExpressions
-      case x => validationExpressions :+ x
-    }
-    val defaultErrorMessageBuilder: ((String, B) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
-    val defaultConditionedValidation: A => Boolean = x => true
+  protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): Stream[IValidationRule[A]] = {
     lazy val lazyPropertyOptionValue = propertyOptionExpression(instance)
-    ruleStructures.toStream map {
+    ruleStructuresList.toStream map {
       ruleStructureContainer =>
         new SimpleOptionValidationRule[A, B](
           lazyPropertyOptionValue,
@@ -32,5 +28,4 @@ class SimpleOptionValidationRuleBuilder[A, B](propertyOptionExpression: A => Opt
           ruleStructureContainer.conditionalValidation.getOrElse(defaultConditionedValidation))
     }
   }
-
 }

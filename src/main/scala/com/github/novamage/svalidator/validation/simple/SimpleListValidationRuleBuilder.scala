@@ -1,26 +1,31 @@
 package com.github.novamage.svalidator.validation.simple
 
+import com.github.novamage.svalidator.validation.IValidationRule
+
 class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B],
                                             currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
                                             validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
-                                            fieldName: String) extends SimpleValidationRuleBuilder[A, B](null, currentRuleStructure, validationExpressions, fieldName) {
+                                            fieldName: String,
+                                            previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]] = None) extends AbstractValidationRuleBuilder[A, List[B], B](propertyListExpression, currentRuleStructure, validationExpressions, fieldName, previousMappedBuilder) {
 
-  protected[validation] override def buildNextInstanceInChain(propertyExpression: A => B,
+
+//  def map[D](valueTransformationFunction: (B) => D) = {
+//    val transformingFunction: (A => List[D]) = instance => propertyListExpression(instance).map(valueTransformationFunction)
+//    new SimpleListValidationRuleBuilder[A, D](transformingFunction, null, Nil, fieldName, Some(this))
+//  }
+
+  protected[validation] override def buildNextInstanceInChain(propertyExpression: A => List[B],
                                                               currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
                                                               validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
-                                                              fieldName: String): SimpleValidationRuleBuilder[A, B] = {
-    new SimpleListValidationRuleBuilder(propertyListExpression, currentRuleStructure, validationExpressions, fieldName)
+                                                              fieldName: String,
+                                                              previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]]): AbstractValidationRuleBuilder[A, List[B], B] = {
+    new SimpleListValidationRuleBuilder(propertyListExpression, currentRuleStructure, validationExpressions, fieldName, previousMappedBuilder)
   }
 
-  protected[validation] override def buildRules(instance: A) = {
-    val ruleStructures = currentRuleStructure match {
-      case null => validationExpressions
-      case x => validationExpressions :+ x
-    }
-    val defaultErrorMessageBuilder: ((String, B) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
-    val defaultConditionedValidation: A => Boolean = x => true
+
+  def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): Stream[IValidationRule[A]] = {
     val lazyPropertyListValue = propertyListExpression(instance)
-    ruleStructures.toStream map {
+    ruleStructuresList.toStream map {
       ruleStructureContainer =>
         new SimpleListValidationRule[A, B](
           lazyPropertyListValue,
