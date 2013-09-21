@@ -36,23 +36,23 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
     buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(conditionalValidation = Some(conditionedValidation)), validationExpressions, fieldName, previousMappedBuilder)
   }
 
-  def must(ruleExpression: C => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
-    val syntheticExpressionWithInstance: (C, A) => Boolean = (property, instance) => ruleExpression(property)
+  def must(ruleExpressionReceivingPropertyValue: C => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
+    val syntheticExpressionWithInstance: (C, A) => Boolean = (property, instance) => ruleExpressionReceivingPropertyValue(property)
     addRuleExpressionToList(syntheticExpressionWithInstance)
   }
 
-  def must(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
-    addRuleExpressionToList(ruleExpression)
+  def must(ruleExpressionReceivingPropertyAndInstanceValue: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
+    addRuleExpressionToList(ruleExpressionReceivingPropertyAndInstanceValue)
   }
 
 
-  def mustNot(ruleExpression: C => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
-    val syntheticExpressionWithInstance: (C, A) => Boolean = (property, instance) => ruleExpression(property)
+  def mustNot(ruleExpressionReceivingPropertyValue: C => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
+    val syntheticExpressionWithInstance: (C, A) => Boolean = (property, instance) => ruleExpressionReceivingPropertyValue(property)
     addRuleExpressionToList(applyNotFunctor(syntheticExpressionWithInstance))
   }
 
-  def mustNot(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
-    addRuleExpressionToList(applyNotFunctor(ruleExpression))
+  def mustNot(ruleExpressionReceivingPropertyValue: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
+    addRuleExpressionToList(applyNotFunctor(ruleExpressionReceivingPropertyValue))
   }
 
   final def withMessage(aFormatStringReceivingFieldNameAndValue: String): AbstractValidationRuleBuilder[A, B, C] = {
