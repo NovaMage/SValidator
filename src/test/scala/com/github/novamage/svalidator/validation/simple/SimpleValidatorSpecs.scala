@@ -28,31 +28,31 @@ class SimpleValidatorSpecs extends Observes {
     val rule_1 = mock[IValidationRule[SampleValidatedClass]]
     val rule_2 = mock[IValidationRule[SampleValidatedClass]]
     val rule_3 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_1 = List(rule_1, rule_2, rule_3)
+    val rule_list_1 = List(rule_1, rule_2, rule_3).toStream
 
     val rule_4 = mock[IValidationRule[SampleValidatedClass]]
     val rule_5 = mock[IValidationRule[SampleValidatedClass]]
     val rule_6 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_2 = List(rule_4, rule_5, rule_6)
+    val rule_list_2 = List(rule_4, rule_5, rule_6).toStream
 
     val rule_7 = mock[IValidationRule[SampleValidatedClass]]
     val rule_8 = mock[IValidationRule[SampleValidatedClass]]
     val rule_9 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_3 = List(rule_7, rule_8, rule_9)
+    val rule_list_3 = List(rule_7, rule_8, rule_9).toStream
 
     val rule_10 = mock[IValidationRule[SampleValidatedClass]]
     val rule_11 = mock[IValidationRule[SampleValidatedClass]]
     val rule_12 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_4 = List(rule_10, rule_11, rule_12)
+    val rule_list_4 = List(rule_10, rule_11, rule_12).toStream
 
-    when(rule_builder_1.buildRules) thenReturn rule_list_1
+    when(rule_builder_1.buildRules(instance)) thenReturn rule_list_1
     when(rule_1.apply(instance)) thenReturn Nil
     when(rule_2.apply(instance)) thenReturn Nil
     when(rule_3.apply(instance)) thenReturn Nil
 
-    when(rule_builder_2.buildRules) thenReturn rule_list_2
-    when(rule_builder_3.buildRules) thenReturn rule_list_3
-    when(rule_builder_4.buildRules) thenReturn rule_list_4
+    when(rule_builder_2.buildRules(instance)) thenReturn rule_list_2
+    when(rule_builder_3.buildRules(instance)) thenReturn rule_list_3
+    when(rule_builder_4.buildRules(instance)) thenReturn rule_list_4
 
     describe("and some of the rule sets return validation failures") {
 

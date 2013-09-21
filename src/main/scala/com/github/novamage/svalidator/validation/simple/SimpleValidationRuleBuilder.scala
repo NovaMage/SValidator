@@ -50,23 +50,24 @@ class SimpleValidationRuleBuilder[A, B](propertyExpression: A => B,
   }
 
   protected[validation] def buildNextInstanceInChain(propertyExpression: A => B,
-                                                 currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
-                                                 validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
-                                                 fieldName: String): SimpleValidationRuleBuilder[A, B] = {
+                                                     currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
+                                                     validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
+                                                     fieldName: String): SimpleValidationRuleBuilder[A, B] = {
     new SimpleValidationRuleBuilder(propertyExpression, currentRuleStructure, validationExpressions, fieldName)
   }
 
-  protected[validation] override def buildRules: List[IValidationRule[A]] = {
+  protected[validation] override def buildRules(instance: A): Stream[IValidationRule[A]] = {
     val ruleStructures = currentRuleStructure match {
       case null => validationExpressions
       case x => validationExpressions :+ x
     }
     val defaultErrorMessageBuilder: ((String, B) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
     val defaultConditionedValidation: A => Boolean = x => true
-    ruleStructures map {
+    lazy val propertyValue = propertyExpression(instance)
+    ruleStructures.toStream map {
       ruleStructureContainer =>
         new SimpleValidationRule[A, B](
-          propertyExpression,
+          propertyValue,
           ruleStructureContainer.validationExpression,
           fieldName,
           ruleStructureContainer.errorMessageBuilder.getOrElse(defaultErrorMessageBuilder),

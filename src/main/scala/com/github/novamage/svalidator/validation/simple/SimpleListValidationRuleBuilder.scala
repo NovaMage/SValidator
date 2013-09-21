@@ -12,17 +12,18 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
     new SimpleListValidationRuleBuilder(propertyListExpression, currentRuleStructure, validationExpressions, fieldName)
   }
 
-  protected[validation] override def buildRules = {
+  protected[validation] override def buildRules(instance: A) = {
     val ruleStructures = currentRuleStructure match {
       case null => validationExpressions
       case x => validationExpressions :+ x
     }
     val defaultErrorMessageBuilder: ((String, B) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
     val defaultConditionedValidation: A => Boolean = x => true
-    ruleStructures map {
+    val lazyPropertyListValue = propertyListExpression(instance)
+    ruleStructures.toStream map {
       ruleStructureContainer =>
         new SimpleListValidationRule[A, B](
-          propertyListExpression,
+          lazyPropertyListValue,
           ruleStructureContainer.validationExpression,
           fieldName,
           ruleStructureContainer.errorMessageBuilder.getOrElse(defaultErrorMessageBuilder),

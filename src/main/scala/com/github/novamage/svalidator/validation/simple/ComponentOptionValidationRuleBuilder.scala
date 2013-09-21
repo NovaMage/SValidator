@@ -13,8 +13,8 @@ class ComponentOptionValidationRuleBuilder[A, B](componentOptionPropertyExpressi
 
 private class ComponentOptionValidationWrapper[A, B](componentOptionPropertyExpression: A => Option[B], fieldName: String, componentValidator: IValidate[B]) extends IRuleBuilder[A] {
 
-  protected[validation] def buildRules: List[IValidationRule[A]] = {
-    List(new ComponentOptionValidationRule[A, B](componentOptionPropertyExpression, fieldName, componentValidator))
+  protected[validation] def buildRules(instance: A): Stream[IValidationRule[A]] = {
+    List(new ComponentOptionValidationRule[A, B](componentOptionPropertyExpression, fieldName, componentValidator)).toStream
   }
 }
 

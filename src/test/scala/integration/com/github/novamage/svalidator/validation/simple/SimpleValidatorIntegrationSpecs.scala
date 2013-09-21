@@ -2,7 +2,6 @@ package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.testing._
 import testUtils.Observes
-import com.github.novamage.svalidator.validation.IValidate
 import com.github.novamage.svalidator.validation.simple.constructs._
 import com.github.novamage.svalidator.validation.simple.SimpleValidator
 import com.github.novamage.svalidator.validation.IRuleBuilder
@@ -82,9 +81,10 @@ class PersonValidator extends SimpleValidator[Person] {
 
 class SimpleValidatorIntegrationSpecs extends Observes {
 
+  val sut = new PersonValidator
+
   describe("when validating an instance of a person") {
 
-    val sut: IValidate[Person] = new PersonValidator
 
     val instance = Person(
       firstName = "John",
@@ -100,7 +100,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and all fields are filled properly") {
 
-      lazy val result = sut.validate(instance)
+      val result = sut.validate(instance)
 
       it("should be valid") {
         result.shouldBeValid()
@@ -109,7 +109,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the first name is null") {
 
-      lazy val result = sut.validate(instance.copy(firstName = null))
+      val result = sut.validate(instance.copy(firstName = null))
 
       it("should have a validation error for the firstName field") {
         result shouldHaveValidationErrorFor 'firstName
@@ -118,7 +118,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the first name is empty") {
 
-      lazy val result = sut.validate(instance.copy(firstName = ""))
+      val result = sut.validate(instance.copy(firstName = ""))
 
       it("should have a validation error for the firstName field") {
         result shouldHaveValidationErrorFor 'firstName
@@ -127,7 +127,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the first name has more than 32 characters") {
 
-      lazy val result = sut.validate(instance.copy(firstName = "012345678901234567890123456789012"))
+      val result = sut.validate(instance.copy(firstName = "012345678901234567890123456789012"))
 
       it("should have a validation error for the firstName field") {
         result shouldHaveValidationErrorFor 'firstName
@@ -136,7 +136,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the last name is null") {
 
-      lazy val result = sut.validate(instance.copy(lastName = null))
+      val result = sut.validate(instance.copy(lastName = null))
 
       it("should have a validation error for the lastName field") {
         result shouldHaveValidationErrorFor 'lastName
@@ -145,7 +145,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the last name is empty") {
 
-      lazy val result = sut.validate(instance.copy(lastName = ""))
+      val result = sut.validate(instance.copy(lastName = ""))
 
       it("should have a validation error for the lastName field") {
         result shouldHaveValidationErrorFor 'lastName
@@ -154,7 +154,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the last name has more than 32 characters") {
 
-      lazy val result = sut.validate(instance.copy(lastName = "012345678901234567890123456789012"))
+      val result = sut.validate(instance.copy(lastName = "012345678901234567890123456789012"))
 
       it("should have a validation error for the lastName field") {
         result shouldHaveValidationErrorFor 'lastName
@@ -163,7 +163,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the age is negative") {
 
-      lazy val result = sut.validate(instance.copy(age = -1))
+      val result = sut.validate(instance.copy(age = -1))
 
       it("should have a validation error for the age field") {
         result shouldHaveValidationErrorFor 'age
@@ -172,7 +172,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the notes are not present") {
 
-      lazy val result = sut.validate(instance.copy(notes = None))
+      val result = sut.validate(instance.copy(notes = None))
 
       it("should not have a validation error for the notes field") {
         result shouldNotHaveValidationErrorFor 'notes
@@ -180,7 +180,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
     }
 
     describe("and the notes are defined but have more than 32 characters") {
-      lazy val result = sut.validate(instance.copy(notes = Some("A ridiculously long string that should have more than 32 characters by all means")))
+      val result = sut.validate(instance.copy(notes = Some("A ridiculously long string that should have more than 32 characters by all means")))
 
       it("should have a validation error for the notes field") {
         result shouldHaveValidationErrorFor 'notes
@@ -189,7 +189,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the married flag is set to true but the age is lower than the marriageable age of 18") {
 
-      lazy val result = sut.validate(instance.copy(age = 17, married = true))
+      val result = sut.validate(instance.copy(age = 17, married = true))
 
       it("should have a validation error for the married field") {
         result shouldHaveValidationErrorFor 'married
@@ -199,7 +199,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the hasJob flag is set to true but the age is lower than the minimum working age of 21") {
 
-      lazy val result = sut.validate(instance.copy(age = 20, hasJob = true))
+      val result = sut.validate(instance.copy(age = 20, hasJob = true))
 
       it("should have a validation error for the married field") {
         result shouldHaveValidationErrorFor 'hasJob
@@ -208,7 +208,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the primary address component zip is longer than 10 characters") {
 
-      lazy val result = sut.validate(instance.copy(primaryAddress = instance.primaryAddress.copy(zip = "ARidiculouslyLongZipCodeHere")))
+      val result = sut.validate(instance.copy(primaryAddress = instance.primaryAddress.copy(zip = "ARidiculouslyLongZipCodeHere")))
 
       it("should have a validation error for the primary address zip") {
         result shouldHaveValidationErrorFor "primaryAddress.zip"
@@ -268,7 +268,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the emergency phone number is not provided") {
 
-      lazy val result = sut.validate(instance.copy(emergencyPhoneNumber = None))
+      val result = sut.validate(instance.copy(emergencyPhoneNumber = None))
 
       it("should not have a validation error for the emergencyPhoneNumber field") {
         result shouldNotHaveValidationErrorFor 'emergencyPhoneNumber
@@ -278,7 +278,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the emergency phone number is provided and the area code has more than four digits") {
 
-      lazy val result = sut.validate(instance.copy(emergencyPhoneNumber = Some(PhoneNumber(areaCode = "99990", number = "aNumber"))))
+      val result = sut.validate(instance.copy(emergencyPhoneNumber = Some(PhoneNumber(areaCode = "99990", number = "aNumber"))))
 
       it("should have a validation error for the emergencyPhoneNumber.areaCode field") {
         result shouldHaveValidationErrorFor "emergencyPhoneNumber.areaCode"
