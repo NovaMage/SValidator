@@ -52,11 +52,14 @@ class PersonValidator extends SimpleValidator[Person] {
     For {_.age} ForField 'age
       mustNot be negative() withMessage "Must be a positive number",
 
-    For {_.married} ForField 'married
-      must be(false) when {_.age < 18} withMessage "Must be 18 years or older to allow marking marriage",
+    When {_.age < 21}(
+      For {_.hasJob} ForField 'hasJob
+        must be(false) withMessage "Must be 21 years or older to allow marking a job"
+    ),
 
-    For {_.hasJob} ForField 'hasJob
-      must be(false) when {_.age < 21} withMessage "Must be 21 years or older to allow marking a job",
+
+    For {_.married} ForField 'married
+      must be(false) withMessage "Must be 21 years or older to allow marking marriage" when {_.age < 21},
 
     For {_.tasksCompletedByMonth} ForField 'tasksCompletedByMonth
       must {_.size == 12} withMessage "Must have 12 values for the tasks completed by month",
@@ -187,9 +190,9 @@ class SimpleValidatorIntegrationSpecs extends Observes {
       }
     }
 
-    describe("and the married flag is set to true but the age is lower than the marriageable age of 18") {
+    describe("and the married flag is set to true but the age is lower than the marriageable age of 21") {
 
-      val result = sut.validate(instance.copy(age = 17, married = true))
+      val result = sut.validate(instance.copy(age = 20, married = true))
 
       it("should have a validation error for the married field") {
         result shouldHaveValidationErrorFor 'married

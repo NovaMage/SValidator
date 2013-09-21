@@ -20,6 +20,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
     new ValidationSummary(firstFailingResultForEachGroup.flatten)
   }
 
+
   def For[B](propertyExpression: A => B) = {
     new FieldRequiringSimpleValidationRuleBuilder[A, B](propertyExpression)
 
@@ -35,6 +36,10 @@ abstract class SimpleValidator[A] extends IValidate[A] {
 
   def ForComponent[B](componentPropertyExpression: A => B) = {
     new ComponentFieldRequiringSimpleValidatorRuleBuilder[A, B](componentPropertyExpression)
+  }
+
+  def When(conditionalExpression: A => Boolean) = {
+    new ConditionedGroupValidationRuleBuilder(conditionalExpression)
   }
 
   def ForOptionalComponent[B](optionalComponentPropertyExpression: A => Option[B]) = {
