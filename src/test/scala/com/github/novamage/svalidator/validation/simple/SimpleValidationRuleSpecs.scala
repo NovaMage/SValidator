@@ -15,7 +15,7 @@ class SimpleValidationRuleSpecs extends Observes {
       val conditioned_validation = stubFunction(instance, false)
       //this value is received by the method as lazy, will not be invoked unless the rule expression applies
       lazy val property_extractor_expression = if (false) 18L else throw new Exception
-      val rule_expression = stubUnCallableFunction[Long, Boolean]
+      val rule_expression = stubUnCallableFunction[Long, TestClass, Boolean]
       val error_message_builder = stubUnCallableFunction[String, Long, String]
 
       val sut: IValidationRule[TestClass] = new SimpleValidationRule(property_extractor_expression, rule_expression, field_name, error_message_builder, conditioned_validation)
@@ -39,7 +39,7 @@ class SimpleValidationRuleSpecs extends Observes {
       lazy val property_value_expression = some_property_value
 
       describe("and the rule expression returns true") {
-        val rule_expression = stubFunction(some_property_value, true)
+        val rule_expression = stubFunction(some_property_value, instance, true)
         val error_message_builder = stubUnCallableFunction[String, Long, String]
 
         val sut: IValidationRule[TestClass] = new SimpleValidationRule(property_value_expression, rule_expression, field_name, error_message_builder, conditioned_validation)
@@ -55,7 +55,7 @@ class SimpleValidationRuleSpecs extends Observes {
 
         val a = List(1, 2, 3, 4).map(_.toString + "hola").map(_.size)
 
-        val rule_expression = stubFunction(some_property_value, false)
+        val rule_expression = stubFunction(some_property_value, instance, false)
         val error_message_builder = stubFunction(field_name, some_property_value, some_error_message)
 
         val sut: IValidationRule[TestClass] = new SimpleValidationRule(property_value_expression, rule_expression, field_name, error_message_builder, conditioned_validation)
