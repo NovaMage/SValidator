@@ -59,10 +59,10 @@ class PersonValidator extends SimpleValidator[Person] {
 
 
     For {_.married} ForField 'married
-      must be(false) withMessage "Must be 21 years or older to allow marking marriage" when {_.age < 21},
+      must { _ == false } withMessage "Must be 21 years or older to allow marking marriage" when {_.age < 21},
 
     For {_.tasksCompletedByMonth} ForField 'tasksCompletedByMonth
-      must {_.size == 12} withMessage "Must have 12 values for the tasks completed by month",
+      must haveSizeEqualTo12 withMessage "Must have 12 values for the tasks completed by month",
 
     ForOptional {_.notes} ForField 'notes
       must have maxLength 32 withMessage "Notes can't have more than 32 characters",
@@ -80,7 +80,12 @@ class PersonValidator extends SimpleValidator[Person] {
       validateUsing new AddressValidator
 
   )
+
+  def haveSizeEqualTo12(value: List[Int]): Boolean = {
+    value.size == 12
+  }
 }
+
 
 class SimpleValidatorIntegrationSpecs extends Observes {
 

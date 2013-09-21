@@ -41,9 +41,9 @@ package object constructs {
 
       override def mustNot(ruleExpression: (C) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.must(ruleExpression)
 
-      override def must(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.mustNot(ruleExpression)
+      override def mustComply(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.mustNotComply(ruleExpression)
 
-      override def mustNot(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.must(ruleExpression)
+      override def mustNotComply(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.mustComply(ruleExpression)
 
       protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, C]]): Stream[IValidationRule[A]] = ???
 

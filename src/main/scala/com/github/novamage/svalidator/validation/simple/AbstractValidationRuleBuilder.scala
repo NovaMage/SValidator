@@ -41,7 +41,7 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
     addRuleExpressionToList(syntheticExpressionWithInstance)
   }
 
-  def must(ruleExpressionReceivingPropertyAndInstanceValue: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
+  def mustComply(ruleExpressionReceivingPropertyAndInstanceValue: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
     addRuleExpressionToList(ruleExpressionReceivingPropertyAndInstanceValue)
   }
 
@@ -51,7 +51,7 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
     addRuleExpressionToList(applyNotFunctor(syntheticExpressionWithInstance))
   }
 
-  def mustNot(ruleExpressionReceivingPropertyValue: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
+  def mustNotComply(ruleExpressionReceivingPropertyValue: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
     addRuleExpressionToList(applyNotFunctor(ruleExpressionReceivingPropertyValue))
   }
 
