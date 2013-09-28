@@ -33,7 +33,7 @@ package object constructs {
       haveConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
-    private class NegatedAbstractValidationRuleBuilder(builder: AbstractValidationRuleBuilder[A, B, C]) extends AbstractValidationRuleBuilder[A, B, C](null, null, null, null, null) {
+    private class NegatedAbstractValidationRuleBuilder(builder: AbstractValidationRuleBuilder[A, B, C]) extends AbstractValidationRuleBuilder[A, B, C](null, null, null, null) {
 
       override def must(ruleExpression: (C) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.mustNot(ruleExpression)
 
@@ -45,7 +45,7 @@ package object constructs {
 
       protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, C]]): RuleStreamCollection[A] = ???
 
-      protected[validation] def buildNextInstanceInChain(propertyExpression: (A) => B, currentRuleStructure: SimpleValidationRuleStructureContainer[A, C], validationExpressions: List[SimpleValidationRuleStructureContainer[A, C]], fieldName: String, previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]]) = ???
+      protected[validation] def buildNextInstanceInChain(propertyExpression: (A) => B, currentRuleStructure: SimpleValidationRuleStructureContainer[A, C], validationExpressions: List[SimpleValidationRuleStructureContainer[A, C]], fieldName: String) = ???
     }
 
   }

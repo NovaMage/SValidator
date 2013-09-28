@@ -9,8 +9,7 @@ import com.github.novamage.svalidator.validation.IRuleBuilder
 abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B,
                                                       currentRuleStructure: SimpleValidationRuleStructureContainer[A, C],
                                                       validationExpressions: List[SimpleValidationRuleStructureContainer[A, C]],
-                                                      fieldName: String,
-                                                      previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]] = None) extends IRuleBuilder[A] {
+                                                      fieldName: String) extends IRuleBuilder[A] {
 
 
   lazy val defaultErrorMessageBuilder: ((String, C) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
@@ -19,8 +18,7 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
   protected[validation] def buildNextInstanceInChain(propertyExpression: A => B,
                                                      currentRuleStructure: SimpleValidationRuleStructureContainer[A, C],
                                                      validationExpressions: List[SimpleValidationRuleStructureContainer[A, C]],
-                                                     fieldName: String,
-                                                     previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]]): AbstractValidationRuleBuilder[A, B, C]
+                                                     fieldName: String): AbstractValidationRuleBuilder[A, B, C]
 
   protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, C]]): RuleStreamCollection[A]
 
@@ -34,7 +32,7 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
   }
 
   final def when(conditionedValidation: A => Boolean) = {
-    buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(conditionalValidation = Some(conditionedValidation)), validationExpressions, fieldName, previousMappedBuilder)
+    buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(conditionalValidation = Some(conditionedValidation)), validationExpressions, fieldName)
   }
 
   def must(ruleExpressionReceivingPropertyValue: C => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
@@ -58,16 +56,16 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
 
   final def withMessage(aFormatStringReceivingFieldNameAndValue: String): AbstractValidationRuleBuilder[A, B, C] = {
     val errorMessageAlternateBuilder: ((String, C) => String) = (fieldName, fieldValue) => aFormatStringReceivingFieldNameAndValue.format(fieldName, fieldValue)
-    buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName, previousMappedBuilder)
+    buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
   }
 
   final def withMessage(anExpressionReceivingFieldValue: C => String): AbstractValidationRuleBuilder[A, B, C] = {
     val errorMessageAlternateBuilder: ((String, C) => String) = (fieldName, value) => anExpressionReceivingFieldValue(value)
-    buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName, previousMappedBuilder)
+    buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
   }
 
   final def withMessage(expressionReceivingFieldNameAndValue: (String, C) => String): AbstractValidationRuleBuilder[A, B, C] = {
-    buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(expressionReceivingFieldNameAndValue)), validationExpressions, fieldName, previousMappedBuilder)
+    buildNextInstanceInChain(propertyExpression, currentRuleStructure.copy(errorMessageBuilder = Some(expressionReceivingFieldNameAndValue)), validationExpressions, fieldName)
   }
 
   private def addRuleExpressionToList(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = {
@@ -75,7 +73,7 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
       case null => validationExpressions
       case x => validationExpressions :+ x
     }
-    buildNextInstanceInChain(propertyExpression, SimpleValidationRuleStructureContainer[A, C](ruleExpression, None, None), ruleList, fieldName, previousMappedBuilder)
+    buildNextInstanceInChain(propertyExpression, SimpleValidationRuleStructureContainer[A, C](ruleExpression, None, None), ruleList, fieldName)
   }
 
   private lazy val notFunctor: ((C, A) => Boolean) => ((C, A) => Boolean) = originalExpression => (propertyValue, instanceValue) => !originalExpression(propertyValue, instanceValue)
