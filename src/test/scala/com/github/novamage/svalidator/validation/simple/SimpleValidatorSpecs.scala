@@ -28,22 +28,22 @@ class SimpleValidatorSpecs extends Observes {
     val rule_1 = mock[IValidationRule[SampleValidatedClass]]
     val rule_2 = mock[IValidationRule[SampleValidatedClass]]
     val rule_3 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_1 = List(rule_1, rule_2, rule_3).toStream
+    val rule_list_1 = RuleStreamCollection(List(Stream(rule_1, rule_2, rule_3)))
 
     val rule_4 = mock[IValidationRule[SampleValidatedClass]]
     val rule_5 = mock[IValidationRule[SampleValidatedClass]]
     val rule_6 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_2 = List(rule_4, rule_5, rule_6).toStream
+    val rule_list_2 = RuleStreamCollection(List(Stream(rule_4, rule_5, rule_6)))
 
     val rule_7 = mock[IValidationRule[SampleValidatedClass]]
     val rule_8 = mock[IValidationRule[SampleValidatedClass]]
     val rule_9 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_3 = List(rule_7, rule_8, rule_9).toStream
+    val rule_list_3 = RuleStreamCollection(List(Stream(rule_7, rule_8, rule_9)))
 
     val rule_10 = mock[IValidationRule[SampleValidatedClass]]
     val rule_11 = mock[IValidationRule[SampleValidatedClass]]
     val rule_12 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_4 = List(rule_10, rule_11, rule_12).toStream
+    val rule_list_4 = RuleStreamCollection(List(Stream(rule_10, rule_11, rule_12)))
 
     when(rule_builder_1.buildRules(instance)) thenReturn rule_list_1
     when(rule_1.apply(instance)) thenReturn Nil
@@ -77,9 +77,9 @@ class SimpleValidatorSpecs extends Observes {
       }
 
       it("should have applied any rules in the lists after the first validation failure") {
-        rule_5 wasNeverToldTo { _.apply(any[SampleValidatedClass]) }
-        rule_6 wasNeverToldTo { _.apply(any[SampleValidatedClass]) }
-        rule_9 wasNeverToldTo { _.apply(any[SampleValidatedClass]) }
+        rule_5 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
+        rule_6 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
+        rule_9 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
       }
     }
 
@@ -106,16 +106,16 @@ class SimpleValidatorSpecs extends Observes {
     }
   }
 
-//  describe("when using the For helper method to generate a rule builder") {
-//
-//    val sut = new SampleSimpleValidator
-//
-//    val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
-//
-//    lazy val result = sut.For(property_expression)
-//
-//    //Don't know how to test this yet, i don't want to make the properties public
-//    it("should return a field requiring rule builder with the passed in property expression, using empty lists " +
-//      "for validation expressions and error messages")(pending)
-//  }
+  //  describe("when using the For helper method to generate a rule builder") {
+  //
+  //    val sut = new SampleSimpleValidator
+  //
+  //    val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
+  //
+  //    lazy val result = sut.For(property_expression)
+  //
+  //    //Don't know how to test this yet, i don't want to make the properties public
+  //    it("should return a field requiring rule builder with the passed in property expression, using empty lists " +
+  //      "for validation expressions and error messages")(pending)
+  //  }
 }

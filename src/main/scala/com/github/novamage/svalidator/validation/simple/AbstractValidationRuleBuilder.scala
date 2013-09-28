@@ -1,10 +1,10 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.{IValidationRule, IRuleBuilder}
+import com.github.novamage.svalidator.validation.IRuleBuilder
 
 //A is the type of the whole validated instance
 //B is the type of the properly directly extracted
-//C is they direct type used on validation rules (varies according if it's a list, an option, etc)
+//C is the direct type used on validation rules (varies according if it's a list, an option, etc)
 
 abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B,
                                                       currentRuleStructure: SimpleValidationRuleStructureContainer[A, C],
@@ -22,14 +22,15 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
                                                      fieldName: String,
                                                      previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]]): AbstractValidationRuleBuilder[A, B, C]
 
-  protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, C]]): Stream[IValidationRule[A]]
+  protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, C]]): RuleStreamCollection[A]
 
-  final protected[validation] def buildRules(instance: A): Stream[IValidationRule[A]] = {
+  final protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
     val ruleStructures = currentRuleStructure match {
       case null => validationExpressions
       case x => validationExpressions :+ x
     }
-    previousMappedBuilder.map(_.buildRules(instance)).getOrElse(Stream.Empty) ++ processRuleStructures(instance, ruleStructures)
+    val currentStream = processRuleStructures(instance, ruleStructures)
+    RuleStreamCollection(currentStream.ruleStreams)
   }
 
   final def when(conditionedValidation: A => Boolean) = {

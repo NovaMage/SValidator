@@ -1,21 +1,21 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.{IValidationRule, IRuleBuilder}
+import com.github.novamage.svalidator.validation.IRuleBuilder
 
 class ConditionedGroupValidationRuleBuilder[A](conditionalExpression: A => Boolean) {
 
-  def apply(ruleBuilder: IRuleBuilder[A]): IRuleBuilder[A] = {
-    new ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression, ruleBuilder)
+  def apply(ruleBuilder: IRuleBuilder[A]*): IRuleBuilder[A] = {
+    new ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression, ruleBuilder.toList)
   }
 }
 
-class ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression: A => Boolean, ruleBuilder: IRuleBuilder[A]) extends IRuleBuilder[A] {
+class ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression: A => Boolean, ruleBuilder: List[IRuleBuilder[A]]) extends IRuleBuilder[A] {
 
-  protected[validation] def buildRules(instance: A): Stream[IValidationRule[A]] = {
+  protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
     if (conditionalExpression(instance)) {
-      ruleBuilder.buildRules(instance)
+      RuleStreamCollection(ruleBuilder.map(_.buildRules(instance)).flatMap(_.ruleStreams))
     } else {
-      Stream.Empty
+      RuleStreamCollection.empty[A]
     }
   }
 }

@@ -1,7 +1,5 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.IValidationRule
-
 
 package object constructs {
 
@@ -45,7 +43,7 @@ package object constructs {
 
       override def mustNotComply(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.mustComply(ruleExpression)
 
-      protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, C]]): Stream[IValidationRule[A]] = ???
+      protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, C]]): RuleStreamCollection[A] = ???
 
       protected[validation] def buildNextInstanceInChain(propertyExpression: (A) => B, currentRuleStructure: SimpleValidationRuleStructureContainer[A, C], validationExpressions: List[SimpleValidationRuleStructureContainer[A, C]], fieldName: String, previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]]) = ???
     }

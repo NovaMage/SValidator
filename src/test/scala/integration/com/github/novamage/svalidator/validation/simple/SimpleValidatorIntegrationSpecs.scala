@@ -39,6 +39,11 @@ class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
 
 class PersonValidator extends SimpleValidator[Person] {
 
+  private def b(a: Iterable[Any]) {
+    val d = Iterable(1, 2, 3, 4)
+    val c = d.map(_ + 5)
+  }
+
   override def buildRules: List[IRuleBuilder[Person]] = List(
 
     For {_.firstName} ForField 'firstName
@@ -54,12 +59,11 @@ class PersonValidator extends SimpleValidator[Person] {
 
     When {_.age < 21}(
       For {_.hasJob} ForField 'hasJob
-        must be(false) withMessage "Must be 21 years or older to allow marking a job"
+        must be(false) withMessage "Must be 21 years or older to allow marking a job",
+      For {_.married} ForField 'married
+        must {_ == false} withMessage "Must be 21 years or older to allow marking marriage"
     ),
 
-
-    For {_.married} ForField 'married
-      must { _ == false } withMessage "Must be 21 years or older to allow marking marriage" when {_.age < 21},
 
     For {_.tasksCompletedByMonth} ForField 'tasksCompletedByMonth
       must haveSizeEqualTo12 withMessage "Must have 12 values for the tasks completed by month",
@@ -72,6 +76,9 @@ class PersonValidator extends SimpleValidator[Person] {
 
     ForComponent {_.primaryAddress} ForField 'primaryAddress
       validateUsing new AddressValidator,
+
+    For { _.emergencyPhoneNumber } ForField 'emergencyPhoneNumber
+      must { _.isDefined } when { _.age < 21 },
 
     ForOptionalComponent {_.emergencyPhoneNumber} ForField 'emergencyPhoneNumber
       validateUsing new PhoneNumberValidator,
@@ -276,10 +283,20 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the emergency phone number is not provided") {
 
-      val result = sut.validate(instance.copy(emergencyPhoneNumber = None))
+      describe("and the person is 21 or older"){
+        val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 21))
 
-      it("should not have a validation error for the emergencyPhoneNumber field") {
-        result shouldNotHaveValidationErrorFor 'emergencyPhoneNumber
+        it("should not have a validation error for the emergencyPhoneNumber field") {
+          result shouldNotHaveValidationErrorFor 'emergencyPhoneNumber
+        }
+      }
+
+      describe("and the person is younger than 21"){
+        val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 20))
+
+        it("should not have a validation error for the emergencyPhoneNumber field") {
+          result shouldHaveValidationErrorFor 'emergencyPhoneNumber
+        }
       }
 
     }

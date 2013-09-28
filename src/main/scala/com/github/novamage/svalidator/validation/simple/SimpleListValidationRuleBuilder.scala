@@ -1,6 +1,5 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.IValidationRule
 
 class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B],
                                             currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
@@ -9,10 +8,10 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
                                             previousMappedBuilder: Option[AbstractValidationRuleBuilder[A, _, _]] = None) extends AbstractValidationRuleBuilder[A, List[B], B](propertyListExpression, currentRuleStructure, validationExpressions, fieldName, previousMappedBuilder) {
 
 
-//  def map[D](valueTransformationFunction: (B) => D) = {
-//    val transformingFunction: (A => List[D]) = instance => propertyListExpression(instance).map(valueTransformationFunction)
-//    new SimpleListValidationRuleBuilder[A, D](transformingFunction, null, Nil, fieldName, Some(this))
-//  }
+  //  def map[D](valueTransformationFunction: (B) => D) = {
+  //    val transformingFunction: (A => List[D]) = instance => propertyListExpression(instance).map(valueTransformationFunction)
+  //    new SimpleListValidationRuleBuilder[A, D](transformingFunction, null, Nil, fieldName, Some(this))
+  //  }
 
   protected[validation] override def buildNextInstanceInChain(propertyExpression: A => List[B],
                                                               currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
@@ -23,9 +22,9 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
   }
 
 
-  def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): Stream[IValidationRule[A]] = {
+  def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): RuleStreamCollection[A] = {
     val lazyPropertyListValue = propertyListExpression(instance)
-    ruleStructuresList.toStream map {
+    val ruleStream = ruleStructuresList.toStream map {
       ruleStructureContainer =>
         new SimpleListValidationRule[A, B](
           lazyPropertyListValue,
@@ -34,6 +33,7 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
           ruleStructureContainer.errorMessageBuilder.getOrElse(defaultErrorMessageBuilder),
           ruleStructureContainer.conditionalValidation.getOrElse(defaultConditionedValidation))
     }
+    RuleStreamCollection(List(ruleStream))
   }
 
 }

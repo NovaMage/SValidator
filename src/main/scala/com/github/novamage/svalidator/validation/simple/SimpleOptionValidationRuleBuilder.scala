@@ -1,6 +1,5 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.IValidationRule
 
 class SimpleOptionValidationRuleBuilder[A, B](propertyOptionExpression: A => Option[B],
                                               currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
@@ -16,9 +15,9 @@ class SimpleOptionValidationRuleBuilder[A, B](propertyOptionExpression: A => Opt
     new SimpleOptionValidationRuleBuilder(propertyOptionExpression, currentRuleStructure, validationExpressions, fieldName)
   }
 
-  protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): Stream[IValidationRule[A]] = {
+  protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): RuleStreamCollection[A] = {
     lazy val lazyPropertyOptionValue = propertyOptionExpression(instance)
-    ruleStructuresList.toStream map {
+    val ruleStream = ruleStructuresList.toStream map {
       ruleStructureContainer =>
         new SimpleOptionValidationRule[A, B](
           lazyPropertyOptionValue,
@@ -27,5 +26,6 @@ class SimpleOptionValidationRuleBuilder[A, B](propertyOptionExpression: A => Opt
           ruleStructureContainer.errorMessageBuilder.getOrElse(defaultErrorMessageBuilder),
           ruleStructureContainer.conditionalValidation.getOrElse(defaultConditionedValidation))
     }
+    RuleStreamCollection(List(ruleStream))
   }
 }

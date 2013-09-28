@@ -7,7 +7,8 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   def buildRules: List[IRuleBuilder[A]]
 
   override def validate(instance: A): ValidationSummary = {
-    val unflattenedValidationRuleStreams: List[Stream[IValidationRule[A]]] = buildRules.map(_.buildRules(instance))
+    val ruleStreamCollections: List[RuleStreamCollection[A]] = buildRules.map(_.buildRules(instance))
+    val unflattenedValidationRuleStreams = ruleStreamCollections.flatMap(_.ruleStreams)
     val firstFailingResultForEachGroup: List[List[ValidationFailure]] =
       unflattenedValidationRuleStreams map {
         ruleStream =>

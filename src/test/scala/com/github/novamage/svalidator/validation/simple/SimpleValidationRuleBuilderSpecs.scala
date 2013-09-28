@@ -20,7 +20,7 @@ class SimpleValidationRuleBuilderSpecs extends Observes {
       lazy val result = sut.buildRules(instance)
 
       it("should return an empty list") {
-        result should be('empty)
+        result.ruleStreams.flatMap(x => x) should be('empty)
       }
 
     }
@@ -35,7 +35,7 @@ class SimpleValidationRuleBuilderSpecs extends Observes {
       val result = sut.buildRules(instance)
 
       it("should return a list with as many rules as rule expressions passed in") {
-        result should have size (1)
+        result.ruleStreams.head should have size (1)
       }
     }
 
