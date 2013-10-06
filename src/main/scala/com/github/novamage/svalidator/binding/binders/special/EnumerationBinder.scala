@@ -14,7 +14,7 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
     val instanceMirror = mirror.reflect(reflectedCompanion.instance)
     val applyMethod = instanceMirror.reflectMethod(applySymbol)
     try {
-      BindingPass(applyMethod(valueMap(fieldName).head.toInt))
+      BindingPass(applyMethod(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get))
     } catch {
       case ex: InvocationTargetException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName), Some(ex))
       case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName), Some(ex))

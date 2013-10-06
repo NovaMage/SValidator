@@ -39,6 +39,7 @@ object MapToObjectBinder {
     val paramSymbols = constructor.paramss
     val argList = ListBuffer[Any]()
     val errorList = ListBuffer[FieldError]()
+    val causeList = ListBuffer[Throwable]()
     val prefix = fieldPrefix.map(_ + ".").getOrElse("")
     paramSymbols.flatten foreach {
       symbol =>
@@ -50,7 +51,10 @@ object MapToObjectBinder {
           case Some(binder) => {
             binder.bind(parameterName, normalizedMap) match {
               case BindingPass(value) => argList.append(value)
-              case BindingFailure(errors, cause) => errorList.appendAll(errors)
+              case BindingFailure(errors, cause) => {
+                errorList.appendAll(errors)
+                cause.map(x => causeList.append(x))
+              }
             }
           }
           case None => throw new NoBinderFoundException(parameterType)
@@ -64,7 +68,13 @@ object MapToObjectBinder {
         val constructorMirror = reflectClass.reflectConstructor(constructor)
         BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])
       }
-      case nonEmptyList => BindingFailure[T](nonEmptyList, None)
+      case nonEmptyList => {
+        if (argList.filterNot(x => x == None || x == false).isEmpty && causeList.forall(_.isInstanceOf[NoSuchElementException])){
+          BindingFailure[T](nonEmptyList, Some(new NoSuchElementException()))
+        } else {
+          BindingFailure[T](nonEmptyList, None)
+        }
+      }
     }
   }
 
