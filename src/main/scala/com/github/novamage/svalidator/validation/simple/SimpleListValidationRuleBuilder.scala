@@ -16,19 +16,10 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
     new SimpleListValidationRuleBuilder(propertyListExpression, currentRuleStructure, validationExpressions, fieldName, markIndexesOfFieldNameErrors)
   }
 
-  lazy val defaultErrorMessageBuilder: ((String, B) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
-  lazy val defaultConditionedValidation: A => Boolean = x => true
+  private lazy val defaultErrorMessageBuilder: ((String, B) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
+  private lazy val defaultConditionedValidation: A => Boolean = x => true
 
-  final protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
-    val ruleStructures = currentRuleStructure match {
-      case null => validationExpressions
-      case x => validationExpressions :+ x
-    }
-    val currentStream = processRuleStructures(instance, ruleStructures)
-    RuleStreamCollection(currentStream.ruleStreams)
-  }
-
-  final def when(conditionedValidation: A => Boolean) = {
+  def when(conditionedValidation: A => Boolean) = {
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(conditionalValidation = Some(conditionedValidation)), validationExpressions, fieldName)
   }
 
@@ -51,17 +42,17 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
     addRuleExpressionToList(applyNotFunctor(ruleExpressionReceivingPropertyValue))
   }
 
-  final def withMessage(aFormatStringReceivingFieldNameAndValue: String): SimpleListValidationRuleBuilder[A,B] = {
+  def withMessage(aFormatStringReceivingFieldNameAndValue: String): SimpleListValidationRuleBuilder[A,B] = {
     val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, fieldValue) => aFormatStringReceivingFieldNameAndValue.format(fieldName, fieldValue)
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
   }
 
-  final def withMessage(anExpressionReceivingFieldValue: B => String): SimpleListValidationRuleBuilder[A,B] = {
+  def withMessage(anExpressionReceivingFieldValue: B => String): SimpleListValidationRuleBuilder[A,B] = {
     val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, value) => anExpressionReceivingFieldValue(value)
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
   }
 
-  final def withMessage(expressionReceivingFieldNameAndValue: (String, B) => String): SimpleListValidationRuleBuilder[A,B] = {
+  def withMessage(expressionReceivingFieldNameAndValue: (String, B) => String): SimpleListValidationRuleBuilder[A,B] = {
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(expressionReceivingFieldNameAndValue)), validationExpressions, fieldName)
   }
 
@@ -79,8 +70,17 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
     notFunctor(expression)
   }
 
+  protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
+    val ruleStructures = currentRuleStructure match {
+      case null => validationExpressions
+      case x => validationExpressions :+ x
+    }
+    val currentStream = processRuleStructures(instance, ruleStructures)
+    RuleStreamCollection(currentStream.ruleStreams)
+  }
 
-  def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): RuleStreamCollection[A] = {
+
+  private def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): RuleStreamCollection[A] = {
     lazy val lazyPropertyListValue = propertyListExpression(instance)
     val ruleStream = ruleStructuresList.toStream map {
       ruleStructureContainer =>

@@ -39,11 +39,6 @@ class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
 
 class PersonValidator extends SimpleValidator[Person] {
 
-  private def b(a: Iterable[Any]) {
-    val d = Iterable(1, 2, 3, 4)
-    val c = d.map(_ + 5)
-  }
-
   override def buildRules: List[IRuleBuilder[Person]] = List(
 
     For {_.firstName} ForField 'firstName
