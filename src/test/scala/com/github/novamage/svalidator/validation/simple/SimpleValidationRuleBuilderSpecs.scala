@@ -13,29 +13,29 @@ class SimpleValidationRuleBuilderSpecs extends Observes {
 
     describe("and the build rules is called with a current rule structure that is null") {
 
-      val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
+      val property_expression = stubUnCallableFunction[SampleValidatedClass, List[Long]]
 
-      val sut = new SimpleValidationRuleBuilder[SampleValidatedClass, Long](property_expression, null, List(), "fieldName")
+      val sut = new SimpleListValidationRuleBuilder[SampleValidatedClass, Long](property_expression, null, List(), "fieldName", false)
 
       lazy val result = sut.buildRules(instance)
 
       it("should return an empty list") {
-        result.ruleStreams.flatMap(x => x) should be('empty)
+        result.ruleStreams.flatten should be('empty)
       }
 
     }
 
     describe("and build rules is called with a current rule structure that is not null") {
-      val property_expression = stubUnCallableFunction[SampleValidatedClass, Long]
+      val property_expression = stubUnCallableFunction[SampleValidatedClass, List[Long]]
       val rule_expression = stubUnCallableFunction[Long, SampleValidatedClass, Boolean]
       val rule_structure_container = SimpleValidationRuleStructureContainer[SampleValidatedClass, Long](rule_expression, None, None)
 
-      val sut = new SimpleValidationRuleBuilder[SampleValidatedClass, Long](property_expression, rule_structure_container, List(), "fieldName")
+      val sut = new SimpleListValidationRuleBuilder[SampleValidatedClass, Long](property_expression, rule_structure_container, List(), "fieldName", false)
 
       val result = sut.buildRules(instance)
 
       it("should return a list with as many rules as rule expressions passed in") {
-        result.ruleStreams.head should have size (1)
+        result.ruleStreams.head should have size 1
       }
     }
 

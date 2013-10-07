@@ -15,7 +15,7 @@ class ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression: A =
     if (conditionalExpression(instance)) {
       RuleStreamCollection(ruleBuilder.map(_.buildRules(instance)).flatMap(_.ruleStreams))
     } else {
-      RuleStreamCollection.empty[A]
+      RuleStreamCollection.Empty
     }
   }
 }
