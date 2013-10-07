@@ -3,7 +3,6 @@ package com.github.novamage.svalidator.validation.simple
 
 package object constructs {
 
-  import com.github.novamage.svalidator.validation.simple.AbstractValidationRuleBuilder
 
   def be = new BeConstruct
 
@@ -13,7 +12,7 @@ package object constructs {
 
   def equal[A](value: A): (A => Boolean) = _ == value
 
-  implicit class SimpleValidationRuleBuilderConstructExtensions[A, B, C](builder: AbstractValidationRuleBuilder[A, B, C]) {
+  implicit class SimpleValidationRuleBuilderConstructExtensions[A, B, C](builder: SimpleListValidationRuleBuilder[A, B]) {
 
     def must(beConstruct: BeConstruct) = {
       beConstruct.prepareConstructWithRule(builder)
@@ -33,45 +32,41 @@ package object constructs {
       haveConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
-    private class NegatedAbstractValidationRuleBuilder(builder: AbstractValidationRuleBuilder[A, B, C]) extends AbstractValidationRuleBuilder[A, B, C](null, null, null, null) {
+    private class NegatedAbstractValidationRuleBuilder(builder: SimpleListValidationRuleBuilder[A, B]) extends SimpleListValidationRuleBuilder[A, B](null, null, null, null, false) {
 
-      override def must(ruleExpression: (C) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.mustNot(ruleExpression)
+      override def must(ruleExpression: (B) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.mustNot(ruleExpression)
 
-      override def mustNot(ruleExpression: (C) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.must(ruleExpression)
+      override def mustNot(ruleExpression: (B) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.must(ruleExpression)
 
-      override def mustComply(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.mustNotComply(ruleExpression)
+      override def mustComply(ruleExpression: (B, A) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.mustNotComply(ruleExpression)
 
-      override def mustNotComply(ruleExpression: (C, A) => Boolean): AbstractValidationRuleBuilder[A, B, C] = builder.mustComply(ruleExpression)
-
-      protected[validation] def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, C]]): RuleStreamCollection[A] = ???
-
-      protected[validation] def buildNextInstanceInChain(propertyExpression: (A) => B, currentRuleStructure: SimpleValidationRuleStructureContainer[A, C], validationExpressions: List[SimpleValidationRuleStructureContainer[A, C]], fieldName: String) = ???
+      override def mustNotComply(ruleExpression: (B, A) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.mustComply(ruleExpression)
     }
 
   }
 
   class BeConstruct {
-    def prepareConstructWithRule[A, B, C](builder: AbstractValidationRuleBuilder[A, B, C]) = {
+    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleBuilder[A, B]) = {
       new BeConstructWithRuleBuilder(builder)
     }
   }
 
   class HaveConstruct {
 
-    def prepareConstructWithRule[A, B, C](builder: AbstractValidationRuleBuilder[A, B, C]) = {
+    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleBuilder[A, B]) = {
       new HaveConstructWithRuleBuilder(builder)
     }
   }
 
-  class BeConstructWithRuleBuilder[A, B, C](protected[constructs] val builder: AbstractValidationRuleBuilder[A, B, C]) {
+  class BeConstructWithRuleBuilder[A, B](protected[constructs] val builder: SimpleListValidationRuleBuilder[A, B]) {
 
   }
 
-  class HaveConstructWithRuleBuilder[A, B, C](protected[constructs] val builder: AbstractValidationRuleBuilder[A, B, C]) {
+  class HaveConstructWithRuleBuilder[A, B](protected[constructs] val builder: SimpleListValidationRuleBuilder[A, B]) {
 
   }
 
-  implicit class BeConstructWithRuleBuilderForStringExtensions[A, B](construct: BeConstructWithRuleBuilder[A, B, String]) {
+  implicit class BeConstructWithRuleBuilderForStringExtensions[A, B](construct: BeConstructWithRuleBuilder[A, String]) {
 
     def empty() = {
       construct.builder must {x => x == null || x.length == 0}
@@ -79,7 +74,7 @@ package object constructs {
 
   }
 
-  implicit class BeConstructWithRuleBuilderForNumbersExtensions[A, B, C <% Double](construct: BeConstructWithRuleBuilder[A, B, C]) {
+  implicit class BeConstructWithRuleBuilderForNumbersExtensions[A, B <% Double](construct: BeConstructWithRuleBuilder[A, B]) {
 
     def negative() = {
       construct.builder must {_ < 0}
@@ -89,17 +84,17 @@ package object constructs {
       construct.builder must {_ > 0}
     }
 
-    def greaterThan(value: C) = {
+    def greaterThan(value: B) = {
       construct.builder must {_ > value}
     }
 
-    def lessThan(value: C) = {
+    def lessThan(value: B) = {
       construct.builder must {_ < value}
     }
 
   }
 
-  implicit class HaveConstructWithRuleBuilderForStringExtensions[A, B](construct: HaveConstructWithRuleBuilder[A, B, String]) {
+  implicit class HaveConstructWithRuleBuilderForStringExtensions[A, B](construct: HaveConstructWithRuleBuilder[A, String]) {
 
     def maxLength(maxLength: Int) = {
       construct.builder must {_.length <= maxLength}

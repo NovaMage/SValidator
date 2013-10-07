@@ -1,18 +1,82 @@
 package com.github.novamage.svalidator.validation.simple
 
+import com.github.novamage.svalidator.validation.IRuleBuilder
+
 
 class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B],
                                             currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
                                             validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
                                             fieldName: String,
-                                            markIndexesOfFieldNameErrors: Boolean) extends AbstractValidationRuleBuilder[A, List[B], B](propertyListExpression, currentRuleStructure, validationExpressions, fieldName) {
+                                            markIndexesOfFieldNameErrors: Boolean) extends IRuleBuilder[A] {
 
-
-  protected[validation] override def buildNextInstanceInChain(propertyExpression: A => List[B],
-                                                              currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
-                                                              validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
-                                                              fieldName: String): AbstractValidationRuleBuilder[A, List[B], B] = {
+  protected[validation] def buildNextInstanceInChain(propertyExpression: A => List[B],
+                                                     currentRuleStructure: SimpleValidationRuleStructureContainer[A, B],
+                                                     validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
+                                                     fieldName: String): SimpleListValidationRuleBuilder[A,B] = {
     new SimpleListValidationRuleBuilder(propertyListExpression, currentRuleStructure, validationExpressions, fieldName, markIndexesOfFieldNameErrors)
+  }
+
+  lazy val defaultErrorMessageBuilder: ((String, B) => String) = (fieldName, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
+  lazy val defaultConditionedValidation: A => Boolean = x => true
+
+  final protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
+    val ruleStructures = currentRuleStructure match {
+      case null => validationExpressions
+      case x => validationExpressions :+ x
+    }
+    val currentStream = processRuleStructures(instance, ruleStructures)
+    RuleStreamCollection(currentStream.ruleStreams)
+  }
+
+  final def when(conditionedValidation: A => Boolean) = {
+    buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(conditionalValidation = Some(conditionedValidation)), validationExpressions, fieldName)
+  }
+
+  def must(ruleExpressionReceivingPropertyValue: B => Boolean): SimpleListValidationRuleBuilder[A,B] = {
+    val syntheticExpressionWithInstance: (B, A) => Boolean = (property, instance) => ruleExpressionReceivingPropertyValue(property)
+    addRuleExpressionToList(syntheticExpressionWithInstance)
+  }
+
+  def mustComply(ruleExpressionReceivingPropertyAndInstanceValue: (B, A) => Boolean): SimpleListValidationRuleBuilder[A,B] = {
+    addRuleExpressionToList(ruleExpressionReceivingPropertyAndInstanceValue)
+  }
+
+
+  def mustNot(ruleExpressionReceivingPropertyValue: B => Boolean): SimpleListValidationRuleBuilder[A,B] = {
+    val syntheticExpressionWithInstance: (B, A) => Boolean = (property, instance) => ruleExpressionReceivingPropertyValue(property)
+    addRuleExpressionToList(applyNotFunctor(syntheticExpressionWithInstance))
+  }
+
+  def mustNotComply(ruleExpressionReceivingPropertyValue: (B, A) => Boolean): SimpleListValidationRuleBuilder[A,B] = {
+    addRuleExpressionToList(applyNotFunctor(ruleExpressionReceivingPropertyValue))
+  }
+
+  final def withMessage(aFormatStringReceivingFieldNameAndValue: String): SimpleListValidationRuleBuilder[A,B] = {
+    val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, fieldValue) => aFormatStringReceivingFieldNameAndValue.format(fieldName, fieldValue)
+    buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
+  }
+
+  final def withMessage(anExpressionReceivingFieldValue: B => String): SimpleListValidationRuleBuilder[A,B] = {
+    val errorMessageAlternateBuilder: ((String, B) => String) = (fieldName, value) => anExpressionReceivingFieldValue(value)
+    buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
+  }
+
+  final def withMessage(expressionReceivingFieldNameAndValue: (String, B) => String): SimpleListValidationRuleBuilder[A,B] = {
+    buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(expressionReceivingFieldNameAndValue)), validationExpressions, fieldName)
+  }
+
+  private def addRuleExpressionToList(ruleExpression: (B, A) => Boolean): SimpleListValidationRuleBuilder[A,B] = {
+    val ruleList = currentRuleStructure match {
+      case null => validationExpressions
+      case x => validationExpressions :+ x
+    }
+    buildNextInstanceInChain(propertyListExpression, SimpleValidationRuleStructureContainer[A, B](ruleExpression, None, None), ruleList, fieldName)
+  }
+
+  private lazy val notFunctor: ((B, A) => Boolean) => ((B, A) => Boolean) = originalExpression => (propertyValue, instanceValue) => !originalExpression(propertyValue, instanceValue)
+
+  private def applyNotFunctor(expression: (B, A) => Boolean) = {
+    notFunctor(expression)
   }
 
 
