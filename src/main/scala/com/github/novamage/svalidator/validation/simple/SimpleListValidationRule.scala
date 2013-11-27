@@ -5,7 +5,7 @@ import com.github.novamage.svalidator.validation.{Constants, ValidationFailure, 
 class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
                                      ruleExpression: (B, A) => Boolean,
                                      fieldName: String,
-                                     errorMessage: (String, B) => String,
+                                     errorMessage: (A, B) => String,
                                      conditionedValidation: A => Boolean,
                                      markIndexesOfFieldNameErrors: Boolean) extends IValidationRule[A] {
 
@@ -16,7 +16,7 @@ class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
       lazyPropertyExtractor.zipWithIndex.collect {
         case (propertyValue, index) if !ruleExpression(propertyValue, instance) => {
           val indexString = if(markIndexesOfFieldNameErrors) "[" + index + "]" else Constants.emptyString
-          ValidationFailure(fieldName + indexString, errorMessage(fieldName, propertyValue))
+          ValidationFailure(fieldName + indexString, errorMessage(instance, propertyValue))
         }
       }
     }
