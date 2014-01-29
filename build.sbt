@@ -1,8 +1,8 @@
 name := "SValidator"
 
-version := "0.2.6"
+version := "0.2.7"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 scalacOptions += "-feature"
 
@@ -12,7 +12,7 @@ exportJars := true
 
 parallelExecution in Test := false
 
-libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.2"
+libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.3"
 
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test"
 

@@ -14,8 +14,43 @@ object AnEnumType extends Enumeration {
   val anotherExampleEnumValue = Value(2, "Just another example value")
 }
 
+sealed class AnObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
+
+object FirstOption extends AnObjectBasedEnum(1, "The first option", "anything1")
+
+object SecondOption extends AnObjectBasedEnum(2, "The second option", BigDecimal("1000"))
+
+object ThirdOption extends AnObjectBasedEnum(3, "The third option", true)
+
+sealed class AnotherObjectBasedEnumWithAnAlternativeConstructor(val id: Int, someDescription: String, somethingElse: Any) {
+
+  def this(id: Int) = this(id, "", "")
+}
+
+object AnotherFirstOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(1, "The first option", "anything1")
+
+object AnotherSecondOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(2, "The second option", BigDecimal("1000"))
+
+object AnotherThirdOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(3, "The third option", true)
+
+sealed class AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(val id: Long, someDescription: String, somethingElse: Any)
+
+object YetAnotherFirstOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(1, "The first option", "anything1")
+
+object YetAnotherSecondOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(2, "The second option", BigDecimal("1000"))
+
+object YetAnotherThirdOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(3, "The third option", true)
+
+sealed class AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(private val id: Int, someDescription: String, somethingElse: Any)
+
+object PrivateFirstOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(1, "The first option", "anything1")
+
+object PrivateSecondOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(2, "The second option", BigDecimal("1000"))
+
+object PrivateThirdOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(3, "The third option", true)
+
 case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boolean, aTimestamp: Timestamp, optionalText: Option[String], optionalInt: Option[Int], intList: List[Int],
-                         enumeratedList: AnEnumType.Value)
+                         enumeratedValue: AnEnumType.Value, anObjectBasedEnum: AnObjectBasedEnum)
 
 case class ASimpleRecursiveClass(anotherString: String, recursiveClass: ClassUsedInRecursiveClass)
 
@@ -24,6 +59,12 @@ case class ClassUsedInRecursiveClass(someInt: Int, someBoolean: Boolean)
 case class AClassWithAnIndexedList(anIndexedList: List[AnIndexedListValue])
 
 case class AnIndexedListValue(stringField: String, longField: Long)
+
+case class AClassWithAnObjectEnumWithAnAlternateConstructor(objectEnumWithAlternateConstructor: AnotherObjectBasedEnumWithAnAlternativeConstructor)
+
+case class AClassWithAnObjectEnumWithNonIntFirstArgOnConstructor(objectEnumWithNonIntFirstArgConstructor: AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor)
+
+case class AClassWithAnObjectEnumWithAPrivateIntFirstArgOnConstructor(anotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor: AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor)
 
 class MapToObjectBinderSpecs extends Observes {
 
@@ -40,12 +81,13 @@ class MapToObjectBinderSpecs extends Observes {
     "optionalText" -> List("someText"),
     "optionalInt" -> List("9"),
     "intList" -> List("10", "20", "30"),
-    "enumeratedList" -> List("1")
+    "enumeratedValue" -> List("1"),
+    "anObjectBasedEnum" -> List("3")
   )
 
   val formatter = new SimpleDateFormat("yyyy-MM-dd")
 
-  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30), AnEnumType.anExampleEnumValue)
+  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30), AnEnumType.anExampleEnumValue, ThirdOption)
 
   describe("when binding a complex class with many types in the constructor") {
 
@@ -108,6 +150,26 @@ class MapToObjectBinderSpecs extends Observes {
       }
     }
 
+    describe("and the required enum is missing") {
+
+      val result = sut.bind[AComplexClass](full_map - "enumeratedValue")
+
+      it("should return a binding failure for the missing required field") {
+        result.fieldErrors should have size 1
+        result.fieldErrors.head.fieldName should equal("enumeratedValue")
+      }
+    }
+
+    describe("and the required object enum is missing") {
+
+      val result = sut.bind[AComplexClass](full_map - "anObjectBasedEnum")
+
+      it("should return a binding failure for the missing required field") {
+        result.fieldErrors should have size 1
+        result.fieldErrors.head.fieldName should equal("anObjectBasedEnum")
+      }
+    }
+
     describe("and the optional text is missing") {
 
       val result = sut.bind[AComplexClass](full_map - "optionalText")
@@ -134,6 +196,7 @@ class MapToObjectBinderSpecs extends Observes {
         result should equal(BindingPass(full_class.copy(intList = List())))
       }
     }
+
   }
 
   describe("when binding a type with another custom type its constructor") {
@@ -228,5 +291,57 @@ class MapToObjectBinderSpecs extends Observes {
       }
     }
   }
+
+  describe("when binding a class that has an object enum that has an alternate constructor") {
+    val values_map = Map(
+      "objectEnumWithAlternateConstructor" -> List("1")
+    )
+
+    val result = try {
+      Left(sut.bind[AClassWithAnObjectEnumWithAnAlternateConstructor](values_map))
+    } catch {
+      case ex: NoBinderFoundException => Right(ex)
+    }
+
+    it("should have thrown a no binder found exception") {
+      result should be('right)
+    }
+
+  }
+
+  describe("when binding a class that has an object enum that has one constructor, but the first parameter isn't an int") {
+    val values_map = Map(
+      "objectEnumWithNonIntFirstArgConstructor" -> List("2")
+    )
+
+    val result = try {
+      Left(sut.bind[AClassWithAnObjectEnumWithNonIntFirstArgOnConstructor](values_map))
+    } catch {
+      case ex: NoBinderFoundException => Right(ex)
+    }
+
+    it("should have thrown a no binder found exception") {
+      result should be('right)
+    }
+
+  }
+
+  describe("when binding a class that has an object enum that has one constructor, the first parameter is an int, but it doesn't have a public getter") {
+    val values_map = Map(
+      "anotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor" -> List("2")
+    )
+
+    val result = try {
+      Left(sut.bind[AClassWithAnObjectEnumWithAPrivateIntFirstArgOnConstructor](values_map))
+    } catch {
+      case ex: NoBinderFoundException => Right(ex)
+    }
+
+    it("should have thrown a no binder found exception") {
+      result should be('right)
+    }
+
+  }
+
 
 }

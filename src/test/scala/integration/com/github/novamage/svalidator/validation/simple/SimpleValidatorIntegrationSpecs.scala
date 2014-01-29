@@ -95,7 +95,6 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
   describe("when validating an instance of a person") {
 
-
     val instance = Person(
       firstName = "John",
       lastName = "Smith",
