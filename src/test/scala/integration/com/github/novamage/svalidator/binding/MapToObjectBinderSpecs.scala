@@ -16,38 +16,63 @@ object AnEnumType extends Enumeration {
 
 sealed class AnObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
 
-object FirstOption extends AnObjectBasedEnum(1, "The first option", "anything1")
+object AnObjectBasedEnum {
+  object FirstOption extends AnObjectBasedEnum(1, "The first option", "anything1")
 
-object SecondOption extends AnObjectBasedEnum(2, "The second option", BigDecimal("1000"))
+  object SecondOption extends AnObjectBasedEnum(2, "The second option", BigDecimal("1000"))
 
-object ThirdOption extends AnObjectBasedEnum(3, "The third option", true)
+  object ThirdOption extends AnObjectBasedEnum(3, "The third option", true)
+}
 
 sealed class AnotherObjectBasedEnumWithAnAlternativeConstructor(val id: Int, someDescription: String, somethingElse: Any) {
 
   def this(id: Int) = this(id, "", "")
 }
 
-object AnotherFirstOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(1, "The first option", "anything1")
+object AnotherObjectBasedEnumWithAnAlternativeConstructor {
+  object AnotherFirstOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(1, "The first option", "anything1")
 
-object AnotherSecondOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(2, "The second option", BigDecimal("1000"))
+  object AnotherSecondOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(2, "The second option", BigDecimal("1000"))
 
-object AnotherThirdOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(3, "The third option", true)
+  object AnotherThirdOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(3, "The third option", true)
+}
 
-sealed class AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(val id: Long, someDescription: String, somethingElse: Any)
 
-object YetAnotherFirstOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(1, "The first option", "anything1")
+sealed class AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(val id: Long, someDescription: String, somethingElse: Any){
+}
 
-object YetAnotherSecondOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(2, "The second option", BigDecimal("1000"))
+object AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor {
+  object YetAnotherFirstOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(1, "The first option", "anything1")
 
-object YetAnotherThirdOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(3, "The third option", true)
+  object YetAnotherSecondOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(2, "The second option", BigDecimal("1000"))
 
-sealed class AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(private val id: Int, someDescription: String, somethingElse: Any)
+  object YetAnotherThirdOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(3, "The third option", true)
+}
 
-object PrivateFirstOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(1, "The first option", "anything1")
+sealed class AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(private val id: Int, someDescription: String, somethingElse: Any){
+}
 
-object PrivateSecondOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(2, "The second option", BigDecimal("1000"))
+object AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor {
+  object PrivateFirstOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(1, "The first option", "anything1")
 
-object PrivateThirdOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(3, "The third option", true)
+  object PrivateSecondOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(2, "The second option", BigDecimal("1000"))
+
+  object PrivateThirdOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(3, "The third option", true)
+}
+
+sealed class AnObjectEnumWithAnEnumValueOutsideCompanionObject(val id: Int, someDescription: String, somethingElse: Any){
+}
+
+
+object AnObjectEnumWithAnEnumValueOutsideCompanionObject {
+
+  object InsideOption1 extends AnObjectEnumWithAnEnumValueOutsideCompanionObject(2, "The second option", BigDecimal("1000"))
+
+  object InsideOption2 extends AnObjectEnumWithAnEnumValueOutsideCompanionObject(3, "The third option", true)
+}
+
+object OutsideOption1 extends AnObjectEnumWithAnEnumValueOutsideCompanionObject(1, "The first option", "anything1")
+
 
 case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boolean, aTimestamp: Timestamp, optionalText: Option[String], optionalInt: Option[Int], intList: List[Int],
                          enumeratedValue: AnEnumType.Value, anObjectBasedEnum: AnObjectBasedEnum)
@@ -65,6 +90,8 @@ case class AClassWithAnObjectEnumWithAnAlternateConstructor(objectEnumWithAltern
 case class AClassWithAnObjectEnumWithNonIntFirstArgOnConstructor(objectEnumWithNonIntFirstArgConstructor: AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor)
 
 case class AClassWithAnObjectEnumWithAPrivateIntFirstArgOnConstructor(anotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor: AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor)
+
+case class AClassWithAnObjectEnumThatHasAValueOutsideItsCompanionObject(anObjectEnumWithAnEnumValueOutsideCompanionObject: AnObjectEnumWithAnEnumValueOutsideCompanionObject)
 
 class MapToObjectBinderSpecs extends Observes {
 
@@ -87,7 +114,7 @@ class MapToObjectBinderSpecs extends Observes {
 
   val formatter = new SimpleDateFormat("yyyy-MM-dd")
 
-  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30), AnEnumType.anExampleEnumValue, ThirdOption)
+  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30), AnEnumType.anExampleEnumValue, AnObjectBasedEnum.ThirdOption)
 
   describe("when binding a complex class with many types in the constructor") {
 
@@ -343,5 +370,21 @@ class MapToObjectBinderSpecs extends Observes {
 
   }
 
+  describe("when binding a class that has an object enum that has a value outside the companion object of the enum class") {
+    val values_map = Map(
+      "anObjectEnumWithAnEnumValueOutsideCompanionObject" -> List("2")
+    )
+
+    val result = try {
+      Left(sut.bind[AClassWithAnObjectEnumThatHasAValueOutsideItsCompanionObject](values_map))
+    } catch {
+      case ex: NoBinderFoundException => Right(ex)
+    }
+
+    it("should have thrown a no binder found exception") {
+      result should be('right)
+    }
+
+  }
 
 }

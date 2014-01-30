@@ -71,6 +71,7 @@ object TypeBinderRegistry {
     // the class must be sealed,
     // it must have only one constructor,
     // the first argument of said constructor must be an int,
+    // all known descendants must be enclosed within the companion object of the class
     // and there must exist a getter method for said argument which is either public or protected
     val classSymbol = runtimeType.typeSymbol.asClass
     if (!classSymbol.isSealed)
@@ -82,6 +83,11 @@ object TypeBinderRegistry {
 
     val params = constructor.asMethod.paramss.flatten
     if (params.isEmpty || !(params.head.typeSignature =:= ru.typeOf[Int]))
+      return false
+
+    val companionObject = classSymbol.companionSymbol.asModule.moduleClass.asType
+    val allKnownDescendants = classSymbol.knownDirectSubclasses
+    if (!allKnownDescendants.forall(x => x.owner == companionObject))
       return false
 
     val leadingIntParamName = params.head.asTerm.name.decoded

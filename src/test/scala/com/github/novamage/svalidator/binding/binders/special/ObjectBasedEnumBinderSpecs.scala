@@ -8,22 +8,22 @@ sealed class ATestCaseObjectEnum(val identifier: Int, description: String) {
 
   //These methods are only to catch corner cases in the test of classes with other methods with similar names or return types
   //Everything should work fine as long as the class has only one constructor and the first arg is an Int and it has a public getter
-
-
   def identifier(a: Int) = "a"
 
   def c(target: Int): Int = 9
 
   def c: Int = 9
-
-
 }
 
-object FirstValue extends ATestCaseObjectEnum(1, "First value")
+object ATestCaseObjectEnum {
 
-object SecondValue extends ATestCaseObjectEnum(2, "Second value")
+  object FirstValue extends ATestCaseObjectEnum(1, "First value")
 
-object ThirdValue extends ATestCaseObjectEnum(3, "Third value")
+  object SecondValue extends ATestCaseObjectEnum(2, "Second value")
+
+  object ThirdValue extends ATestCaseObjectEnum(3, "Third value")
+}
+
 
 
 class ObjectBasedEnumBinderSpecs extends Observes {
@@ -80,7 +80,7 @@ class ObjectBasedEnumBinderSpecs extends Observes {
             val result = sut.bind(field_name, Map(field_name -> List("1")))
 
             it("should have return a binding pass with the right value") {
-              result should equal(BindingPass(FirstValue))
+              result should equal(BindingPass(ATestCaseObjectEnum.FirstValue))
             }
           }
 
@@ -89,7 +89,7 @@ class ObjectBasedEnumBinderSpecs extends Observes {
             val result = sut.bind(field_name, Map(field_name -> List("2")))
 
             it("should have return a binding pass with the right value") {
-              result should equal(BindingPass(SecondValue))
+              result should equal(BindingPass(ATestCaseObjectEnum.SecondValue))
             }
           }
 
@@ -98,7 +98,7 @@ class ObjectBasedEnumBinderSpecs extends Observes {
             val result = sut.bind(field_name, Map(field_name -> List("3")))
 
             it("should have return a binding pass with the right value") {
-              result should equal(BindingPass(ThirdValue))
+              result should equal(BindingPass(ATestCaseObjectEnum.ThirdValue))
             }
           }
 
