@@ -10,7 +10,7 @@ case class ADifferentTestingClass(aString: String, anInt: Int, aFloat: Float, aD
 
 case class AMappedTestingClass(aMappedString: String, aMappedInt: Int, aMappedFloat: Float, aMappedDecimal: BigDecimal, aMappedOptionalDouble: Option[Double], aMappedOptionalString: Option[String])
 
-class AMappedTestingClassValidator extends MappingBindingValidator[ADifferentTestingClass, AMappedTestingClass] {
+class AMappedTestingClassValidator extends MappingBindingValidator[AMappedTestingClass] {
 
   def buildRules = List(
     For { _.aMappedString } ForField 'aString
@@ -24,7 +24,7 @@ class AMappedTestingClassValidator extends MappingBindingValidator[ADifferentTes
 
 class MappingBindingValidatorSpecs extends Observes {
 
-  val sut: MappingBindingValidator[ADifferentTestingClass, AMappedTestingClass] = new AMappedTestingClassValidator
+  val sut: MappingBindingValidator[AMappedTestingClass] = new AMappedTestingClassValidator
 
   val full_map = Map(
     "aString" -> List("someString"),
