@@ -1,7 +1,7 @@
 package integration.com.github.novamage.svalidator.validation.binding
 
 import testUtils.Observes
-import com.github.novamage.svalidator.validation.binding.{IBindingValidator, BindingValidator}
+import com.github.novamage.svalidator.validation.binding.BindingValidator
 import com.github.novamage.svalidator.validation.simple.constructs._
 import com.github.novamage.svalidator.binding.TypeBinderRegistry
 import com.github.novamage.svalidator.testing.ShouldExtensions
@@ -23,7 +23,7 @@ class ATestingClassValidator extends BindingValidator[ATestingClass] {
 
 class BindingValidatorSpecs extends Observes {
 
-  val sut: IBindingValidator[ATestingClass] = new ATestingClassValidator
+  val sut: BindingValidator[ATestingClass] = new ATestingClassValidator
 
   val full_map = Map(
     "aString" -> List("someString"),
