@@ -1,10 +1,10 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 import scala.reflect.runtime.{universe => ru}
 import com.github.novamage.svalidator.binding.{BindingPass, BindingResult, BindingConfig, BindingFailure}
 
-class ObjectBasedEnumBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends ITypedBinder[Any] {
+class ObjectBasedEnumBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 
   override def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Any] = {
     try {

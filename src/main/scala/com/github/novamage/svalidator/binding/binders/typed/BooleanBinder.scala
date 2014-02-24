@@ -1,9 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 
-class BooleanBinder(config: BindingConfig) extends ITypedBinder[Boolean] {
+class BooleanBinder(config: BindingConfig) extends TypedBinder[Boolean] {
 
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Boolean] = {
     try {

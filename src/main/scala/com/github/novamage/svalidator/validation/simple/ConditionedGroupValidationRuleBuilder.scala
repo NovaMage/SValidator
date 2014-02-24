@@ -9,11 +9,11 @@ class ConditionedGroupValidationRuleBuilder[A](conditionalExpression: A => Boole
   }
 }
 
-class ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression: A => Boolean, ruleBuilder: List[IRuleBuilder[A]]) extends IRuleBuilder[A] {
+class ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression: A => Boolean, ruleBuilders: List[IRuleBuilder[A]]) extends IRuleBuilder[A] {
 
   protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
     if (conditionalExpression(instance)) {
-      RuleStreamCollection(ruleBuilder.map(_.buildRules(instance)).flatMap(_.ruleStreams))
+      RuleStreamCollection(ruleBuilders.map(_.buildRules(instance)).flatMap(_.ruleStreams))
     } else {
       RuleStreamCollection.Empty
     }

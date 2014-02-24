@@ -1,11 +1,12 @@
 package integration.com.github.novamage.svalidator.binding
 
 import testUtils.Observes
-import com.github.novamage.svalidator.binding.{BindingPass, TypeBinderRegistry}
+import com.github.novamage.svalidator.binding.{BindingResult, BindingPass, TypeBinderRegistry}
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import com.github.novamage.svalidator.binding.exceptions.NoBinderFoundException
 import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 
 object AnEnumType extends Enumeration {
   type AnEnumType = Value
@@ -17,11 +18,13 @@ object AnEnumType extends Enumeration {
 sealed class AnObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
 
 object AnObjectBasedEnum {
+
   object FirstOption extends AnObjectBasedEnum(1, "The first option", "anything1")
 
   object SecondOption extends AnObjectBasedEnum(2, "The second option", BigDecimal("1000"))
 
   object ThirdOption extends AnObjectBasedEnum(3, "The third option", true)
+
 }
 
 sealed class AnotherObjectBasedEnumWithAnAlternativeConstructor(val id: Int, someDescription: String, somethingElse: Any) {
@@ -30,37 +33,43 @@ sealed class AnotherObjectBasedEnumWithAnAlternativeConstructor(val id: Int, som
 }
 
 object AnotherObjectBasedEnumWithAnAlternativeConstructor {
+
   object AnotherFirstOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(1, "The first option", "anything1")
 
   object AnotherSecondOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(2, "The second option", BigDecimal("1000"))
 
   object AnotherThirdOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(3, "The third option", true)
+
 }
 
 
-sealed class AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(val id: Long, someDescription: String, somethingElse: Any){
+sealed class AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(val id: Long, someDescription: String, somethingElse: Any) {
 }
 
 object AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor {
+
   object YetAnotherFirstOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(1, "The first option", "anything1")
 
   object YetAnotherSecondOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(2, "The second option", BigDecimal("1000"))
 
   object YetAnotherThirdOption extends AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(3, "The third option", true)
+
 }
 
-sealed class AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(private val id: Int, someDescription: String, somethingElse: Any){
+sealed class AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(private val id: Int, someDescription: String, somethingElse: Any) {
 }
 
 object AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor {
+
   object PrivateFirstOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(1, "The first option", "anything1")
 
   object PrivateSecondOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(2, "The second option", BigDecimal("1000"))
 
   object PrivateThirdOption extends AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(3, "The third option", true)
+
 }
 
-sealed class AnObjectEnumWithAnEnumValueOutsideCompanionObject(val id: Int, someDescription: String, somethingElse: Any){
+sealed class AnObjectEnumWithAnEnumValueOutsideCompanionObject(val id: Int, someDescription: String, somethingElse: Any) {
 }
 
 
@@ -69,6 +78,7 @@ object AnObjectEnumWithAnEnumValueOutsideCompanionObject {
   object InsideOption1 extends AnObjectEnumWithAnEnumValueOutsideCompanionObject(2, "The second option", BigDecimal("1000"))
 
   object InsideOption2 extends AnObjectEnumWithAnEnumValueOutsideCompanionObject(3, "The third option", true)
+
 }
 
 object OutsideOption1 extends AnObjectEnumWithAnEnumValueOutsideCompanionObject(1, "The first option", "anything1")
@@ -383,6 +393,25 @@ class MapToObjectBinderSpecs extends Observes {
 
     it("should have thrown a no binder found exception") {
       result should be('right)
+    }
+
+  }
+
+  describe("when binding a class that has a direct binder for it") {
+
+    val values_map = Map(
+      "someField" -> List("someValue")
+    )
+
+    val direct_binder = mock[TypedBinder[AComplexClass]]
+    val direct_bind_result = mock[BindingResult[AComplexClass]]
+    when(direct_binder.bind("", values_map)) thenReturn direct_bind_result
+    TypeBinderRegistry.registerBinder(direct_binder)
+
+    val result = MapToObjectBinder.bind[AComplexClass](values_map)
+
+    it("should have returned the result done by the direct binder") {
+      result should be theSameInstanceAs direct_bind_result
     }
 
   }

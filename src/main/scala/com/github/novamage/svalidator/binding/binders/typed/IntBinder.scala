@@ -1,9 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 
-class IntBinder(config: BindingConfig) extends ITypedBinder[Int] {
+class IntBinder(config: BindingConfig) extends TypedBinder[Int] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Int] = {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get)

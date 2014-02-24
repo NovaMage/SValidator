@@ -12,7 +12,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
     val firstFailingResultForEachGroup: List[List[ValidationFailure]] =
       unflattenedValidationRuleStreams map {
         ruleStream =>
-          ruleStream map {_.apply(instance)} collectFirst {
+          ruleStream map { _.apply(instance) } collectFirst {
             case result if !result.isEmpty => result
           }
       } collect {
@@ -26,7 +26,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   }
 
   def For[B](propertyExpression: A => B) = {
-    val composedFunction: (A => List[B]) = x => List(propertyExpression(x))
+    val composedFunction: (A => List[B]) = x => propertyExpression(x) :: Nil
     new FieldListRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 
@@ -40,7 +40,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   }
 
   def ForComponent[B](componentPropertyExpression: A => B) = {
-    val composedFunction: (A => List[B]) = x => List(componentPropertyExpression(x))
+    val composedFunction: (A => List[B]) = x => componentPropertyExpression(x) :: Nil
     new ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 

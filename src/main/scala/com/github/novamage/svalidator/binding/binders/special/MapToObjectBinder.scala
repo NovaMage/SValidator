@@ -7,6 +7,7 @@ import com.github.novamage.svalidator.binding._
 import com.github.novamage.svalidator.binding.BindingPass
 import com.github.novamage.svalidator.binding.FieldError
 import scala.Some
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 
 
 object MapToObjectBinder {
@@ -24,13 +25,13 @@ object MapToObjectBinder {
     }
   }
 
-  def bind[T: ru.TypeTag](dataMap: Map[String, Seq[String]]): BindingResult[T] = {
+  def bind[T](dataMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val normalizedMap = normalizeKeys(dataMap)
-    bind[T](None, normalizedMap)
+    val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror)
+    typeBinderOption.map(_.asInstanceOf[TypedBinder[T]].bind("", normalizedMap)).getOrElse(bind[T](None, normalizedMap))
   }
 
-  protected[special] def bind[T: ru.TypeTag](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]]): BindingResult[T] = {
-    val tag = ru.typeTag[T]
+  protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
     val classToBind = runtimeType.typeSymbol.asClass

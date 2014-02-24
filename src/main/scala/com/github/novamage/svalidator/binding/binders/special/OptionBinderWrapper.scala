@@ -1,9 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, BindingResult}
 
-class OptionBinderWrapper(wrappedBinder: ITypedBinder[_]) extends ITypedBinder[Option[Any]] {
+class OptionBinderWrapper(wrappedBinder: TypedBinder[_]) extends TypedBinder[Option[Any]] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Option[Any]] = {
     wrappedBinder.bind(fieldName, valueMap) match {
       case BindingPass(value) => BindingPass(Option(value))

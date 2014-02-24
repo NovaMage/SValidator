@@ -1,11 +1,11 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 import java.sql.Timestamp
 import com.github.novamage.svalidator.binding.{BindingFailure, BindingConfig, BindingPass, BindingResult}
 import java.text.{ParseException, SimpleDateFormat}
 
-class TimestampBinder(config: BindingConfig) extends ITypedBinder[Timestamp] {
+class TimestampBinder(config: BindingConfig) extends TypedBinder[Timestamp] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Timestamp] = {
     val formatter = new SimpleDateFormat(config.dateFormat)
     try {

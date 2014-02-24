@@ -1,9 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, BindingConfig, BindingResult}
 
-class FloatBinder(config: BindingConfig) extends ITypedBinder[Float] {
+class FloatBinder(config: BindingConfig) extends TypedBinder[Float] {
 
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Float] = {
     try {

@@ -1,9 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
 import com.github.novamage.svalidator.binding.{BindingPass, BindingFailure, BindingConfig, BindingResult}
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 
-class StringBinder(config: BindingConfig) extends ITypedBinder[String] {
+class StringBinder(config: BindingConfig) extends TypedBinder[String] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[String] = {
 
     val headOption = valueMap.get(fieldName) match {

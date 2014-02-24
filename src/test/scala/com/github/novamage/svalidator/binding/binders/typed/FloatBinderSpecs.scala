@@ -1,12 +1,12 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
 import testUtils.Observes
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingPass, BindingConfig}
 
 class FloatBinderSpecs extends Observes {
 
-  val sut: ITypedBinder[Float] = new FloatBinder(BindingConfig.defaultConfig)
+  val sut: TypedBinder[Float] = new FloatBinder(BindingConfig.defaultConfig)
 
   describe("when testing the binding of a class with a simple constructor with a float argument") {
 

@@ -1,10 +1,10 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{FieldError, BindingFailure, BindingPass, BindingResult}
 import scala.collection.mutable.ListBuffer
 
-class ListBinderWrapper(wrappedBinder: ITypedBinder[_]) extends ITypedBinder[List[Any]] {
+class ListBinderWrapper(wrappedBinder: TypedBinder[_]) extends TypedBinder[List[Any]] {
 
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[List[Any]] = {
     val fieldErrors = new ListBuffer[FieldError]

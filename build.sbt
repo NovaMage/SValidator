@@ -1,12 +1,10 @@
 name := "SValidator"
 
-version := "0.2.8"
+version := "0.2.9"
 
 scalaVersion := "2.10.3"
 
-scalacOptions += "-feature"
-
-mainClass := Some("com.github.novamage.svalidator.Main")
+scalacOptions ++= Seq("-feature", "-Xfatal-warnings", "-unchecked", "-deprecation")
 
 exportJars := true
 

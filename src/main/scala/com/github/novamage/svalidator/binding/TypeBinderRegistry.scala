@@ -3,15 +3,15 @@ package com.github.novamage.svalidator.binding
 import scala.reflect.runtime.{universe => ru}
 import scala.collection.mutable.ListBuffer
 import com.github.novamage.svalidator.binding.binders.typed._
-import com.github.novamage.svalidator.binding.binders.ITypedBinder
+import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.binders.special._
 import scala.Some
 
 object TypeBinderRegistry {
 
-  private val directBinders = ListBuffer[(ITypedBinder[_], ru.TypeTag[_])]()
+  private val directBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
   private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
-  private val recursiveBinders = ListBuffer[(ITypedBinder[_], ru.TypeTag[_])]()
+  private val recursiveBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
 
   def initializeBinders() {
     initializeBinders(BindingConfig.defaultConfig)
@@ -39,7 +39,7 @@ object TypeBinderRegistry {
     recursiveBinders.clear()
   }
 
-  protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror): Option[ITypedBinder[_]] = {
+  protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror): Option[TypedBinder[_]] = {
     val directBinderOption = directBinders collectFirst {
       case (binder, tag) if tag.tpe =:= runtimeType => binder
     }
@@ -98,12 +98,12 @@ object TypeBinderRegistry {
     getter.isDefined
   }
 
-  def registerBinder[A: ru.TypeTag](binder: ITypedBinder[A]) {
-    directBinders.append((binder, ru.typeTag[A]))
+  def registerBinder[A](binder: TypedBinder[A])(implicit tag: ru.TypeTag[A]) {
+    directBinders.append((binder, tag))
   }
 
-  def allowRecursiveBindingForType[A: ru.TypeTag]() {
-    recursiveBinders.append((new RecursiveBinderWrapper[A](), ru.typeTag[A]))
+  def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]) {
+    recursiveBinders.append((new RecursiveBinderWrapper[A](), tag))
   }
 
 }

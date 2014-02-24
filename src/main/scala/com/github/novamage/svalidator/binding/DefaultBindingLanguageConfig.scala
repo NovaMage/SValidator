@@ -1,6 +1,6 @@
 package com.github.novamage.svalidator.binding
 
-object DefaultBindingLanguageConfig extends IBindingLanguageConfig {
+object DefaultBindingLanguageConfig extends BindingLanguageConfig {
 
   def noValueProvidedMessage(fieldName: String) = s"This field is required"
 
