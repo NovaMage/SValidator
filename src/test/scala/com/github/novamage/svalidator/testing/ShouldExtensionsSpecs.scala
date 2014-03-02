@@ -16,7 +16,7 @@ class ShouldExtensionsSpecs extends Observes {
       when(summary.isValid) thenReturn true
 
       lazy val result = try {
-        val unitResult = summary.shouldBeValid
+        val unitResult = summary.shouldBeValid()
         Left(unitResult)
       } catch {
         case e: ValidationTestingException => Right(e)

@@ -2,13 +2,13 @@ package com.github.novamage.svalidator.validation
 
 import testUtils.Observes
 
-class ValidationSummarySpecs extends Observes {
+class SimpleSummarySpecs extends Observes {
 
   describe("when checking if a validation summary is valid") {
 
     describe("and the validation summary contains no validation failures") {
 
-      val sut = new ValidationSummary(List())
+      val sut = ValidationSummary(List())
 
       lazy val result = sut.isValid
 
@@ -19,7 +19,7 @@ class ValidationSummarySpecs extends Observes {
 
     describe("and the validation summary contains one or more validation failures") {
 
-      val sut =  new ValidationSummary(List(new ValidationFailure("someFieldName", "someErrorMessage")))
+      val sut = ValidationSummary(List(ValidationFailure("someFieldName", "someErrorMessage")))
 
       lazy val result = sut.isValid
 

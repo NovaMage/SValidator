@@ -2,21 +2,64 @@ package com.github.novamage.svalidator.validation.binding
 
 import com.github.novamage.svalidator.validation.{ValidationFailure, ValidationSummary}
 
-class BindingAndValidationSummary[+A](private val failures: List[ValidationFailure], val instance: Option[A], val valuesMap: Map[String, Seq[String]]) extends ValidationSummary(failures) {
+sealed abstract class BindingAndValidationSummary[+A](validationFailures: List[ValidationFailure]) extends ValidationSummary(validationFailures) {
 
-  override def equals(obj: Any) = {
+  def instance: Option[A]
 
-    val other = obj.asInstanceOf[BindingAndValidationSummary[A]]
-    other != null && other.failures == this.failures && other.instance == this.instance && other.valuesMap == this.valuesMap
-  }
+  def valuesMap: Map[String, Seq[String]]
+
 }
 
 object BindingAndValidationSummary {
 
-  def apply[A](failures: List[ValidationFailure], instance: Option[A], valuesMap: Map[String, Seq[String]]) = new BindingAndValidationSummary[A](failures, instance, valuesMap)
+  def empty[A] = Failure(Nil, Map())
 
-  def empty[A] = new BindingAndValidationSummary[A](Nil, None, Map())
-
-  def filled[A](instance: A) = new BindingAndValidationSummary[A](Nil, Some(instance), Map())
+  def filled[A](instance: A) = Success(instance, Map())
 
 }
+
+sealed case class Success[+A] private(instanceValue: A) extends BindingAndValidationSummary[A](Nil) {
+
+  private var _valuesMap: Map[String, Seq[String]] = _
+
+  def valuesMap = _valuesMap
+
+  protected[Success] def valuesMap_=(value: Map[String, Seq[String]]): Unit = {
+    _valuesMap = value
+  }
+
+  def instance: Option[A] = Some(instanceValue)
+}
+
+object Success {
+
+  def apply[A](instanceValue: A, valuesMap: Map[String, Seq[String]]): Success[A] = {
+    val result = new Success[A](instanceValue)
+    result.valuesMap = valuesMap
+    result
+  }
+}
+
+sealed case class Failure private(failures: List[ValidationFailure]) extends BindingAndValidationSummary[Nothing](failures) {
+
+  private var _valuesMap: Map[String, Seq[String]] = _
+
+  def valuesMap = _valuesMap
+
+  protected[Failure] def valuesMap_=(value: Map[String, Seq[String]]): Unit = {
+    _valuesMap = value
+  }
+
+  def instance: Option[Nothing] = None
+}
+
+object Failure {
+
+  def apply[A](failures: List[ValidationFailure], valuesMap: Map[String, Seq[String]]): Failure = {
+    val result = new Failure(failures)
+    result.valuesMap = valuesMap
+    result
+  }
+
+}
+

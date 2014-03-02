@@ -20,7 +20,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
       } collect {
         case Some(x) => x
       }
-    new ValidationSummary(firstFailingResultForEachGroup.flatten)
+    ValidationSummary(firstFailingResultForEachGroup.flatten)
   }
 
   def When(conditionalExpression: A => Boolean) = {
