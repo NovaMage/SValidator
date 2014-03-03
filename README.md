@@ -3,7 +3,8 @@ SValidator
 
 A framework for validation of scala objects in a fluent and concise way.
 
-This project is heavily inspired by the [FluentValidation library for .NET](http://fluentvalidation.codeplex.com/)
+This project is heavily inspired by the [FluentValidation library for .NET](http://fluentvalidation.codeplex.com/) and
+licensed under the MIT license.
 
 Quick Usage
 =====
@@ -24,7 +25,7 @@ the type of the object you want to validate.  Then, import `com.github.novamage.
 and make a fluent and elegant validation by overriding the buildRules method of your validator.
 
 ```scala
-  override def buildRules: List[IRuleBuilder[Person]] = List(
+  override def buildRules(instance:Person): List[IRuleBuilder[Person]] = List(
 
     For { _.firstName } ForField 'firstName
       mustNot be empty () withMessage "First name is required"
