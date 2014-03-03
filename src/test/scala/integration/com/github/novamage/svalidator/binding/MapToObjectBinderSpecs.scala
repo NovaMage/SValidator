@@ -4,7 +4,7 @@ import testUtils.Observes
 import com.github.novamage.svalidator.binding.{BindingResult, BindingPass, TypeBinderRegistry}
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import com.github.novamage.svalidator.binding.exceptions.NoBinderFoundException
+import com.github.novamage.svalidator.binding.exceptions.{NoDirectBinderNorConstructorForBindingException, NoBinderFoundException}
 import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 
@@ -15,7 +15,7 @@ object AnEnumType extends Enumeration {
   val anotherExampleEnumValue = Value(2, "Just another example value")
 }
 
-sealed class AnObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
+sealed abstract class AnObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
 
 object AnObjectBasedEnum {
 
@@ -27,23 +27,42 @@ object AnObjectBasedEnum {
 
 }
 
-sealed class AnotherObjectBasedEnumWithAnAlternativeConstructor(val id: Int, someDescription: String, somethingElse: Any) {
+class AClassWithMultipleConstructors(val someIntField: Int) {
 
-  def this(id: Int) = this(id, "", "")
+  def this(aString: String) = this(aString.length)
+
+  override def equals(other:Any) = {
+    other match {
+      case value:AClassWithMultipleConstructors => value.someIntField == this.someIntField
+      case _ => false
+    }
+  }
+
+  override def hashCode(): Int = someIntField.hashCode()
+}
+
+trait SomeTrait {
+
+  def someMethod: Int
+}
+
+sealed abstract class AnotherObjectBasedEnumWithAnAlternativeConstructor(val id: Int, someDescription: String) {
+
+  def this(id: Int) = this(id, "")
 }
 
 object AnotherObjectBasedEnumWithAnAlternativeConstructor {
 
-  object AnotherFirstOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(1, "The first option", "anything1")
+  object AnotherFirstOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(1, "The first option")
 
-  object AnotherSecondOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(2, "The second option", BigDecimal("1000"))
+  object AnotherSecondOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(2, "The second option")
 
-  object AnotherThirdOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(3, "The third option", true)
+  object AnotherThirdOption extends AnotherObjectBasedEnumWithAnAlternativeConstructor(3, "The third option")
 
 }
 
 
-sealed class AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(val id: Long, someDescription: String, somethingElse: Any) {
+sealed abstract class AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor(val id: Long, someDescription: String, somethingElse: Any) {
 }
 
 object AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor {
@@ -56,7 +75,7 @@ object AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor {
 
 }
 
-sealed class AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(private val id: Int, someDescription: String, somethingElse: Any) {
+sealed abstract class AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor(private val id: Int, someDescription: String, somethingElse: Any) {
 }
 
 object AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor {
@@ -69,7 +88,7 @@ object AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor {
 
 }
 
-sealed class AnObjectEnumWithAnEnumValueOutsideCompanionObject(val id: Int, someDescription: String, somethingElse: Any) {
+sealed abstract class AnObjectEnumWithAnEnumValueOutsideCompanionObject(val id: Int, someDescription: String, somethingElse: Any) {
 }
 
 
@@ -83,25 +102,67 @@ object AnObjectEnumWithAnEnumValueOutsideCompanionObject {
 
 object OutsideOption1 extends AnObjectEnumWithAnEnumValueOutsideCompanionObject(1, "The first option", "anything1")
 
+sealed abstract class AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(val id: Int, someDescription: String, somethingElse: Any)
+
+object AnObjectEnumWithAnEnumValueThatIsNotAModuleClass {
+
+  object AModuleOption1 extends AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(2, "The second option", BigDecimal("1000"))
+
+  object AModuleOption2 extends AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(3, "The third option", true)
+
+  class ANonModuleOption extends AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(4, "The fourth option", true)
+
+}
+
+abstract class ANonSealedObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
+
+object ANonSealedObjectBasedEnum {
+
+  object Option1 extends ANonSealedObjectBasedEnum(1, "Option 1", "something1")
+
+  object Option2 extends ANonSealedObjectBasedEnum(2, "Option 2", "something2")
+
+}
+
+sealed class ANonAbstractBaseClassObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
+
+object ANonAbstractBaseClassObjectBasedEnum {
+
+  object Option1 extends ANonAbstractBaseClassObjectBasedEnum(1, "Option 1", "something1")
+
+  object Option2 extends ANonAbstractBaseClassObjectBasedEnum(2, "Option 2", "something2")
+
+}
+
+sealed abstract class AnObjectBasedEnumWithNoCompanionObject(val id: Int, someDescription: String, somethingElse: Any)
+
+sealed abstract class AnObjectBasedEnumWithNoDescendants(val id: Int, someDescription: String, somethingElse: Any)
+
+object AnObjectBasedEnumWithNoDescendants {
+
+}
+
 
 case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boolean, aTimestamp: Timestamp, optionalText: Option[String], optionalInt: Option[Int], intList: List[Int],
                          enumeratedValue: AnEnumType.Value, anObjectBasedEnum: AnObjectBasedEnum)
 
 case class ASimpleRecursiveClass(anotherString: String, recursiveClass: ClassUsedInRecursiveClass)
 
-case class ClassUsedInRecursiveClass(someInt: Int, someBoolean: Boolean)
+class ClassUsedInRecursiveClass(val someInt: Int, val someBoolean: Boolean){
+
+  override def equals(any:Any) = {
+    any match {
+      case other:ClassUsedInRecursiveClass => this.someBoolean == other.someBoolean && this.someInt == other.someInt
+      case _ => false
+    }
+  }
+
+  override def hashCode = this.someInt.hashCode()
+}
 
 case class AClassWithAnIndexedList(anIndexedList: List[AnIndexedListValue])
 
 case class AnIndexedListValue(stringField: String, longField: Long)
-
-case class AClassWithAnObjectEnumWithAnAlternateConstructor(objectEnumWithAlternateConstructor: AnotherObjectBasedEnumWithAnAlternativeConstructor)
-
-case class AClassWithAnObjectEnumWithNonIntFirstArgOnConstructor(objectEnumWithNonIntFirstArgConstructor: AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor)
-
-case class AClassWithAnObjectEnumWithAPrivateIntFirstArgOnConstructor(anotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor: AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor)
-
-case class AClassWithAnObjectEnumThatHasAValueOutsideItsCompanionObject(anObjectEnumWithAnEnumValueOutsideCompanionObject: AnObjectEnumWithAnEnumValueOutsideCompanionObject)
 
 class MapToObjectBinderSpecs extends Observes {
 
@@ -197,7 +258,7 @@ class MapToObjectBinderSpecs extends Observes {
       }
     }
 
-    describe("and the required object enum is missing") {
+    describe("and the required type based enum is missing") {
 
       val result = sut.bind[AComplexClass](full_map - "anObjectBasedEnum")
 
@@ -251,7 +312,7 @@ class MapToObjectBinderSpecs extends Observes {
       val result = sut.bind[ASimpleRecursiveClass](value_map)
 
       it("should have bound properly the top class and the recursively bound class") {
-        result should equal(BindingPass(ASimpleRecursiveClass("anotherValue", ClassUsedInRecursiveClass(8, true))))
+        result should equal(BindingPass(ASimpleRecursiveClass("anotherValue", new ClassUsedInRecursiveClass(8, true))))
       }
     }
 
@@ -263,14 +324,11 @@ class MapToObjectBinderSpecs extends Observes {
         "recursiveClass.someBoolean" -> List("true")
       )
 
-      val result = try {
-        Left(sut.bind[ASimpleRecursiveClass](value_map))
-      } catch {
-        case ex: NoBinderFoundException => Right(ex)
-      }
 
       it("should have bound properly the top class and the recursively bound class") {
-        result should be('right)
+        intercept[NoBinderFoundException] {
+          sut.bind[ASimpleRecursiveClass](value_map)
+        }
       }
     }
 
@@ -329,73 +387,101 @@ class MapToObjectBinderSpecs extends Observes {
     }
   }
 
-  describe("when binding a class that has an object enum that has an alternate constructor") {
-    val values_map = Map(
-      "objectEnumWithAlternateConstructor" -> List("1")
-    )
+  describe("when binding a type based enum") {
+    val fieldName = "someFieldName"
+    val values_map = Map(fieldName -> List("1"))
 
-    val result = try {
-      Left(sut.bind[AClassWithAnObjectEnumWithAnAlternateConstructor](values_map))
-    } catch {
-      case ex: NoBinderFoundException => Right(ex)
+    describe("and the type based enum has an alternate constructor") {
+
+      val result = sut.bind[AnotherObjectBasedEnumWithAnAlternativeConstructor](values_map, fieldName)
+
+      it("should have successfully bound the enum using the primary constructor") {
+        result should equal(BindingPass(AnotherObjectBasedEnumWithAnAlternativeConstructor.AnotherFirstOption))
+      }
+
     }
 
-    it("should have thrown a no binder found exception") {
-      result should be('right)
+    describe("and the type based enum has one constructor, but the first parameter isn't an int") {
+
+      it("should have thrown a no binder found exception") {
+        intercept[NoBinderFoundException] {
+          sut.bind[AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor](values_map, fieldName)
+        }
+      }
+
     }
 
+    describe("and the type based enum has one constructor, the first parameter is an int, but it doesn't have a public getter") {
+
+      it("should have thrown a no binder found exception") {
+        intercept[NoBinderFoundException] {
+          sut.bind[AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor](values_map, fieldName)
+        }
+      }
+
+    }
+
+    describe("and the type based enum that has a value outside the companion object of the enum class") {
+
+      it("should have thrown a no binder found exception") {
+        intercept[NoBinderFoundException] {
+          sut.bind[AnObjectEnumWithAnEnumValueOutsideCompanionObject](values_map, fieldName)
+        }
+      }
+
+    }
+
+    describe("and the type based enum has a non module class (i.e. A non object type) descendant value inside the companion object of the enum class") {
+
+      it("should have thrown a no binder found exception") {
+        intercept[NoBinderFoundException] {
+          sut.bind[AnObjectEnumWithAnEnumValueThatIsNotAModuleClass](values_map, fieldName)
+        }
+      }
+
+    }
+
+    describe("and the type based enum is not sealed") {
+
+      it("should have thrown a no binder found exception") {
+        intercept[NoBinderFoundException] {
+          sut.bind[ANonSealedObjectBasedEnum](values_map, fieldName)
+        }
+      }
+
+    }
+
+    describe("and the type based enum is not abstract") {
+
+      it("should have thrown a no binder found exception") {
+        intercept[NoBinderFoundException] {
+          sut.bind[ANonAbstractBaseClassObjectBasedEnum](values_map, fieldName)
+        }
+      }
+
+    }
+
+    describe("and the type based enum but it has no companion object") {
+
+      it("should have thrown a no binder found exception") {
+        intercept[NoBinderFoundException] {
+          sut.bind[AnObjectBasedEnumWithNoCompanionObject](values_map, fieldName)
+        }
+      }
+
+    }
+
+    describe("and the type based enum has no descendants") {
+
+      it("should have thrown a no binder found exception") {
+        intercept[NoBinderFoundException] {
+          sut.bind[AnObjectBasedEnumWithNoDescendants](values_map, fieldName)
+        }
+      }
+
+    }
   }
 
-  describe("when binding a class that has an object enum that has one constructor, but the first parameter isn't an int") {
-    val values_map = Map(
-      "objectEnumWithNonIntFirstArgConstructor" -> List("2")
-    )
-
-    val result = try {
-      Left(sut.bind[AClassWithAnObjectEnumWithNonIntFirstArgOnConstructor](values_map))
-    } catch {
-      case ex: NoBinderFoundException => Right(ex)
-    }
-
-    it("should have thrown a no binder found exception") {
-      result should be('right)
-    }
-
-  }
-
-  describe("when binding a class that has an object enum that has one constructor, the first parameter is an int, but it doesn't have a public getter") {
-    val values_map = Map(
-      "anotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor" -> List("2")
-    )
-
-    val result = try {
-      Left(sut.bind[AClassWithAnObjectEnumWithAPrivateIntFirstArgOnConstructor](values_map))
-    } catch {
-      case ex: NoBinderFoundException => Right(ex)
-    }
-
-    it("should have thrown a no binder found exception") {
-      result should be('right)
-    }
-
-  }
-
-  describe("when binding a class that has an object enum that has a value outside the companion object of the enum class") {
-    val values_map = Map(
-      "anObjectEnumWithAnEnumValueOutsideCompanionObject" -> List("2")
-    )
-
-    val result = try {
-      Left(sut.bind[AClassWithAnObjectEnumThatHasAValueOutsideItsCompanionObject](values_map))
-    } catch {
-      case ex: NoBinderFoundException => Right(ex)
-    }
-
-    it("should have thrown a no binder found exception") {
-      result should be('right)
-    }
-
-  }
 
   describe("when binding a class that has a direct binder for it") {
 
@@ -409,6 +495,54 @@ class MapToObjectBinderSpecs extends Observes {
     TypeBinderRegistry.registerBinder(direct_binder)
 
     val result = MapToObjectBinder.bind[AComplexClass](values_map)
+
+    it("should have returned the result done by the direct binder") {
+      result should be theSameInstanceAs direct_bind_result
+    }
+
+  }
+
+  describe("when binding to a class that has multiple constructors") {
+
+    val values_map = Map(
+      "someIntField" -> List("5"),
+      "aString" -> List("aVeryRidiculouslyLongString")
+    )
+
+    val result =  sut.bind[AClassWithMultipleConstructors](values_map)
+
+    it("should have properly bound the class using its primary constructor") {
+      result should equal(BindingPass(new AClassWithMultipleConstructors(5)))
+    }
+
+  }
+
+  describe("when binding to a trait, and no direct binder exists for it") {
+
+    val values_map = Map(
+      "someField" -> List("someValue")
+    )
+
+    it("should have thrown an exception complaining about the lack of a constructor or direct binder for the trait") {
+      intercept[NoDirectBinderNorConstructorForBindingException] {
+        MapToObjectBinder.bind[SomeTrait](values_map)
+      }
+    }
+
+  }
+
+  describe("when binding to a trait, and no direct binder exists for it") {
+
+    val values_map = Map(
+      "someField" -> List("someValue")
+    )
+
+    val direct_binder = mock[TypedBinder[SomeTrait]]
+    val direct_bind_result = mock[BindingResult[SomeTrait]]
+    when(direct_binder.bind("", values_map)) thenReturn direct_bind_result
+    TypeBinderRegistry.registerBinder(direct_binder)
+
+    val result = MapToObjectBinder.bind[SomeTrait](values_map)
 
     it("should have returned the result done by the direct binder") {
       result should be theSameInstanceAs direct_bind_result

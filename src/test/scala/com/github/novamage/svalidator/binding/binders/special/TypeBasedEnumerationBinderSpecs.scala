@@ -26,12 +26,12 @@ object ATestCaseObjectEnum {
 
 
 
-class ObjectBasedEnumBinderSpecs extends Observes {
+class TypeBasedEnumerationBinderSpecs extends Observes {
 
 
   val tag = ru.typeTag[ATestCaseObjectEnum]
 
-  val sut = new ObjectBasedEnumBinder(tag.tpe, tag.mirror, BindingConfig.defaultConfig)
+  val sut = new TypeBasedEnumerationBinder(tag.tpe, tag.mirror, BindingConfig.defaultConfig)
 
   describe("when binding an object that is a case object enum") {
 

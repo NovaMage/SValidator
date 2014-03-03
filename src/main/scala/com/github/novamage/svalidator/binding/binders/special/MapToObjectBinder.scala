@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import scala.reflect.runtime.{universe => ru}
 import scala.collection.mutable.ListBuffer
-import com.github.novamage.svalidator.binding.exceptions.NoBinderFoundException
+import com.github.novamage.svalidator.binding.exceptions.{NoDirectBinderNorConstructorForBindingException, NoBinderFoundException}
 import com.github.novamage.svalidator.binding._
 import com.github.novamage.svalidator.binding.BindingPass
 import com.github.novamage.svalidator.binding.FieldError
@@ -25,18 +25,28 @@ object MapToObjectBinder {
     }
   }
 
-  def bind[T](dataMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+  def bind[T](dataMap: Map[String, Seq[String]], globalFieldName: String = "")(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val normalizedMap = normalizeKeys(dataMap)
     val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror)
-    typeBinderOption.map(_.asInstanceOf[TypedBinder[T]].bind("", normalizedMap)).getOrElse(bind[T](None, normalizedMap))
+    typeBinderOption.map(_.asInstanceOf[TypedBinder[T]].bind(globalFieldName, normalizedMap)).getOrElse(bind[T](Some(globalFieldName).filterNot(_.isEmpty), normalizedMap))
   }
 
   protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
     val classToBind = runtimeType.typeSymbol.asClass
-    val constructor = runtimeType.declaration(ru.nme.CONSTRUCTOR).asMethod
-    val paramSymbols = constructor.paramss
+    val constructorSymbols = runtimeType.declaration(ru.nme.CONSTRUCTOR)
+    if (!constructorSymbols.isTerm){
+      throw new NoDirectBinderNorConstructorForBindingException(runtimeType)
+    }
+    val constructorMethodOption = constructorSymbols.asTerm.alternatives.collectFirst {
+      case ctor if ctor.asMethod.isPrimaryConstructor => ctor.asMethod
+    }
+    if (!constructorMethodOption.isDefined) {
+      throw new NoDirectBinderNorConstructorForBindingException(runtimeType)
+    }
+    val primaryConstructorMethod = constructorMethodOption.get
+    val paramSymbols = primaryConstructorMethod.paramss
     val argList = ListBuffer[Any]()
     val errorList = ListBuffer[FieldError]()
     val causeList = ListBuffer[Throwable]()
@@ -63,7 +73,7 @@ object MapToObjectBinder {
     errorList.toList match {
       case Nil =>
         val reflectClass = runtimeMirror.reflectClass(classToBind)
-        val constructorMirror = reflectClass.reflectConstructor(constructor)
+        val constructorMirror = reflectClass.reflectConstructor(primaryConstructorMethod)
         BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])
       case nonEmptyList =>
         if (argList.filterNot(x => x == None || x == false).isEmpty && causeList.forall(_.isInstanceOf[NoSuchElementException])) {

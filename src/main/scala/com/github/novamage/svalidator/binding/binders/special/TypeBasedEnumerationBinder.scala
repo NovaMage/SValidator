@@ -4,13 +4,17 @@ import com.github.novamage.svalidator.binding.binders.TypedBinder
 import scala.reflect.runtime.{universe => ru}
 import com.github.novamage.svalidator.binding.{BindingPass, BindingResult, BindingConfig, BindingFailure}
 
-class ObjectBasedEnumBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
+class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 
   override def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Any] = {
     try {
       val intValue = valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get
       val classSymbol = runtimeType.typeSymbol.asClass
-      val constructor = runtimeType.declaration(ru.nme.CONSTRUCTOR).asMethod
+      val constructorSymbols = runtimeType.declaration(ru.nme.CONSTRUCTOR)
+      val constructor = constructorSymbols.asTerm.alternatives.collectFirst {
+        case ctor if ctor.asMethod.isPrimaryConstructor => ctor.asMethod
+      }.get
+
       val leadingIntTermName = ru.newTermName(constructor.paramss.flatten.head.asTerm.name.decoded)
 
       val enclosingModule = classSymbol.companionSymbol.asModule

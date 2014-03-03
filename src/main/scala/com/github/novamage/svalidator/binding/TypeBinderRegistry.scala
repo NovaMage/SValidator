@@ -54,8 +54,8 @@ object TypeBinderRegistry {
     else if (runtimeType.erasure =:= ru.typeOf[List[_]].erasure) {
       getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new ListBinderWrapper(_))
     }
-    else if (isTypeACaseObjectEnum(runtimeType)) {
-      Some(new ObjectBasedEnumBinder(runtimeType, mirror, currentBindingConfig))
+    else if (isTypeATypeBasedEnum(runtimeType)) {
+      Some(new TypeBasedEnumerationBinder(runtimeType, mirror, currentBindingConfig))
     } else {
       recursiveBinders collectFirst {
         case (binder, tag) if tag.tpe =:= runtimeType => binder
@@ -66,28 +66,40 @@ object TypeBinderRegistry {
   }
 
 
-  private def isTypeACaseObjectEnum(runtimeType: ru.Type): Boolean = {
+  private def isTypeATypeBasedEnum(runtimeType: ru.Type): Boolean = {
     //The criteria applied here is that
-    // the class must be sealed,
-    // it must have only one constructor,
+    // the type must be sealed and have at least one known descendant,
+    // the type must be abstract,
+    // the type must have a companion symbol
+    // the type must have a primary constructor
     // the first argument of said constructor must be an int,
-    // all known descendants must be enclosed within the companion object of the class
-    // and there must exist a getter method for said argument which is either public or protected
+    // all direct known descendants must be enclosed within the companion object of the type
+    // all descendants must be module classes (i.e. object definitions that extend the runtimeType)
+    // and there must exist a getter/param accessor method for said int argument which is either public or protected
     val classSymbol = runtimeType.typeSymbol.asClass
-    if (!classSymbol.isSealed)
+    val allKnownDescendants = classSymbol.knownDirectSubclasses.map(_.asClass).toVector
+
+    //by testing if the class has known descendants, we also implicitly test that it is sealed
+    if (allKnownDescendants.isEmpty || !classSymbol.isAbstractClass || !classSymbol.companionSymbol.isModule)
       return false
 
-    val constructor = runtimeType.declaration(ru.nme.CONSTRUCTOR).asTerm
-    if (constructor.isOverloaded)
+    val constructorSymbols = runtimeType.declaration(ru.nme.CONSTRUCTOR)
+    if (!constructorSymbols.isTerm)
       return false
 
-    val params = constructor.asMethod.paramss.flatten
+    val primaryConstructorMethodOption = constructorSymbols.asTerm.alternatives.collectFirst {
+      case ctor if ctor.asMethod.isPrimaryConstructor => ctor.asMethod
+    }
+    if (!primaryConstructorMethodOption.isDefined)
+      return false
+
+    val constructor = primaryConstructorMethodOption.get
+    val params = constructor.paramss.flatten
     if (params.isEmpty || !(params.head.typeSignature =:= ru.typeOf[Int]))
       return false
 
     val companionObject = classSymbol.companionSymbol.asModule.moduleClass.asType
-    val allKnownDescendants = classSymbol.knownDirectSubclasses
-    if (!allKnownDescendants.forall(x => x.owner == companionObject))
+    if (allKnownDescendants.exists(x => x.owner != companionObject) || allKnownDescendants.exists(!_.isModuleClass))
       return false
 
     val leadingIntParamName = params.head.asTerm.name.decoded
