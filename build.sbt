@@ -12,7 +12,7 @@ parallelExecution in Test := false
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.10.3"
 
-libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test"
+libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
 
 libraryDependencies += "junit" % "junit" % "4.6" % "test"
 

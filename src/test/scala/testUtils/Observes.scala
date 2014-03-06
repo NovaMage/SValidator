@@ -2,15 +2,14 @@ package testUtils
 
 import org.scalatest.path
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.matchers.ShouldMatchers
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
+import org.scalatest
 
 @RunWith(classOf[JUnitRunner])
-class Observes extends path.FunSpec with MockitoSugar with ShouldMatchers with FunctionStubbingHelpers {
+class Observes extends path.FunSpec with MockitoSugar with scalatest.Matchers with FunctionStubbingHelpers {
 
   def when[T](method_call: T) = {
     Mockito.when(method_call)
