@@ -49,10 +49,10 @@ object TypeBinderRegistry {
       Some(new EnumerationBinder(runtimeType, mirror, currentBindingConfig))
     }
     else if (runtimeType.erasure =:= ru.typeOf[Option[_]].erasure) {
-      getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new OptionBinderWrapper(_))
+      getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new OptionBinder(_))
     }
     else if (runtimeType.erasure =:= ru.typeOf[List[_]].erasure) {
-      getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new ListBinderWrapper(_))
+      getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new ListBinder(_))
     }
     else if (isTypeATypeBasedEnum(runtimeType)) {
       Some(new TypeBasedEnumerationBinder(runtimeType, mirror, currentBindingConfig))
@@ -115,7 +115,7 @@ object TypeBinderRegistry {
   }
 
   def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]) {
-    recursiveBinders.append((new RecursiveBinderWrapper[A](), tag))
+    recursiveBinders.append((new RecursiveBinder[A](), tag))
   }
 
 }

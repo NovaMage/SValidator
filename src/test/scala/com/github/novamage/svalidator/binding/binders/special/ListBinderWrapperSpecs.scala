@@ -7,7 +7,7 @@ import com.github.novamage.svalidator.binding.{FieldError, BindingPass, BindingF
 class ListBinderWrapperSpecs extends Observes {
 
   val wrappedBinder = mock[TypedBinder[Long]]
-  val sut: TypedBinder[List[_]] = new ListBinderWrapper(wrappedBinder)
+  val sut: TypedBinder[List[_]] = new ListBinder(wrappedBinder)
 
   describe("when binding a list of values of a specific type with a single non indexed field name") {
 

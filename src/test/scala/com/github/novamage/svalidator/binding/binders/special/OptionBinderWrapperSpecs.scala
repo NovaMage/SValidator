@@ -7,7 +7,7 @@ import com.github.novamage.svalidator.binding.{FieldError, BindingPass, BindingF
 class OptionBinderWrapperSpecs extends Observes {
 
   val wrappedBinder = mock[TypedBinder[Long]]
-  val sut: TypedBinder[Option[_]] = new OptionBinderWrapper(wrappedBinder)
+  val sut: TypedBinder[Option[_]] = new OptionBinder(wrappedBinder)
 
   describe("when performing the binding of an option type") {
 
