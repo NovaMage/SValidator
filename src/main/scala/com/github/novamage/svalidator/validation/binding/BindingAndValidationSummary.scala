@@ -12,9 +12,9 @@ sealed abstract class BindingAndValidationSummary[+A](validationFailures: List[V
 
 object BindingAndValidationSummary {
 
-  def empty[A] = Failure(Nil, Map())
+  def empty[A]: BindingAndValidationSummary[A] = Failure(Nil, Map(), None.asInstanceOf[Option[A]])
 
-  def filled[A](instance: A) = Success(instance, Map())
+  def filled[A](instance: A): BindingAndValidationSummary[A] = Success(instance, Map())
 
 }
 
@@ -40,7 +40,7 @@ object Success {
   }
 }
 
-sealed case class Failure private(failures: List[ValidationFailure]) extends BindingAndValidationSummary[Nothing](failures) {
+sealed case class Failure[+A] private(failures: List[ValidationFailure], instance: Option[A]) extends BindingAndValidationSummary[A](failures) {
 
   private var _valuesMap: Map[String, Seq[String]] = _
 
@@ -50,13 +50,12 @@ sealed case class Failure private(failures: List[ValidationFailure]) extends Bin
     _valuesMap = value
   }
 
-  def instance: Option[Nothing] = None
 }
 
 object Failure {
 
-  def apply[A](failures: List[ValidationFailure], valuesMap: Map[String, Seq[String]]): Failure = {
-    val result = new Failure(failures)
+  def apply[A](failures: List[ValidationFailure], valuesMap: Map[String, Seq[String]], instance: Option[A]): Failure[A] = {
+    val result = new Failure(failures, instance)
     result.valuesMap = valuesMap
     result
   }

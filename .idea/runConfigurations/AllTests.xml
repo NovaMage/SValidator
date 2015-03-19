@@ -1,5 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AllTests" type="ScalaTestRunConfiguration" factoryName="ScalaTest" singleton="true">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+    <extension name="scalaCoverage" />
     <module name="SValidator" />
     <setting name="path" value="" />
     <setting name="package" value="" />
