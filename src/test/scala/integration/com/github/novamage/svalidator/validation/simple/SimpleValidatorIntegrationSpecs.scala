@@ -1,6 +1,7 @@
 package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.testing._
+import com.github.novamage.svalidator.utils.TypeBasedEnumeration
 import com.github.novamage.svalidator.validation.IRuleBuilder
 import com.github.novamage.svalidator.validation.simple.SimpleValidator
 import com.github.novamage.svalidator.validation.simple.constructs._
@@ -10,9 +11,20 @@ case class Address(line1: String, line2: String, city: String, state: String, zi
 
 case class PhoneNumber(areaCode: String, number: String)
 
+sealed abstract case class Gender(id: Int, description: String, abbreviation: Char) extends Gender.Value
+
+object Gender extends TypeBasedEnumeration[Gender] {
+
+  object Male extends Gender(1, "Male", 'M')
+
+  object Female extends Gender(2, "Female", 'F')
+
+}
+
 case class Person(firstName: String,
                   lastName: String,
                   age: Int,
+                  gender: Gender,
                   married: Boolean,
                   hasJob: Boolean,
                   notes: Option[String],
@@ -99,6 +111,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
       firstName = "John",
       lastName = "Smith",
       age = 25,
+      gender = Gender.Male,
       married = true,
       hasJob = true,
       notes = Some("notes"),

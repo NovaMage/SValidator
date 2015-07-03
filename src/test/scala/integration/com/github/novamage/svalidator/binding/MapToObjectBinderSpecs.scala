@@ -7,6 +7,7 @@ import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
 import com.github.novamage.svalidator.binding.exceptions.{NoBinderFoundException, NoDirectBinderNorConstructorForBindingException}
 import com.github.novamage.svalidator.binding.{BindingPass, BindingResult, TypeBinderRegistry}
+import com.github.novamage.svalidator.utils.TypeBasedEnumeration
 import testUtils.Observes
 
 object AnEnumType extends Enumeration {
@@ -16,15 +17,27 @@ object AnEnumType extends Enumeration {
   val anotherExampleEnumValue = Value(2, "Just another example value")
 }
 
-sealed abstract class AnObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
+sealed abstract class ASimpleObjectBasedEnum(val id: Int, someDescription: String, somethingElse: Any)
 
-object AnObjectBasedEnum {
+object ASimpleObjectBasedEnum {
 
-  object FirstOption extends AnObjectBasedEnum(1, "The first option", "anything1")
+  object FirstOption extends ASimpleObjectBasedEnum(1, "The first option", "anything1")
 
-  object SecondOption extends AnObjectBasedEnum(2, "The second option", BigDecimal("1000"))
+  object SecondOption extends ASimpleObjectBasedEnum(2, "The second option", BigDecimal("1000"))
 
-  object ThirdOption extends AnObjectBasedEnum(3, "The third option", true)
+  object ThirdOption extends ASimpleObjectBasedEnum(3, "The third option", true)
+
+}
+
+sealed abstract case class ATypeBasedEnum(id: Int, description: String, somethingElse: Any) extends ATypeBasedEnum.Value
+
+object ATypeBasedEnum extends TypeBasedEnumeration[ATypeBasedEnum] {
+
+  object TypeBasedFirstOption extends ATypeBasedEnum(1, "The first typed option", "anything4")
+
+  object TypeBasedSecondOption extends ATypeBasedEnum(2, "The second typed option", BigDecimal("390"))
+
+  object TypeBasedThirdOption extends ATypeBasedEnum(3, "The third typed option", true)
 
 }
 
@@ -145,7 +158,7 @@ object AnObjectBasedEnumWithNoDescendants {
 
 
 case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boolean, aTimestamp: Timestamp, optionalText: Option[String], optionalInt: Option[Int], intList: List[Int],
-                         enumeratedValue: AnEnumType.Value, anObjectBasedEnum: AnObjectBasedEnum)
+                         enumeratedValue: AnEnumType.Value, aSimpleObjectBasedEnum: ASimpleObjectBasedEnum, aTypeBasedEnum: ATypeBasedEnum)
 
 case class ASimpleRecursiveClass(anotherString: String, recursiveClass: ClassUsedInRecursiveClass)
 
@@ -181,12 +194,13 @@ class MapToObjectBinderSpecs extends Observes {
     "optionalInt" -> List("9"),
     "intList" -> List("10", "20", "30"),
     "enumeratedValue" -> List("1"),
-    "anObjectBasedEnum" -> List("3")
+    "aSimpleObjectBasedEnum" -> List("3"),
+    "aTypeBasedEnum" -> List("2")
   )
 
   val formatter = new SimpleDateFormat("yyyy-MM-dd")
 
-  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30), AnEnumType.anExampleEnumValue, AnObjectBasedEnum.ThirdOption)
+  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30), AnEnumType.anExampleEnumValue, ASimpleObjectBasedEnum.ThirdOption, ATypeBasedEnum.TypeBasedSecondOption)
 
   describe("when binding a complex class with many types in the constructor") {
 
@@ -259,13 +273,23 @@ class MapToObjectBinderSpecs extends Observes {
       }
     }
 
-    describe("and the required type based enum is missing") {
+    describe("and the required simple object based enum is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "anObjectBasedEnum")
+      val result = sut.bind[AComplexClass](full_map - "aSimpleObjectBasedEnum")
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
-        result.fieldErrors.head.fieldName should equal("anObjectBasedEnum")
+        result.fieldErrors.head.fieldName should equal("aSimpleObjectBasedEnum")
+      }
+    }
+
+    describe("and the required type based enum is missing") {
+
+      val result = sut.bind[AComplexClass](full_map - "aTypeBasedEnum")
+
+      it("should return a binding failure for the missing required field") {
+        result.fieldErrors should have size 1
+        result.fieldErrors.head.fieldName should equal("aTypeBasedEnum")
       }
     }
 
