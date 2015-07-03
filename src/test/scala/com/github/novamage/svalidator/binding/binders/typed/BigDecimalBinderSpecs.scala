@@ -1,12 +1,12 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
-import testUtils.Observes
 import com.github.novamage.svalidator.binding.binders.TypedBinder
-import com.github.novamage.svalidator.binding.{BindingPass, BindingConfig}
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingPass}
+import testUtils.Observes
 
 class BigDecimalBinderSpecs extends Observes {
 
-  val sut:TypedBinder[BigDecimal] = new BigDecimalBinder(BindingConfig.defaultConfig)
+  val sut: TypedBinder[BigDecimal] = new BigDecimalBinder(BindingConfig.defaultConfig)
 
   describe("when testing the binding of a class with a simple constructor with a decimal argument") {
 

@@ -69,27 +69,27 @@ package object constructs {
   implicit class BeConstructWithRuleBuilderForStringExtensions[A, B](construct: BeConstructWithRuleBuilder[A, String]) {
 
     def empty() = {
-      construct.builder must {x => x == null || x.length == 0}
+      construct.builder must { x => x == null || x.length == 0 }
     }
 
   }
 
-  implicit class BeConstructWithRuleBuilderForNumbersExtensions[A, B <% Double](construct: BeConstructWithRuleBuilder[A, B]) {
+  implicit class BeConstructWithRuleBuilderForNumbersExtensions[A, B](construct: BeConstructWithRuleBuilder[A, B])(implicit evidence: B => Double) {
 
     def negative() = {
-      construct.builder must {_ < 0}
+      construct.builder must { _ < 0 }
     }
 
     def positive() = {
-      construct.builder must {_ > 0}
+      construct.builder must { _ > 0 }
     }
 
     def greaterThan(value: B) = {
-      construct.builder must {_ > value}
+      construct.builder must { _ > value }
     }
 
     def lessThan(value: B) = {
-      construct.builder must {_ < value}
+      construct.builder must { _ < value }
     }
 
   }
@@ -97,11 +97,11 @@ package object constructs {
   implicit class HaveConstructWithRuleBuilderForStringExtensions[A, B](construct: HaveConstructWithRuleBuilder[A, String]) {
 
     def maxLength(maxLength: Int) = {
-      construct.builder must {_.length <= maxLength}
+      construct.builder must { _.length <= maxLength }
     }
 
     def minLength(minLength: Int) = {
-      construct.builder must {_.length >= minLength}
+      construct.builder must { _.length >= minLength }
     }
   }
 

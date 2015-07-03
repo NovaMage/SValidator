@@ -1,7 +1,7 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
-import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
 import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
 
 class BooleanBinder(config: BindingConfig) extends TypedBinder[Boolean] {
 

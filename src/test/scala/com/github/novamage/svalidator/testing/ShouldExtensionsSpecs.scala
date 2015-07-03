@@ -1,9 +1,8 @@
 package com.github.novamage.svalidator.testing
 
-import testUtils.Observes
-import com.github.novamage.svalidator.validation.ValidationSummary
 import com.github.novamage.svalidator.testing.exceptions.ValidationTestingException
-import com.github.novamage.svalidator.validation.ValidationFailure
+import com.github.novamage.svalidator.validation.{ValidationFailure, ValidationSummary}
+import testUtils.Observes
 
 class ShouldExtensionsSpecs extends Observes {
 
@@ -34,7 +33,7 @@ class ShouldExtensionsSpecs extends Observes {
       when(summary.validationFailures) thenReturn failures
 
       lazy val result = try {
-        val unitResult = summary.shouldBeValid
+        val unitResult = summary.shouldBeValid()
         Left(unitResult)
       } catch {
         case e: ValidationTestingException => Right(e)
@@ -67,7 +66,7 @@ class ShouldExtensionsSpecs extends Observes {
     }
 
     describe("and there's an error for the specified field") {
-      
+
       val failures = List(ValidationFailure("aField", "aMessage"), ValidationFailure("aDifferentField", "anotherMessage"))
       when(summary.validationFailures) thenReturn failures
 
@@ -84,7 +83,7 @@ class ShouldExtensionsSpecs extends Observes {
 
     }
   }
-  
+
   describe("when using the shouldNotHaveValidationErrorFor view on a validation summary") {
 
     describe("and there's no error for specified field") {
@@ -106,7 +105,7 @@ class ShouldExtensionsSpecs extends Observes {
     }
 
     describe("and there's an error for the specified field") {
-      
+
       val failures = List(ValidationFailure("aField", "aMessage"), ValidationFailure("aDifferentField", "anotherMessage"))
       when(summary.validationFailures) thenReturn failures
 

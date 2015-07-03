@@ -12,5 +12,4 @@ abstract class AbstractValidationRuleBuilder[A, B, C](propertyExpression: A => B
                                                       fieldName: String) extends IRuleBuilder[A] {
 
 
-
 }

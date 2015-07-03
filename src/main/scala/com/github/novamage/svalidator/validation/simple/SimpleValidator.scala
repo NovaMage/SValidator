@@ -4,21 +4,15 @@ import com.github.novamage.svalidator.validation._
 
 abstract class SimpleValidator[A] extends IValidate[A] {
 
-  def buildRules: List[IRuleBuilder[A]]
+  def buildRules(input: A): List[IRuleBuilder[A]]
 
-  def buildRules(instance: A): List[IRuleBuilder[A]] = buildRules
-
-  override def validate(instance: A): ValidationSummary = {
-    val ruleStreamCollections: List[RuleStreamCollection[A]] = buildRules(instance).map(_.buildRules(instance))
-    val unflattenedValidationRuleStreams = ruleStreamCollections.flatMap(_.ruleStreams)
+  override def validate(input: A): ValidationSummary = {
+    val ruleStreamCollections: List[RuleStreamCollection[A]] = buildRules(input).map(_.buildRules(input))
+    val nonFlattenedValidationRuleStreams = ruleStreamCollections.flatMap(_.ruleStreams)
     val firstFailingResultForEachGroup: List[List[ValidationFailure]] =
-      unflattenedValidationRuleStreams map {
+      nonFlattenedValidationRuleStreams flatMap {
         ruleStream =>
-          ruleStream map { _.apply(instance) } collectFirst {
-            case result if !result.isEmpty => result
-          }
-      } collect {
-        case Some(x) => x
+          ruleStream map { _.apply(input) } collectFirst { case result if result.nonEmpty => result }
       }
     ValidationSummary(firstFailingResultForEachGroup.flatten)
   }

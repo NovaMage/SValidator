@@ -1,10 +1,10 @@
 package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.testing._
-import testUtils.Observes
-import com.github.novamage.svalidator.validation.simple.constructs._
-import com.github.novamage.svalidator.validation.simple.SimpleValidator
 import com.github.novamage.svalidator.validation.IRuleBuilder
+import com.github.novamage.svalidator.validation.simple.SimpleValidator
+import com.github.novamage.svalidator.validation.simple.constructs._
+import testUtils.Observes
 
 case class Address(line1: String, line2: String, city: String, state: String, zip: String)
 
@@ -24,61 +24,61 @@ case class Person(firstName: String,
 
 class AddressValidator extends SimpleValidator[Address] {
 
-  def buildRules = List(
-    For {_.zip} ForField 'zip
+  def buildRules(instance: Address) = List(
+    For { _.zip } ForField 'zip
       must have maxLength 10 withMessage "Must have 10 characters or less"
   )
 }
 
 class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
-  def buildRules = List(
-    For {_.areaCode} ForField 'areaCode
+  def buildRules(instance: PhoneNumber) = List(
+    For { _.areaCode } ForField 'areaCode
       must have maxLength 4 withMessage "The area code can not exceed 4 characters"
   )
 }
 
 class PersonValidator extends SimpleValidator[Person] {
 
-  override def buildRules: List[IRuleBuilder[Person]] = List(
+  override def buildRules(instance: Person): List[IRuleBuilder[Person]] = List(
 
-    For {_.firstName} ForField 'firstName
+    For { _.firstName } ForField 'firstName
       mustNot be empty() withMessage "First name is required"
       must have maxLength 32 withMessage "Must have 32 characters or less",
 
-    For {_.lastName} ForField 'lastName
+    For { _.lastName } ForField 'lastName
       mustNot be empty() withMessage "Last name is required"
       must have maxLength 32 withMessage "Must have 32 characters or less",
 
-    For {_.age} ForField 'age
+    For { _.age } ForField 'age
       mustNot be negative() withMessage "Must be a positive number",
 
-    When {_.age < 21}(
-      For {_.hasJob} ForField 'hasJob
+    When { _.age < 21 }(
+      For { _.hasJob } ForField 'hasJob
         must be(false) withMessage "Must be 21 years or older to allow marking a job",
-      For {_.married} ForField 'married
-        must {_ == false} withMessage "Must be 21 years or older to allow marking marriage"
+      For { _.married } ForField 'married
+        must { _ == false } withMessage "Must be 21 years or older to allow marking marriage"
     ),
 
 
-    For {_.tasksCompletedByMonth} ForField 'tasksCompletedByMonth
+    For { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth
       must haveSizeEqualTo12 withMessage "Must have 12 values for the tasks completed by month",
 
-    ForOptional {_.notes} ForField 'notes
+    ForOptional { _.notes } ForField 'notes
       must have maxLength 32 withMessage "Notes can't have more than 32 characters",
 
-    ForEach {_.tasksCompletedByMonth} ForField 'tasksCompletedByMonth
+    ForEach { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth
       must be positive() withMessage "Must be a positive number",
 
-    ForComponent {_.primaryAddress} ForField 'primaryAddress
+    ForComponent { _.primaryAddress } ForField 'primaryAddress
       validateUsing new AddressValidator,
 
     For { _.emergencyPhoneNumber } ForField 'emergencyPhoneNumber
       must { _.isDefined } when { _.age < 21 },
 
-    ForOptionalComponent {_.emergencyPhoneNumber} ForField 'emergencyPhoneNumber
+    ForOptionalComponent { _.emergencyPhoneNumber } ForField 'emergencyPhoneNumber
       validateUsing new PhoneNumberValidator,
 
-    ForEachComponent {_.otherAddresses} ForField 'otherAddresses
+    ForEachComponent { _.otherAddresses } ForField 'otherAddresses
       validateUsing new AddressValidator
 
   )
@@ -277,7 +277,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the emergency phone number is not provided") {
 
-      describe("and the person is 21 or older"){
+      describe("and the person is 21 or older") {
         val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 21))
 
         it("should not have a validation error for the emergencyPhoneNumber field") {
@@ -285,7 +285,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
         }
       }
 
-      describe("and the person is younger than 21"){
+      describe("and the person is younger than 21") {
         val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 20))
 
         it("should not have a validation error for the emergencyPhoneNumber field") {

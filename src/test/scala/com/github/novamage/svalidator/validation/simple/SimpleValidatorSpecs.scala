@@ -1,22 +1,21 @@
 package com.github.novamage.svalidator.validation.simple
 
-import testUtils.Observes
-import com.github.novamage.svalidator.validation._
-import com.github.novamage.svalidator.validation.ValidationFailure
+import com.github.novamage.svalidator.validation.{ValidationFailure, _}
 import org.mockito.Matchers.any
+import testUtils.Observes
 
 class SimpleValidatorSpecs extends Observes {
-
-  case class SampleValidatedClass(a: String, b: Long) {
-  }
 
   val rule_builder_1 = mock[IRuleBuilder[SampleValidatedClass]]
   val rule_builder_2 = mock[IRuleBuilder[SampleValidatedClass]]
   val rule_builder_3 = mock[IRuleBuilder[SampleValidatedClass]]
   val rule_builder_4 = mock[IRuleBuilder[SampleValidatedClass]]
 
+  case class SampleValidatedClass(a: String, b: Long) {
+  }
+
   class SampleSimpleValidator extends SimpleValidator[SampleValidatedClass] {
-    def buildRules = List(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
+    def buildRules(instance: SampleValidatedClass) = List(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
   }
 
   describe("when performing validation assisted by an instance of a child class of simple validator") {
@@ -77,9 +76,15 @@ class SimpleValidatorSpecs extends Observes {
       }
 
       it("should have applied any rules in the lists after the first validation failure") {
-        rule_5 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
-        rule_6 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
-        rule_9 wasNeverToldTo {_.apply(any[SampleValidatedClass])}
+        rule_5 wasNeverToldTo {
+          _.apply(any[SampleValidatedClass])
+        }
+        rule_6 wasNeverToldTo {
+          _.apply(any[SampleValidatedClass])
+        }
+        rule_9 wasNeverToldTo {
+          _.apply(any[SampleValidatedClass])
+        }
       }
     }
 

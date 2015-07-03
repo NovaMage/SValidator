@@ -1,8 +1,8 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import testUtils.Observes
 import com.github.novamage.svalidator.binding.binders.TypedBinder
-import com.github.novamage.svalidator.binding.{FieldError, BindingPass, BindingFailure}
+import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, FieldError}
+import testUtils.Observes
 
 class ListBinderWrapperSpecs extends Observes {
 
@@ -34,7 +34,7 @@ class ListBinderWrapperSpecs extends Observes {
       val result = sut.bind(fieldName, valueMap)
 
       it("should have a list of binding failures for each failure encountered, with the name of list field instead of the" +
-        " name of subfield returned by the wrappedBinder") {
+        " name of sub-field returned by the wrappedBinder") {
         val resultFailure = result.asInstanceOf[BindingFailure[Long]]
         resultFailure.fieldErrors should have size (first_failure_field_errors.size + second_failure_field_errors.size)
         first_failure_field_errors foreach {
@@ -99,7 +99,7 @@ class ListBinderWrapperSpecs extends Observes {
 
         val result = sut.bind(fieldName, valueMap)
 
-        it("should have returned BindingFailure with a field error for all failing values and the fieldname " +
+        it("should have returned BindingFailure with a field error for all failing values and the field name " +
           "should be the same as returned by the wrapped binder") {
           val resultFailure = result.asInstanceOf[BindingFailure[Long]]
           resultFailure.fieldErrors should have size (first_failure_field_errors.size + second_failure_field_errors.size)

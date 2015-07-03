@@ -1,12 +1,13 @@
 package integration.com.github.novamage.svalidator.binding
 
-import testUtils.Observes
-import com.github.novamage.svalidator.binding.{BindingResult, BindingPass, TypeBinderRegistry}
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import com.github.novamage.svalidator.binding.exceptions.{NoDirectBinderNorConstructorForBindingException, NoBinderFoundException}
-import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
+
 import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
+import com.github.novamage.svalidator.binding.exceptions.{NoBinderFoundException, NoDirectBinderNorConstructorForBindingException}
+import com.github.novamage.svalidator.binding.{BindingPass, BindingResult, TypeBinderRegistry}
+import testUtils.Observes
 
 object AnEnumType extends Enumeration {
   type AnEnumType = Value
@@ -31,9 +32,9 @@ class AClassWithMultipleConstructors(val someIntField: Int) {
 
   def this(aString: String) = this(aString.length)
 
-  override def equals(other:Any) = {
+  override def equals(other: Any) = {
     other match {
-      case value:AClassWithMultipleConstructors => value.someIntField == this.someIntField
+      case value: AClassWithMultipleConstructors => value.someIntField == this.someIntField
       case _ => false
     }
   }
@@ -106,11 +107,11 @@ sealed abstract class AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(val id: I
 
 object AnObjectEnumWithAnEnumValueThatIsNotAModuleClass {
 
+  class ANonModuleOption extends AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(4, "The fourth option", true)
+
   object AModuleOption1 extends AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(2, "The second option", BigDecimal("1000"))
 
   object AModuleOption2 extends AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(3, "The third option", true)
-
-  class ANonModuleOption extends AnObjectEnumWithAnEnumValueThatIsNotAModuleClass(4, "The fourth option", true)
 
 }
 
@@ -148,11 +149,11 @@ case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boo
 
 case class ASimpleRecursiveClass(anotherString: String, recursiveClass: ClassUsedInRecursiveClass)
 
-class ClassUsedInRecursiveClass(val someInt: Int, val someBoolean: Boolean){
+class ClassUsedInRecursiveClass(val someInt: Int, val someBoolean: Boolean) {
 
-  override def equals(any:Any) = {
+  override def equals(any: Any) = {
     any match {
-      case other:ClassUsedInRecursiveClass => this.someBoolean == other.someBoolean && this.someInt == other.someInt
+      case other: ClassUsedInRecursiveClass => this.someBoolean == other.someBoolean && this.someInt == other.someInt
       case _ => false
     }
   }
@@ -509,7 +510,7 @@ class MapToObjectBinderSpecs extends Observes {
       "aString" -> List("aVeryRidiculouslyLongString")
     )
 
-    val result =  sut.bind[AClassWithMultipleConstructors](values_map)
+    val result = sut.bind[AClassWithMultipleConstructors](values_map)
 
     it("should have properly bound the class using its primary constructor") {
       result should equal(BindingPass(new AClassWithMultipleConstructors(5)))

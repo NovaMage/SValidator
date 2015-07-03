@@ -1,8 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.special
 
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass}
 import testUtils.Observes
+
 import scala.reflect.runtime.{universe => ru}
-import com.github.novamage.svalidator.binding.{BindingConfig, BindingPass, BindingFailure}
 
 object ATestEnumeration extends Enumeration {
   type ATestEnumeration = Value
@@ -45,7 +46,7 @@ class EnumerationBinderSpecs extends Observes {
       describe("and a value is passed in") {
 
 
-        describe("and the passed in value is not a valid not an integer"){
+        describe("and the passed in value is not a valid not an integer") {
 
           val result = sut.bind(field_name, Map(field_name -> List("notAnInt")))
 
@@ -55,7 +56,7 @@ class EnumerationBinderSpecs extends Observes {
           }
         }
 
-        describe("and the passed in value is not a valid id of the enumeration"){
+        describe("and the passed in value is not a valid id of the enumeration") {
 
           val result = sut.bind(field_name, Map(field_name -> List("1000")))
 

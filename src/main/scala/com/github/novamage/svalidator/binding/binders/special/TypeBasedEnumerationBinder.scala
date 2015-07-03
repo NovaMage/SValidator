@@ -1,8 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
+
 import scala.reflect.runtime.{universe => ru}
-import com.github.novamage.svalidator.binding.{BindingPass, BindingResult, BindingConfig, BindingFailure}
 
 class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 

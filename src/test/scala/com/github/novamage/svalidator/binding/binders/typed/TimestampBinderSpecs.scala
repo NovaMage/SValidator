@@ -1,10 +1,11 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
-import testUtils.Observes
 import java.sql.Timestamp
-import com.github.novamage.svalidator.binding.{BindingConfig, BindingPass}
 import java.text.SimpleDateFormat
+
 import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingPass}
+import testUtils.Observes
 
 class TimestampBinderSpecs extends Observes {
 

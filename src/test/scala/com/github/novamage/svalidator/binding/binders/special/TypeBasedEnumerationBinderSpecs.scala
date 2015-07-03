@@ -1,8 +1,9 @@
 package com.github.novamage.svalidator.binding.binders.special
 
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass}
 import testUtils.Observes
+
 import scala.reflect.runtime.{universe => ru}
-import com.github.novamage.svalidator.binding.{BindingPass, BindingFailure, BindingConfig}
 
 sealed class ATestCaseObjectEnum(val identifier: Int, description: String) {
 
@@ -22,8 +23,8 @@ object ATestCaseObjectEnum {
   object SecondValue extends ATestCaseObjectEnum(2, "Second value")
 
   object ThirdValue extends ATestCaseObjectEnum(3, "Third value")
-}
 
+}
 
 
 class TypeBasedEnumerationBinderSpecs extends Observes {

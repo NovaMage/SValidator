@@ -21,11 +21,10 @@ private class ComponentListValidationRule[A, B](componentListPropertyExpression:
   def apply(instance: A): List[ValidationFailure] = {
     val components = componentListPropertyExpression.apply(instance)
     val validationResults = components.zipWithIndex.flatMap {
-      case (component, index) => {
+      case (component, index) =>
         val summary = componentValidator.validate(component)
         val indexInfo = if (markIndexesOfFieldNameErrors) "[" + index + "]" else Constants.emptyString
-        summary.validationFailures.map(x => x.copy(fieldName + indexInfo + "." +  x.fieldName))
-      }
+        summary.validationFailures.map(x => x.copy(fieldName + indexInfo + "." + x.fieldName))
     }
     validationResults
   }

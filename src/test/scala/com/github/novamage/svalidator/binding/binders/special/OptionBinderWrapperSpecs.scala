@@ -1,8 +1,8 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import testUtils.Observes
 import com.github.novamage.svalidator.binding.binders.TypedBinder
-import com.github.novamage.svalidator.binding.{FieldError, BindingPass, BindingFailure}
+import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, FieldError}
+import testUtils.Observes
 
 class OptionBinderWrapperSpecs extends Observes {
 
@@ -32,7 +32,7 @@ class OptionBinderWrapperSpecs extends Observes {
         val fieldName = "fieldName"
         val valueMap = mock[Map[String, Seq[String]]]
         val errors = mock[List[FieldError]]
-        val exception  = new RuntimeException
+        val exception = new RuntimeException
         val binding_result = BindingFailure[Long](errors, Some(exception))
         when(wrappedBinder.bind(fieldName, valueMap)) thenReturn binding_result
 

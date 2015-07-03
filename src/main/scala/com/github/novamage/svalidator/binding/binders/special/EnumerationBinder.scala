@@ -1,9 +1,11 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import com.github.novamage.svalidator.binding.binders.TypedBinder
-import scala.reflect.runtime.{universe => ru}
-import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass}
 import java.lang.reflect.InvocationTargetException
+
+import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass}
+
+import scala.reflect.runtime.{universe => ru}
 
 class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]) = {

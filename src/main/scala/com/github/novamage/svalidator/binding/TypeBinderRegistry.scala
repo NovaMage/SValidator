@@ -1,17 +1,17 @@
 package com.github.novamage.svalidator.binding
 
-import scala.reflect.runtime.{universe => ru}
-import scala.collection.mutable.ListBuffer
-import com.github.novamage.svalidator.binding.binders.typed._
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.binders.special._
-import scala.Some
+import com.github.novamage.svalidator.binding.binders.typed._
+
+import scala.collection.mutable.ListBuffer
+import scala.reflect.runtime.{universe => ru}
 
 object TypeBinderRegistry {
 
   private val directBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
-  private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
   private val recursiveBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
+  private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
 
   def initializeBinders() {
     initializeBinders(BindingConfig.defaultConfig)
@@ -30,13 +30,21 @@ object TypeBinderRegistry {
     currentBindingConfig = config
   }
 
+  private def clearBinderBuffers() {
+    directBinders.clear()
+    recursiveBinders.clear()
+  }
+
+  def registerBinder[A](binder: TypedBinder[A])(implicit tag: ru.TypeTag[A]) {
+    directBinders.append((binder, tag))
+  }
+
   def clearBinders() {
     clearBinderBuffers()
   }
 
-  private def clearBinderBuffers() {
-    directBinders.clear()
-    recursiveBinders.clear()
+  def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]) {
+    recursiveBinders.append((new RecursiveBinder[A](), tag))
   }
 
   protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror): Option[TypedBinder[_]] = {
@@ -45,7 +53,7 @@ object TypeBinderRegistry {
     }
     if (directBinderOption.isDefined) {
       directBinderOption
-    } else if (runtimeType.asInstanceOf[ru.TypeRef].pre.baseClasses.exists(x => x == ru.typeOf[Enumeration].typeSymbol.asClass)) {
+    } else if (runtimeType.asInstanceOf[ru.TypeRef].pre.baseClasses.contains(ru.typeOf[Enumeration].typeSymbol.asClass)) {
       Some(new EnumerationBinder(runtimeType, mirror, currentBindingConfig))
     }
     else if (runtimeType.erasure =:= ru.typeOf[Option[_]].erasure) {
@@ -64,7 +72,6 @@ object TypeBinderRegistry {
 
 
   }
-
 
   private def isTypeATypeBasedEnum(runtimeType: ru.Type): Boolean = {
     //The criteria applied here is that
@@ -90,7 +97,7 @@ object TypeBinderRegistry {
     val primaryConstructorMethodOption = constructorSymbols.asTerm.alternatives.collectFirst {
       case ctor if ctor.asMethod.isPrimaryConstructor => ctor.asMethod
     }
-    if (!primaryConstructorMethodOption.isDefined)
+    if (primaryConstructorMethodOption.isEmpty)
       return false
 
     val constructor = primaryConstructorMethodOption.get
@@ -108,14 +115,6 @@ object TypeBinderRegistry {
       x => (x.isPublic || x.isProtected) && x.isGetter && x.isParamAccessor
     }
     getter.isDefined
-  }
-
-  def registerBinder[A](binder: TypedBinder[A])(implicit tag: ru.TypeTag[A]) {
-    directBinders.append((binder, tag))
-  }
-
-  def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]) {
-    recursiveBinders.append((new RecursiveBinder[A](), tag))
   }
 
 }

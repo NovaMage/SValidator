@@ -1,21 +1,21 @@
 package integration.com.github.novamage.svalidator.validation.binding
 
-import testUtils.Observes
-import com.github.novamage.svalidator.validation.binding.BindingValidator
-import com.github.novamage.svalidator.validation.simple.constructs._
 import com.github.novamage.svalidator.binding.TypeBinderRegistry
 import com.github.novamage.svalidator.testing.ShouldExtensions
+import com.github.novamage.svalidator.validation.binding.BindingValidator
+import com.github.novamage.svalidator.validation.simple.constructs._
+import testUtils.Observes
 
 
 case class ATestingClass(aString: String, anInt: Int, aFloat: Float, aDecimal: BigDecimal, anOptionalDouble: Option[Double], anOptionalString: Option[String])
 
 class ATestingClassValidator extends BindingValidator[ATestingClass] {
 
-  def buildRules = List(
-    For {_.aString} ForField 'aString
+  def buildRules(instance: ATestingClass) = List(
+    For { _.aString } ForField 'aString
       must have minLength 6 withMessage "A string must have at least 6 characters",
 
-    For {_.anInt} ForField 'anInt
+    For { _.anInt } ForField 'anInt
       must be greaterThan 8 withMessage "An int must be greater than 8"
 
   )

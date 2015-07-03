@@ -1,8 +1,8 @@
 package com.github.novamage.svalidator.binding.binders.typed
 
-import testUtils.Observes
 import com.github.novamage.svalidator.binding.binders.TypedBinder
-import com.github.novamage.svalidator.binding.{BindingPass, BindingConfig}
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingPass}
+import testUtils.Observes
 
 class StringBinderSpecs extends Observes {
 
