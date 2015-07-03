@@ -1,14 +1,11 @@
 package testUtils
 
-import org.scalatest.path
-import org.scalatest.mock.MockitoSugar
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest
+import org.scalatest.mock.MockitoSugar
+import org.scalatest.path
 
-@RunWith(classOf[JUnitRunner])
 class Observes extends path.FunSpec with MockitoSugar with scalatest.Matchers with FunctionStubbingHelpers {
 
   def when[T](method_call: T) = {
