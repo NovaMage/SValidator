@@ -38,9 +38,6 @@ package object constructs {
 
       override def mustNot(ruleExpression: (B) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.must(ruleExpression)
 
-      override def mustComply(ruleExpression: (B, A) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.mustNotComply(ruleExpression)
-
-      override def mustNotComply(ruleExpression: (B, A) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.mustComply(ruleExpression)
     }
 
   }

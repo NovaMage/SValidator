@@ -22,10 +22,6 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
     addRuleExpressionToList(syntheticExpressionWithInstance)
   }
 
-  def mustComply(ruleExpressionReceivingPropertyAndInstanceValue: (B, A) => Boolean): SimpleListValidationRuleBuilder[A, B] = {
-    addRuleExpressionToList(ruleExpressionReceivingPropertyAndInstanceValue)
-  }
-
   private def addRuleExpressionToList(ruleExpression: (B, A) => Boolean): SimpleListValidationRuleBuilder[A, B] = {
     val ruleList = currentRuleStructure match {
       case null => validationExpressions
@@ -48,10 +44,6 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
 
   private def applyNotFunctor(expression: (B, A) => Boolean) = {
     notFunctor(expression)
-  }
-
-  def mustNotComply(ruleExpressionReceivingPropertyValue: (B, A) => Boolean): SimpleListValidationRuleBuilder[A, B] = {
-    addRuleExpressionToList(applyNotFunctor(ruleExpressionReceivingPropertyValue))
   }
 
   def withMessage(aFormatStringReceivingFieldValue: String): SimpleListValidationRuleBuilder[A, B] = {
