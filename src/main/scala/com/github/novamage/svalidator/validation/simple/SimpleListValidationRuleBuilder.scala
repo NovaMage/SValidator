@@ -51,11 +51,6 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
   }
 
-  def withMessage(expressionReceivingTheInstance: A => String): SimpleListValidationRuleBuilder[A, B] = {
-    val errorMessageAlternateBuilder: ((A, B) => String) = (instance, value) => expressionReceivingTheInstance(instance)
-    buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName)
-  }
-
   protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
     val ruleStructures = currentRuleStructure match {
       case null => validationExpressions

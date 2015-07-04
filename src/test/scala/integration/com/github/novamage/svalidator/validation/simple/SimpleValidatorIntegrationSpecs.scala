@@ -68,7 +68,7 @@ class PersonValidator extends SimpleValidator[Person] {
       For { _.hasJob } ForField 'hasJob
         must be(false) withMessage "Must be 21 years or older to allow marking a job",
       For { _.married } ForField 'married
-        must { _ == false } withMessage "Must be 21 years or older to allow marking marriage"
+        must { _ == false } withMessage s"Can't be married at ${instance.age} Must be 21 years or older to allow marking marriage"
     ),
 
 

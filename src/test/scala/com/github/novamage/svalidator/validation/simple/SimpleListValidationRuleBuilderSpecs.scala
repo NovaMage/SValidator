@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.validation.simple
 
 import testUtils.Observes
 
-class SimpleValidationRuleBuilderSpecs extends Observes {
+class SimpleListValidationRuleBuilderSpecs extends Observes {
 
   case class SampleValidatedClass(a: String, b: Long) {
   }
