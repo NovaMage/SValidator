@@ -15,6 +15,12 @@ abstract class TypeBasedEnumeration[A: ru.TypeTag] {
 
     override def hashCode: Int = id.hashCode()
 
+    override def equals(obj: Any): Boolean = {
+      obj match {
+        case someValue: Value => this.id == someValue.id
+        case _ => false
+      }
+    }
   }
 
   private lazy val _values: List[A with Value] = {
@@ -22,15 +28,15 @@ abstract class TypeBasedEnumeration[A: ru.TypeTag] {
     val mirror = tag.mirror
     val runtimeType = tag.tpe
     val classSymbol = runtimeType.typeSymbol.asClass
-    val enclosingModule = classSymbol.companionSymbol.asModule
+    val enclosingModule = classSymbol.companion.asModule
     val reflectedEnclosingModule = mirror.reflectModule(enclosingModule)
     val enclosingObjectInstance = reflectedEnclosingModule.instance
     val reflectedInstance = mirror.reflect(enclosingObjectInstance)
     val instanceSymbol = reflectedInstance.symbol
     (classSymbol.knownDirectSubclasses map {
       descendantType =>
-        val innerObjectModule = instanceSymbol.typeSignature.member(ru.newTermName(descendantType.name.decoded)).asModule
-        val companionInnerObjectSymbol = innerObjectModule.moduleClass.companionSymbol.asModule
+        val innerObjectModule = instanceSymbol.typeSignature.member(ru.TermName(descendantType.name.decodedName.toString)).asModule
+        val companionInnerObjectSymbol = innerObjectModule.moduleClass.companion.asModule
         mirror.reflectModule(companionInnerObjectSymbol).instance.asInstanceOf[A with Value]
     }).toList
   }

@@ -87,10 +87,10 @@ object TypeBinderRegistry {
     val allKnownDescendants = classSymbol.knownDirectSubclasses.map(_.asClass).toVector
 
     //by testing if the class has known descendants, we also implicitly test that it is sealed
-    if (allKnownDescendants.isEmpty || !classSymbol.isAbstractClass || !classSymbol.companionSymbol.isModule)
+    if (allKnownDescendants.isEmpty || !classSymbol.isAbstract || !classSymbol.companion.isModule)
       return false
 
-    val constructorSymbols = runtimeType.declaration(ru.nme.CONSTRUCTOR)
+    val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)
     if (!constructorSymbols.isTerm)
       return false
 
@@ -101,16 +101,16 @@ object TypeBinderRegistry {
       return false
 
     val constructor = primaryConstructorMethodOption.get
-    val params = constructor.paramss.flatten
+    val params = constructor.paramLists.flatten
     if (params.isEmpty || !(params.head.typeSignature =:= ru.typeOf[Int]))
       return false
 
-    val companionObject = classSymbol.companionSymbol.asModule.moduleClass.asType
+    val companionObject = classSymbol.companion.asModule.moduleClass.asType
     if (allKnownDescendants.exists(x => x.owner != companionObject) || allKnownDescendants.exists(!_.isModuleClass))
       return false
 
-    val leadingIntParamName = params.head.asTerm.name.decoded
-    val targetTermName = ru.newTermName(leadingIntParamName)
+    val leadingIntParamName = params.head.asTerm.name.decodedName.toString
+    val targetTermName = ru.TermName(leadingIntParamName)
     val getter = runtimeType.members.filter(x => x.name == targetTermName && x.isMethod).map(_.asMethod) find {
       x => (x.isPublic || x.isProtected) && x.isGetter && x.isParamAccessor
     }

@@ -32,8 +32,7 @@ object MapToObjectBinder {
   protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
-    val classToBind = runtimeType.typeSymbol.asClass
-    val constructorSymbols = runtimeType.declaration(ru.nme.CONSTRUCTOR)
+    val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)
     if (!constructorSymbols.isTerm) {
       throw new NoDirectBinderNorConstructorForBindingException(runtimeType)
     }
@@ -44,7 +43,7 @@ object MapToObjectBinder {
       throw new NoDirectBinderNorConstructorForBindingException(runtimeType)
     }
     val primaryConstructorMethod = constructorMethodOption.get
-    val paramSymbols = primaryConstructorMethod.paramss
+    val paramSymbols = primaryConstructorMethod.paramLists
     val argList = ListBuffer[Any]()
     val errorList = ListBuffer[FieldError]()
     val causeList = ListBuffer[Throwable]()
@@ -52,7 +51,7 @@ object MapToObjectBinder {
     paramSymbols.flatten foreach {
       symbol =>
         val paramTermSymbol = symbol.asTerm
-        val parameterName = prefix + paramTermSymbol.name.decoded
+        val parameterName = prefix + paramTermSymbol.name.decodedName.toString
         val parameterType = paramTermSymbol.typeSignature
         val typeBinder = TypeBinderRegistry.getBinderForType(parameterType, runtimeMirror)
         typeBinder match {
@@ -70,6 +69,7 @@ object MapToObjectBinder {
 
     errorList.toList match {
       case Nil =>
+        val classToBind = runtimeType.typeSymbol.asClass
         val reflectClass = runtimeMirror.reflectClass(classToBind)
         val constructorMirror = reflectClass.reflectConstructor(primaryConstructorMethod)
         BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])

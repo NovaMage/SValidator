@@ -11,14 +11,14 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
     try {
       val intValue = valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get
       val classSymbol = runtimeType.typeSymbol.asClass
-      val constructorSymbols = runtimeType.declaration(ru.nme.CONSTRUCTOR)
+      val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)
       val constructor = constructorSymbols.asTerm.alternatives.collectFirst {
         case ctor if ctor.asMethod.isPrimaryConstructor => ctor.asMethod
       }.get
 
-      val leadingIntTermName = ru.newTermName(constructor.paramss.flatten.head.asTerm.name.decoded)
+      val leadingIntTermName = ru.TermName(constructor.paramLists.flatten.head.asTerm.name.decodedName.toString)
 
-      val enclosingModule = classSymbol.companionSymbol.asModule
+      val enclosingModule = classSymbol.companion.asModule
       val reflectedEnclosingModule = mirror.reflectModule(enclosingModule)
       val enclosingObjectInstance = reflectedEnclosingModule.instance
       val enclosingInstanceMirror = mirror.reflect(enclosingObjectInstance)
@@ -26,18 +26,19 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
       val knownDescendants = classSymbol.knownDirectSubclasses.toIterable
       val matchedCaseObjectOption = knownDescendants map {
         descendantType =>
-          val innerObjectModule = enclosingInstanceSymbol.typeSignature.member(ru.newTermName(descendantType.name.decoded)).asModule
-          val companionInnerObjectSymbol = innerObjectModule.moduleClass.companionSymbol.asModule
+          val innerObjectModule = enclosingInstanceSymbol.typeSignature.member(ru.TermName(descendantType.name.decodedName.toString)).asModule
+          val companionObjectSymbol = innerObjectModule.moduleClass.asClass
           val singleIntParamGetterMethodSymbol = (innerObjectModule.typeSignature.members filter {
             x => x.name == leadingIntTermName && x.isMethod
           } map { _.asMethod } find {
             x => (x.isPublic || x.isProtected) && x.isGetter && x.isParamAccessor
           }).get
-          val reflectedCompanion = mirror.reflectModule(companionInnerObjectSymbol)
-          val instance = reflectedCompanion.instance
-          val instanceMirror = mirror.reflect(instance)
+          val reflectedCompanion = mirror.reflectClass(companionObjectSymbol)
+          val companionConstructorTerm = companionObjectSymbol.typeSignature.decl(ru.termNames.CONSTRUCTOR).asMethod
+          val objectInstance = reflectedCompanion.reflectConstructor(companionConstructorTerm).apply()
+          val instanceMirror = mirror.reflect(objectInstance)
           val getterMethod = instanceMirror.reflectMethod(singleIntParamGetterMethodSymbol)
-          getterMethod() -> instance
+          getterMethod() -> objectInstance
       } collectFirst {
         case (enumValue, instance) if enumValue == intValue => instance
       }
