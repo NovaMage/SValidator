@@ -36,8 +36,11 @@ abstract class TypeBasedEnumeration[A: ru.TypeTag] {
     (classSymbol.knownDirectSubclasses map {
       descendantType =>
         val innerObjectModule = instanceSymbol.typeSignature.member(ru.TermName(descendantType.name.decodedName.toString)).asModule
-        val companionInnerObjectSymbol = innerObjectModule.moduleClass.companion.asModule
-        mirror.reflectModule(companionInnerObjectSymbol).instance.asInstanceOf[A with Value]
+        val moduleClass = innerObjectModule.moduleClass
+        val reflectedCompanion = mirror.reflectClass(moduleClass.asClass)
+        val companionConstructorTerm = moduleClass.asType.typeSignature.decl(ru.termNames.CONSTRUCTOR).asMethod
+        val objectInstance = reflectedCompanion.reflectConstructor(companionConstructorTerm).apply()
+        objectInstance.asInstanceOf[A with Value]
     }).toList
   }
 
