@@ -440,7 +440,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the type based enum has an alternate constructor") {
 
-      val result = sut.bind[AnotherObjectBasedEnumWithAnAlternativeConstructor](values_map, fieldName)
+      val result = sut.bind[AnotherObjectBasedEnumWithAnAlternativeConstructor](values_map, Some(fieldName))
 
       it("should have successfully bound the enum using the primary constructor") {
         result should equal(BindingPass(AnotherObjectBasedEnumWithAnAlternativeConstructor.AnotherFirstOption))
@@ -452,7 +452,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor](values_map, fieldName)
+          sut.bind[AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor](values_map, Some(fieldName))
         }
       }
 
@@ -462,7 +462,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor](values_map, fieldName)
+          sut.bind[AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor](values_map, Some(fieldName))
         }
       }
 
@@ -472,7 +472,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectEnumWithAnEnumValueOutsideCompanionObject](values_map, fieldName)
+          sut.bind[AnObjectEnumWithAnEnumValueOutsideCompanionObject](values_map, Some(fieldName))
         }
       }
 
@@ -482,7 +482,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectEnumWithAnEnumValueThatIsNotAModuleClass](values_map, fieldName)
+          sut.bind[AnObjectEnumWithAnEnumValueThatIsNotAModuleClass](values_map, Some(fieldName))
         }
       }
 
@@ -492,7 +492,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[ANonSealedObjectBasedEnum](values_map, fieldName)
+          sut.bind[ANonSealedObjectBasedEnum](values_map, Some(fieldName))
         }
       }
 
@@ -502,7 +502,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[ANonAbstractBaseClassObjectBasedEnum](values_map, fieldName)
+          sut.bind[ANonAbstractBaseClassObjectBasedEnum](values_map, Some(fieldName))
         }
       }
 
@@ -512,7 +512,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectBasedEnumWithNoCompanionObject](values_map, fieldName)
+          sut.bind[AnObjectBasedEnumWithNoCompanionObject](values_map, Some(fieldName))
         }
       }
 
@@ -522,7 +522,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectBasedEnumWithNoDescendants](values_map, fieldName)
+          sut.bind[AnObjectBasedEnumWithNoDescendants](values_map, Some(fieldName))
         }
       }
 

@@ -9,4 +9,6 @@ class ValidationSummary(val validationFailures: List[ValidationFailure]) {
 object ValidationSummary {
 
   def apply(validationFailures: List[ValidationFailure]): ValidationSummary = new ValidationSummary(validationFailures)
+
+  final val Empty = new ValidationSummary(Nil)
 }

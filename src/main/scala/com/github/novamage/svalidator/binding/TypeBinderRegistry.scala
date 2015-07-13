@@ -9,6 +9,7 @@ import scala.reflect.runtime.{universe => ru}
 
 object TypeBinderRegistry {
 
+
   private val directBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
   private val recursiveBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
   private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
@@ -47,7 +48,7 @@ object TypeBinderRegistry {
     recursiveBinders.append((new RecursiveBinder[A](), tag))
   }
 
-  protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror): Option[TypedBinder[_]] = {
+  protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror, allowRecursiveBinders: Boolean = true): Option[TypedBinder[_]] = {
     val directBinderOption = directBinders collectFirst {
       case (binder, tag) if tag.tpe =:= runtimeType => binder
     }
@@ -64,10 +65,12 @@ object TypeBinderRegistry {
     }
     else if (isTypeATypeBasedEnum(runtimeType)) {
       Some(new TypeBasedEnumerationBinder(runtimeType, mirror, currentBindingConfig))
-    } else {
+    } else if (allowRecursiveBinders) {
       recursiveBinders collectFirst {
         case (binder, tag) if tag.tpe =:= runtimeType => binder
       }
+    } else {
+      None
     }
 
 

@@ -10,10 +10,10 @@ import scala.reflect.runtime.{universe => ru}
 
 object MapToObjectBinder {
 
-  def bind[T](dataMap: Map[String, Seq[String]], globalFieldName: String = "")(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+  def bind[T](dataMap: Map[String, Seq[String]], globalFieldName: Option[String] = None)(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val normalizedMap = normalizeKeys(dataMap)
-    val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror)
-    typeBinderOption.map(_.asInstanceOf[TypedBinder[T]].bind(globalFieldName, normalizedMap)).getOrElse(bind[T](Some(globalFieldName).filterNot(_.isEmpty), normalizedMap))
+    val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror, allowRecursiveBinders = false)
+    typeBinderOption.map(_.asInstanceOf[TypedBinder[T]].bind(globalFieldName.getOrElse(""), normalizedMap)).getOrElse(bind[T](globalFieldName.filterNot(_.isEmpty), normalizedMap))
   }
 
   private def normalizeKeys(map: Map[String, Seq[String]]): Map[String, Seq[String]] = {

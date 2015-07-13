@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ScalaTests in 'scala'" type="ScalaTestRunConfiguration" factoryName="ScalaTest" singleton="true" nameIsGenerated="true">
+  <configuration default="false" name="AllTests" type="ScalaTestRunConfiguration" factoryName="ScalaTest" singleton="true">
     <extension name="coverage" enabled="false" merge="false" runner="idea">
       <pattern>
         <option name="PATTERN" value="com.github.novamage.*" />
