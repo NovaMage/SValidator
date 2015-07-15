@@ -11,7 +11,7 @@ case class ATestingClass(aString: String, anInt: Int, aFloat: Float, aDecimal: B
 
 class ATestingClassValidator extends BindingValidator[ATestingClass] {
 
-  def buildRules(instance: ATestingClass) = List(
+  def validate(implicit instance: ATestingClass) = WithRules(
     For { _.aString } ForField 'aString
       must have minLength 6 withMessage "A string must have at least 6 characters",
 

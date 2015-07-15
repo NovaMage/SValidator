@@ -2,7 +2,6 @@ package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.testing._
 import com.github.novamage.svalidator.utils.TypeBasedEnumeration
-import com.github.novamage.svalidator.validation.IRuleBuilder
 import com.github.novamage.svalidator.validation.simple.SimpleValidator
 import com.github.novamage.svalidator.validation.simple.constructs._
 import testUtils.Observes
@@ -36,14 +35,14 @@ case class Person(firstName: String,
 
 class AddressValidator extends SimpleValidator[Address] {
 
-  def buildRules(instance: Address) = List(
+  def validate(implicit instance: Address) = WithRules(
     For { _.zip } ForField 'zip
       must have maxLength 10 withMessage "Must have 10 characters or less"
   )
 }
 
 class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
-  def buildRules(instance: PhoneNumber) = List(
+  def validate(implicit instance: PhoneNumber) = WithRules(
     For { _.areaCode } ForField 'areaCode
       must have maxLength 4 withMessage "The area code can not exceed 4 characters"
   )
@@ -51,7 +50,7 @@ class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
 
 class PersonValidator extends SimpleValidator[Person] {
 
-  override def buildRules(instance: Person): List[IRuleBuilder[Person]] = List(
+  override def validate(implicit instance: Person) = WithRules(
 
     For { _.firstName } ForField 'firstName
       mustNot be empty() withMessage "First name is required"
@@ -68,12 +67,12 @@ class PersonValidator extends SimpleValidator[Person] {
       For { _.hasJob } ForField 'hasJob
         must be(false) withMessage "Must be 21 years or older to allow marking a job",
       For { _.married } ForField 'married
-        must { _ == false } withMessage s"Can't be married at ${instance.age} Must be 21 years or older to allow marking marriage"
+        must { _ == false } withMessage s"Can't be married at ${instance.age } Must be 21 years or older to allow marking marriage"
     ),
 
 
     For { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth
-      must haveSizeEqualTo12 withMessage "Must have 12 values for the tasks completed by month",
+      must have size 12 withMessage "Must have 12 values for the tasks completed by month",
 
     ForOptional { _.notes } ForField 'notes
       must have maxLength 32 withMessage "Notes can't have more than 32 characters",
@@ -85,7 +84,7 @@ class PersonValidator extends SimpleValidator[Person] {
       validateUsing new AddressValidator,
 
     For { _.emergencyPhoneNumber } ForField 'emergencyPhoneNumber
-      must { _.isDefined } when { _.age < 21 },
+      mustNot be empty() withMessage "An emergency number is needed if the person is a minor" when { _.age < 21 },
 
     ForOptionalComponent { _.emergencyPhoneNumber } ForField 'emergencyPhoneNumber
       validateUsing new PhoneNumberValidator,
@@ -95,9 +94,6 @@ class PersonValidator extends SimpleValidator[Person] {
 
   )
 
-  def haveSizeEqualTo12(value: List[Int]): Boolean = {
-    value.size == 12
-  }
 }
 
 
@@ -301,7 +297,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
       describe("and the person is younger than 21") {
         val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 20))
 
-        it("should not have a validation error for the emergencyPhoneNumber field") {
+        it("should have a validation error for the emergencyPhoneNumber field") {
           result shouldHaveValidationErrorFor 'emergencyPhoneNumber
         }
       }

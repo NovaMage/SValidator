@@ -1,6 +1,6 @@
 name := "SValidator"
 
-version := "0.5.2"
+version := "0.6.0"
 
 scalaVersion := "2.11.7"
 

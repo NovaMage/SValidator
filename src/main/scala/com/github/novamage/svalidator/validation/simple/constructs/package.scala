@@ -69,6 +69,18 @@ package object constructs {
       construct.builder must { x => x == null || x.length == 0 }
     }
 
+    def trimmed() = {
+      construct.builder must { x => x.trim.length == x.length }
+    }
+
+  }
+
+  implicit class BeConstructWithRuleBuilderForIterableExtensions[A, B](construct: BeConstructWithRuleBuilder[A, B])(implicit evidence: B => Iterable[_]) {
+
+    def empty() = {
+      construct.builder must { _.isEmpty }
+    }
+
   }
 
   implicit class BeConstructWithRuleBuilderForNumbersExtensions[A, B](construct: BeConstructWithRuleBuilder[A, B])(implicit evidence: B => Double) {
@@ -99,6 +111,25 @@ package object constructs {
 
     def minLength(minLength: Int) = {
       construct.builder must { _.length >= minLength }
+    }
+
+    def length(targetLength: Int) = {
+      construct.builder must { _.length == targetLength }
+    }
+  }
+
+  implicit class HaveConstructWithRuleBuilderForIterableExtensions[A, B](construct: HaveConstructWithRuleBuilder[A, B])(implicit evidence: B => Iterable[_]) {
+
+    def maxSize(maxSize: Int) = {
+      construct.builder must { _.size <= maxSize }
+    }
+
+    def minSize(minSize: Int) = {
+      construct.builder must { _.size >= minSize }
+    }
+
+    def size(targetSize: Int) = {
+      construct.builder must { _.size == targetSize }
     }
   }
 

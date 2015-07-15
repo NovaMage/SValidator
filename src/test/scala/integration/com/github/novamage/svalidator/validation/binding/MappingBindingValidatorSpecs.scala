@@ -12,13 +12,12 @@ case class AMappedTestingClass(aMappedString: String, aMappedInt: Int, aMappedFl
 
 class AMappedTestingClassValidator extends MappingBindingValidator[AMappedTestingClass] {
 
-  def buildRules(instance: AMappedTestingClass) = List(
+  def validate(implicit instance: AMappedTestingClass) = WithRules(
     For { _.aMappedString } ForField 'aString
       must { _.contains("K") } withMessage "A string must contain at least a 'K'",
 
     For { _.aMappedInt } ForField 'anInt
       must be greaterThan 8 withMessage "An int must be greater than 8"
-
   )
 }
 

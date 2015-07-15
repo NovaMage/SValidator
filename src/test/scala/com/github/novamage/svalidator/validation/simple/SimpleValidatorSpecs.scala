@@ -15,7 +15,7 @@ class SimpleValidatorSpecs extends Observes {
   }
 
   class SampleSimpleValidator extends SimpleValidator[SampleValidatedClass] {
-    def buildRules(instance: SampleValidatedClass) = List(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
+    def validate(implicit instance: SampleValidatedClass) = WithRules(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
   }
 
   describe("when performing validation assisted by an instance of a child class of simple validator") {
