@@ -167,9 +167,7 @@ object AnObjectBasedEnumWithNoDescendants {
 
 
 case class AComplexClass(aString: String, anInt: Int, aLong: Long, aBoolean: Boolean, aTimestamp: Timestamp, optionalText: Option[String], optionalInt: Option[Int], intList: List[Int],
-                         /*enumeratedValue: AnEnumType.Value,*/ aSimpleObjectBasedEnum: ASimpleObjectBasedEnum, aTypeBasedEnum: ATypeBasedEnum)
-
-/* TODO find out why equals is not working properly here for enumerated values when bound */
+                         enumeratedValue: AnEnumType.Value, aSimpleObjectBasedEnum: ASimpleObjectBasedEnum, aTypeBasedEnum: ATypeBasedEnum)
 
 case class ASimpleRecursiveClass(anotherString: String, recursiveClass: ClassUsedInRecursiveClass)
 
@@ -211,7 +209,7 @@ class MapToObjectBinderSpecs extends Observes {
 
   val formatter = new SimpleDateFormat("yyyy-MM-dd")
 
-  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30), /*AnEnumType.anExampleEnumValue,*/ ASimpleObjectBasedEnum.ThirdOption, ATypeBasedEnum.TypeBasedSecondOption)
+  val full_class = AComplexClass("someValue", 5, 8, true, new Timestamp(formatter.parse("2008-09-05").getTime), Some("someText"), Some(9), List(10, 20, 30), AnEnumType.anExampleEnumValue, ASimpleObjectBasedEnum.ThirdOption, ATypeBasedEnum.TypeBasedSecondOption)
 
   describe("when binding a complex class with many types in the constructor") {
 
@@ -227,11 +225,11 @@ class MapToObjectBinderSpecs extends Observes {
         result.value.get.aSimpleObjectBasedEnum should equal(full_class.aSimpleObjectBasedEnum)
         result.value.get.aString should equal(full_class.aString)
         result.value.get.aTimestamp should equal(full_class.aTimestamp)
+        result.value.get.enumeratedValue should equal(full_class.enumeratedValue)
         result.value.get.aTypeBasedEnum should equal(full_class.aTypeBasedEnum)
         result.value.get.intList should equal(full_class.intList)
         result.value.get.optionalInt should equal(full_class.optionalInt)
         result.value.get.optionalText should equal(full_class.optionalText)
-        //        result should equal(BindingPass(full_class))
       }
     }
 
@@ -285,15 +283,15 @@ class MapToObjectBinderSpecs extends Observes {
       }
     }
 
-    //    describe("and the required enum is missing") {
-    //
-    //      val result = sut.bind[AComplexClass](full_map - "enumeratedValue")
-    //
-    //      it("should return a binding failure for the missing required field") {
-    //        result.fieldErrors should have size 1
-    //        result.fieldErrors.head.fieldName should equal("enumeratedValue")
-    //      }
-    //    }
+    describe("and the required enum is missing") {
+
+      val result = sut.bind[AComplexClass](full_map - "enumeratedValue")
+
+      it("should return a binding failure for the missing required field") {
+        result.fieldErrors should have size 1
+        result.fieldErrors.head.fieldName should equal("enumeratedValue")
+      }
+    }
 
     describe("and the required simple object based enum is missing") {
 

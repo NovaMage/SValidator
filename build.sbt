@@ -4,7 +4,7 @@ version := "0.5.2"
 
 scalaVersion := "2.11.7"
 
-scalacOptions ++= Seq("-feature", "-Xfatal-warnings", "-unchecked", "-deprecation")
+scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
 
 exportJars := true
 

@@ -9,7 +9,7 @@ class DoubleBinder(config: BindingConfig) extends TypedBinder[Double] {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toDouble).get)
     } catch {
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidDoubleMessage(fieldName, valueMap(fieldName).head.toString), Some(ex))
+      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidDoubleMessage(fieldName, valueMap.get(fieldName).flatMap(_.headOption).getOrElse("")), Some(ex))
       case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
     }
   }

@@ -9,7 +9,7 @@ class BooleanBinder(config: BindingConfig) extends TypedBinder[Boolean] {
     try {
       BindingPass(valueMap.get(fieldName).exists(_.headOption.exists(_.toBoolean)))
     } catch {
-      case ex: IllegalArgumentException => new BindingFailure(fieldName, config.languageConfig.invalidBooleanMessage(fieldName, valueMap(fieldName).head.toString), Some(ex))
+      case ex: IllegalArgumentException => new BindingFailure(fieldName, config.languageConfig.invalidBooleanMessage(fieldName, valueMap.get(fieldName).flatMap(_.headOption).getOrElse("")), Some(ex))
     }
   }
 }

@@ -10,11 +10,10 @@ import scala.reflect.runtime.{universe => ru}
 class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]) = {
     val enumType = runtimeType.asInstanceOf[ru.TypeRef].pre
-    val companionObjectSymbol = enumType.typeSymbol.asClass
-    val reflectedCompanion = mirror.reflectClass(companionObjectSymbol)
-    val companionConstructorTerm = enumType.decl(ru.termNames.CONSTRUCTOR).asMethod
+    val classSymbol = enumType.typeSymbol.asClass
+    val companionSymbol = classSymbol.companionSymbol.asModule
+    val objectInstance = mirror.reflectModule(companionSymbol).instance
     val applySymbol = enumType.member(ru.TermName("apply")).asMethod
-    val objectInstance = reflectedCompanion.reflectConstructor(companionConstructorTerm).apply()
     val applyMethod = mirror.reflect(objectInstance).reflectMethod(applySymbol)
     try {
       BindingPass(applyMethod(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get))
@@ -25,6 +24,6 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
     }
   }
 
-  def test() = {
-  }
+
+
 }

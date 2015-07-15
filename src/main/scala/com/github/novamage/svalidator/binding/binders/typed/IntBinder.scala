@@ -8,7 +8,7 @@ class IntBinder(config: BindingConfig) extends TypedBinder[Int] {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get)
     } catch {
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidIntegerMessage(fieldName, valueMap(fieldName).head.toString), Some(ex))
+      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidIntegerMessage(fieldName, valueMap.get(fieldName).flatMap(_.headOption).getOrElse("")), Some(ex))
       case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
     }
   }
