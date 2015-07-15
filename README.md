@@ -7,7 +7,7 @@ This project is heavily inspired by the [FluentValidation library for .NET](http
 licensed under the MIT license.
 
 Quick Usage
-=====
+===========
 
 Consider the following case class.
 
@@ -22,10 +22,10 @@ case class Person(firstName: String,
 
 Create a class that inherits from `com.github.novamage.svalidator.validation.simple.SimpleValidator[A]` where A is
 the type of the object you want to validate.  Then, import `com.github.novamage.svalidator.validation.simple.constructs._`
-and make a fluent and elegant validation by overriding the buildRules method of your validator.
+and make a fluent and elegant validation by using the `WithRules` builder on your simple validator, like:
 
 ```scala
-  override def buildRules(instance: Person): List[IRuleBuilder[Person]] = List(
+  override def validate(implicit instance: Person): ValidationSummary = WithRules(
 
     For { _.firstName } ForField 'firstName
       mustNot be empty () withMessage "First name is required"
@@ -46,9 +46,9 @@ and make a fluent and elegant validation by overriding the buildRules method of 
     )
 ```
 
-To perform the actual validation, create an instance of your validator class, and call the method validate on the instance
- to validate.
+To perform the actual validation, create an instance of your validator class, and call the method validate passing in 
+the instance to validate.
 
- Check the [wiki](https://github.com/NovaMage/SValidator/wiki/SValidator) for more details :D
+Check the [wiki](https://github.com/NovaMage/SValidator/wiki/SValidator) for more details.
 
 
