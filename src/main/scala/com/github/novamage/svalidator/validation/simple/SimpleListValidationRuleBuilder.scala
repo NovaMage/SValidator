@@ -64,12 +64,11 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
       case null => validationExpressions
       case x => validationExpressions :+ x
     }
-    val currentStream = processRuleStructures(instance, ruleStructures)
-    RuleStreamCollection(currentStream.ruleStreams)
+    processRuleStructures(instance, ruleStructures, currentMetadata)
   }
 
 
-  private def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): RuleStreamCollection[A] = {
+  private def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]], currentMetadata: Map[String, List[Any]]): RuleStreamCollection[A] = {
     lazy val lazyPropertyListValue = propertyListExpression(instance)
     val ruleStream = ruleStructuresList.toStream map {
       ruleStructureContainer =>
@@ -81,7 +80,7 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
           ruleStructureContainer.conditionalValidation.getOrElse(defaultConditionedValidation),
           markIndexesOfFieldNameErrors)
     }
-    RuleStreamCollection(List(ruleStream))
+    RuleStreamCollection(List(ruleStream), currentMetadata)
   }
 
 }

@@ -1,5 +1,7 @@
 package com.github.novamage.svalidator.validation
 
+import com.github.novamage.svalidator.utils.Utils
+
 
 class ValidationSummary(val validationFailures: List[ValidationFailure],
                         val metadata: Map[String, List[Any]] = Map.empty[String, List[Any]]) {
@@ -7,17 +9,7 @@ class ValidationSummary(val validationFailures: List[ValidationFailure],
   def isValid = validationFailures.isEmpty
 
   def merge(another: ValidationSummary): ValidationSummary = {
-    val otherMetadata = another.metadata
-    val allKeys = metadata.keySet ++ otherMetadata.keySet
-    val mergedMetadata = allKeys.map { key =>
-      if (metadata.contains(key) && otherMetadata.contains(key)) {
-        key -> metadata.apply(key).:::(otherMetadata.apply(key))
-      } else if (metadata.contains(key)) {
-        key -> metadata(key)
-      } else {
-        key -> otherMetadata(key)
-      }
-    }
+    val mergedMetadata = Utils.mergeMaps(metadata, another.metadata)
     new ValidationSummary(validationFailures ++ another.validationFailures, mergedMetadata.toMap)
   }
 
