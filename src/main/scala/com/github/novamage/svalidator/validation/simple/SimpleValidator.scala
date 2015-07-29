@@ -1,5 +1,6 @@
 package com.github.novamage.svalidator.validation.simple
 
+import com.github.novamage.svalidator.utils.Utils
 import com.github.novamage.svalidator.validation._
 
 abstract class SimpleValidator[A] extends IValidate[A] {
@@ -7,12 +8,13 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   def WithRules(ruleBuilders: IRuleBuilder[A]*)(implicit instance: A): ValidationSummary = {
     val ruleStreamCollections = ruleBuilders.toList.map(_.buildRules(instance))
     val nonFlattenedValidationRuleStreams = ruleStreamCollections.flatMap(_.ruleStreams)
+    val metadata = ruleStreamCollections.map(_.metadata).reduce(Utils.mergeMaps)
     val firstFailingResultForEachGroup =
       nonFlattenedValidationRuleStreams flatMap {
         ruleStream =>
           ruleStream map { _.apply(instance) } collectFirst { case result if result.nonEmpty => result }
       }
-    ValidationSummary(firstFailingResultForEachGroup.flatten)
+    ValidationSummary(firstFailingResultForEachGroup.flatten, metadata.toList: _*)
   }
 
   def When(conditionalExpression: A => Boolean) = {
