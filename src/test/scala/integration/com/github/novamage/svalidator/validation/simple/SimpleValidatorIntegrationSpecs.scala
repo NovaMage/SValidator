@@ -2,6 +2,7 @@ package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.testing._
 import com.github.novamage.svalidator.utils.TypeBasedEnumeration
+import com.github.novamage.svalidator.validation.binding.{BindingAndValidationSummary, Failure, Success}
 import com.github.novamage.svalidator.validation.simple.SimpleValidator
 import com.github.novamage.svalidator.validation.simple.constructs._
 import testUtils.Observes
@@ -19,6 +20,7 @@ object Gender extends TypeBasedEnumeration[Gender] {
   object Female extends Gender(2, "Female", 'F')
 
 }
+
 
 case class Person(firstName: String,
                   lastName: String,
@@ -314,6 +316,14 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     }
 
+  }
+
+  val c: BindingAndValidationSummary[String] = Success.apply("Hola", Map.empty[String, Seq[String]], Map.empty[String, List[Any]])
+
+  //This is just sort of a compile time test to ensure binding validation summaries can be unapplied properly.
+  c match {
+    case Success(instance) => instance.length
+    case Failure(failures, metadata) => failures.size + metadata.size
   }
 
 }

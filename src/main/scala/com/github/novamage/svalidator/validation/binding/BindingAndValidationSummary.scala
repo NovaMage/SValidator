@@ -13,13 +13,13 @@ sealed abstract class BindingAndValidationSummary[+A](validationFailures: List[V
 
 object BindingAndValidationSummary {
 
-  def empty[A]: BindingAndValidationSummary[A] = Failure(Nil, Map.empty[String, Seq[String]], None.asInstanceOf[Option[A]], Map.empty[String, List[Any]])
+  def empty[A]: BindingAndValidationSummary[A] = Failure(Nil, Map.empty[String, List[Any]], Map.empty[String, Seq[String]], None.asInstanceOf[Option[A]])
 
   def filled[A](instance: A): BindingAndValidationSummary[A] = Success(instance, Map.empty[String, Seq[String]], Map.empty[String, List[Any]])
 
 }
 
-sealed case class Success[+A] private(_metadata: Map[String, List[Any]], instanceValue: A) extends BindingAndValidationSummary[A](Nil, _metadata) {
+sealed class Success[+A] private(val instanceValue: A, metadata: Map[String, List[Any]]) extends BindingAndValidationSummary[A](Nil, metadata) {
 
   private var _valuesMap: Map[String, Seq[String]] = _
 
@@ -35,13 +35,19 @@ sealed case class Success[+A] private(_metadata: Map[String, List[Any]], instanc
 object Success {
 
   def apply[A](instanceValue: A, valuesMap: Map[String, Seq[String]], metadata: Map[String, List[Any]]): Success[A] = {
-    val result = new Success[A](metadata, instanceValue)
+    val result = new Success[A](instanceValue, metadata)
     result.valuesMap = valuesMap
     result
   }
+
+  def unapply[A](input: Success[A]): Option[A] = {
+    input.instance
+  }
+
+
 }
 
-sealed case class Failure[+A] private(failures: List[ValidationFailure], instance: Option[A], _metadata: Map[String, List[Any]]) extends BindingAndValidationSummary[A](failures, _metadata) {
+sealed class Failure[+A] private(failures: List[ValidationFailure], val instance: Option[A], metadata: Map[String, List[Any]]) extends BindingAndValidationSummary[A](failures, metadata) {
 
   private var _valuesMap: Map[String, Seq[String]] = _
 
@@ -55,10 +61,15 @@ sealed case class Failure[+A] private(failures: List[ValidationFailure], instanc
 
 object Failure {
 
-  def apply[A](failures: List[ValidationFailure], valuesMap: Map[String, Seq[String]], instance: Option[A], metadata: Map[String, List[Any]]): Failure[A] = {
+
+  def apply[A](failures: List[ValidationFailure], metadata: Map[String, List[Any]], valuesMap: Map[String, Seq[String]], instance: Option[A]): Failure[A] = {
     val result = new Failure(failures, instance, metadata)
     result.valuesMap = valuesMap
     result
+  }
+
+  def unapply[A](input: Failure[A]): Option[(List[ValidationFailure], Map[String, List[Any]])] = {
+    Some((input.validationFailures, input.metadata))
   }
 
 }
