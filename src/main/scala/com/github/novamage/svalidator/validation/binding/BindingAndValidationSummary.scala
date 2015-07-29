@@ -8,7 +8,6 @@ sealed abstract class BindingAndValidationSummary[+A](validationFailures: List[V
 
   def valuesMap: Map[String, Seq[String]]
 
-
 }
 
 object BindingAndValidationSummary {
@@ -30,6 +29,11 @@ sealed class Success[+A] private(val instanceValue: A, metadata: Map[String, Lis
   }
 
   def instance: Option[A] = Some(instanceValue)
+
+  override def equals(obj: Any): Boolean = obj match {
+    case another: Success[_] => instanceValue.equals(another.instanceValue) && metadata.equals(another.metadata)
+    case _ => false
+  }
 }
 
 object Success {
@@ -55,6 +59,11 @@ sealed class Failure[+A] private(failures: List[ValidationFailure], val instance
 
   protected[Failure] def valuesMap_=(value: Map[String, Seq[String]]): Unit = {
     _valuesMap = value
+  }
+
+  override def equals(obj: Any): Boolean = obj match {
+    case another: Failure[_] => another.validationFailures == failures && instance == another.instance && metadata == another.metadata
+    case _ => false
   }
 
 }
