@@ -8,7 +8,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   def WithRules(ruleBuilders: IRuleBuilder[A]*)(implicit instance: A): ValidationSummary = {
     val ruleStreamCollections = ruleBuilders.toList.map(_.buildRules(instance))
     val nonFlattenedValidationRuleStreams = ruleStreamCollections.flatMap(_.ruleStreams)
-    val metadata = ruleStreamCollections.map(_.metadata).reduce(Utils.mergeMaps)
+    val metadata = ruleStreamCollections.map(_.metadata).fold(Map.empty[String, List[Any]])(Utils.mergeMaps)
     val firstFailingResultForEachGroup =
       nonFlattenedValidationRuleStreams flatMap {
         ruleStream =>
