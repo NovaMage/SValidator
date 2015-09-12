@@ -63,6 +63,9 @@ object TypeBinderRegistry {
     else if (runtimeType.erasure =:= ru.typeOf[List[_]].erasure) {
       getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new ListBinder(_))
     }
+    else if (runtimeType.erasure =:= ru.typeOf[Set[_]].erasure) {
+      getBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new SetBinder(_))
+    }
     else if (isTypeATypeBasedEnum(runtimeType)) {
       Some(new TypeBasedEnumerationBinder(runtimeType, mirror, currentBindingConfig))
     } else if (allowRecursiveBinders) {
