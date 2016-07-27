@@ -7,14 +7,14 @@ import scala.collection.mutable.ListBuffer
 
 class SetBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[Set[Any]] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Set[Any]] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizationFunction: String => String): BindingResult[Set[Any]] = {
     val fieldErrors = new ListBuffer[FieldError]
     val validValues = new ListBuffer[Any]
     val nonIndexedFieldName = valueMap.get(fieldName)
     nonIndexedFieldName match {
       case Some(values) =>
         values.toList map {
-          value => wrappedBinder.bind(fieldName, Map(fieldName -> List(value)))
+          value => wrappedBinder.bind(fieldName, Map(fieldName -> List(value)), localizationFunction)
         } foreach {
           case x: BindingFailure[_] => fieldErrors.appendAll(x.fieldErrors.map(_.copy(fieldName = fieldName)))
           case BindingPass(validValue) => validValues.append(validValue)
@@ -25,8 +25,8 @@ class SetBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[Set[Any]] {
         (for {
           i <- indexes
         } yield {
-            wrappedBinder.bind(s"$fieldName[$i]", valueMap)
-          }) foreach {
+          wrappedBinder.bind(s"$fieldName[$i]", valueMap, localizationFunction)
+        }) foreach {
           case x: BindingFailure[_] => fieldErrors.appendAll(x.fieldErrors)
           case BindingPass(validValue) => validValues.append(validValue)
         }

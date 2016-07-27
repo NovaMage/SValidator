@@ -8,6 +8,8 @@ import org.scalatest.path
 
 class Observes extends path.FunSpec with MockitoSugar with scalatest.Matchers with FunctionStubbingHelpers {
 
+  val identityLocalization: String => String = x => x
+
   def when[T](method_call: T) = {
     Mockito.when(method_call)
   }

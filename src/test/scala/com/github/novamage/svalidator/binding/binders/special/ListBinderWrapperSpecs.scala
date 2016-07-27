@@ -25,13 +25,13 @@ class ListBinderWrapperSpecs extends Observes {
       when(first_failure.fieldErrors) thenReturn first_failure_field_errors
       when(second_failure.fieldErrors) thenReturn second_failure_field_errors
 
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("a")))) thenReturn first_failure
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("c")))) thenReturn second_failure
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("a")), identityLocalization)) thenReturn first_failure
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("c")), identityLocalization)) thenReturn second_failure
 
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("2")))) thenReturn BindingPass(2L)
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("4")))) thenReturn BindingPass(4L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("2")), identityLocalization)) thenReturn BindingPass(2L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("4")), identityLocalization)) thenReturn BindingPass(4L)
 
-      val result = sut.bind(fieldName, valueMap)
+      val result = sut.bind(fieldName, valueMap, identityLocalization)
 
       it("should have a list of binding failures for each failure encountered, with the name of list field instead of the" +
         " name of sub-field returned by the wrappedBinder") {
@@ -56,13 +56,13 @@ class ListBinderWrapperSpecs extends Observes {
         fieldName -> List("a", "2", "c", "4")
       )
 
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("a")))) thenReturn BindingPass(1L)
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("c")))) thenReturn BindingPass(3L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("a")), identityLocalization)) thenReturn BindingPass(1L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("c")), identityLocalization)) thenReturn BindingPass(3L)
 
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("2")))) thenReturn BindingPass(2L)
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("4")))) thenReturn BindingPass(4L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("2")), identityLocalization)) thenReturn BindingPass(2L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("4")), identityLocalization)) thenReturn BindingPass(4L)
 
-      val result = sut.bind(fieldName, valueMap)
+      val result = sut.bind(fieldName, valueMap, identityLocalization)
 
       it("should have returned BindingPass with a list with all BindingPass values bound to it") {
         result should equal(BindingPass(List(1L, 2L, 3L, 4L)))
@@ -91,13 +91,13 @@ class ListBinderWrapperSpecs extends Observes {
           fieldName + "[3]" -> List("4")
         )
 
-        when(wrappedBinder.bind(fieldName + "[0]", valueMap)) thenReturn first_failure
-        when(wrappedBinder.bind(fieldName + "[2]", valueMap)) thenReturn second_failure
+        when(wrappedBinder.bind(fieldName + "[0]", valueMap, identityLocalization)) thenReturn first_failure
+        when(wrappedBinder.bind(fieldName + "[2]", valueMap, identityLocalization)) thenReturn second_failure
 
-        when(wrappedBinder.bind(fieldName + "[1]", valueMap)) thenReturn BindingPass(2L)
-        when(wrappedBinder.bind(fieldName + "[3]", valueMap)) thenReturn BindingPass(4L)
+        when(wrappedBinder.bind(fieldName + "[1]", valueMap, identityLocalization)) thenReturn BindingPass(2L)
+        when(wrappedBinder.bind(fieldName + "[3]", valueMap, identityLocalization)) thenReturn BindingPass(4L)
 
-        val result = sut.bind(fieldName, valueMap)
+        val result = sut.bind(fieldName, valueMap, identityLocalization)
 
         it("should have returned BindingFailure with a field error for all failing values and the field name " +
           "should be the same as returned by the wrapped binder") {
@@ -124,13 +124,13 @@ class ListBinderWrapperSpecs extends Observes {
           fieldName + "[3]" -> List("4")
         )
 
-        when(wrappedBinder.bind(fieldName + "[0]", valueMap)) thenReturn BindingPass(1L)
-        when(wrappedBinder.bind(fieldName + "[2]", valueMap)) thenReturn BindingPass(3L)
+        when(wrappedBinder.bind(fieldName + "[0]", valueMap, identityLocalization)) thenReturn BindingPass(1L)
+        when(wrappedBinder.bind(fieldName + "[2]", valueMap, identityLocalization)) thenReturn BindingPass(3L)
 
-        when(wrappedBinder.bind(fieldName + "[1]", valueMap)) thenReturn BindingPass(2L)
-        when(wrappedBinder.bind(fieldName + "[3]", valueMap)) thenReturn BindingPass(4L)
+        when(wrappedBinder.bind(fieldName + "[1]", valueMap, identityLocalization)) thenReturn BindingPass(2L)
+        when(wrappedBinder.bind(fieldName + "[3]", valueMap, identityLocalization)) thenReturn BindingPass(4L)
 
-        val result = sut.bind(fieldName, valueMap)
+        val result = sut.bind(fieldName, valueMap, identityLocalization)
 
         it("should have returned BindingPass with a list with all BindingPass values bound to it") {
           result should equal(BindingPass(List(1L, 2L, 3L, 4L)))

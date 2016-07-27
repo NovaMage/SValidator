@@ -4,5 +4,5 @@ import com.github.novamage.svalidator.binding.BindingResult
 
 trait TypedBinder[A] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[A]
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizationFunction: String => String): BindingResult[A]
 }

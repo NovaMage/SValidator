@@ -8,7 +8,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
 import scala.reflect.runtime.{universe => ru}
 
 class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]) = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizationFunction: String => String) = {
     val enumType = runtimeType.asInstanceOf[ru.TypeRef].pre
     val classSymbol = enumType.typeSymbol.asClass
     val companionSymbol = classSymbol.companionSymbol.asModule
@@ -18,12 +18,11 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
     try {
       BindingPass(applyMethod(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get))
     } catch {
-      case ex: InvocationTargetException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName), Some(ex))
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName), Some(ex))
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
+      case ex: InvocationTargetException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizationFunction), Some(ex))
+      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizationFunction), Some(ex))
+      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName, localizationFunction), Some(ex))
     }
   }
-
 
 
 }

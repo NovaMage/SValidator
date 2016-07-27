@@ -7,7 +7,7 @@ import scala.reflect.runtime.{universe => ru}
 
 class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 
-  override def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Any] = {
+  override def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizationFunction: String => String): BindingResult[Any] = {
     try {
       val intValue = valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get
       val classSymbol = runtimeType.typeSymbol.asClass
@@ -44,11 +44,11 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
       }
       matchedCaseObjectOption match {
         case Some(caseObjectEnum) => BindingPass(caseObjectEnum)
-        case None => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName), None)
+        case None => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizationFunction), None)
       }
     } catch {
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName), Some(ex))
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
+      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizationFunction), Some(ex))
+      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName, localizationFunction), Some(ex))
     }
   }
 }

@@ -10,8 +10,8 @@ import scala.reflect.runtime.{universe => ru}
 abstract class MappingBindingValidator[A] extends SimpleValidator[A] {
 
 
-  def bindAndValidate[B](valuesMap: Map[String, Seq[String]], mapOp: B => A)(implicit tag: ru.TypeTag[B]): BindingAndValidationSummary[A] = {
-    val bindingResult = MapToObjectBinder.bind[B](valuesMap)
+  def bindAndValidate[B](valuesMap: Map[String, Seq[String]], mapOp: B => A, localizationFunction: String => String)(implicit tag: ru.TypeTag[B]): BindingAndValidationSummary[A] = {
+    val bindingResult = MapToObjectBinder.bind[B](valuesMap, localizationFunction)
     bindingResult match {
       case BindingFailure(errors, cause) => Failure(errors.map(error => ValidationFailure(error.fieldName, error.errorMessage)), Map.empty[String, List[String]], valuesMap, None)
       case BindingPass(value) =>

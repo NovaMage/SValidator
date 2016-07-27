@@ -40,7 +40,7 @@ class MappingBindingValidatorSpecs extends Observes {
 
   describe("when binding and validating a testing class and all values are provided and valid") {
 
-    val result = sut.bindAndValidate(full_map, mapOp)
+    val result = sut.bindAndValidate(full_map, mapOp, identityLocalization)
 
     it("should have returned a valid summary") {
       result.isValid should be(true)
@@ -53,7 +53,7 @@ class MappingBindingValidatorSpecs extends Observes {
 
   describe("when binding and validating a testing class and some invalid values are provided in the bind") {
 
-    val result = sut.bindAndValidate(full_map.updated("anInt", List("90.9")), mapOp)
+    val result = sut.bindAndValidate(full_map.updated("anInt", List("90.9")), mapOp, identityLocalization)
 
     it("should have returned an error for the anInt field") {
       result shouldHaveValidationErrorFor "anInt"
@@ -63,7 +63,7 @@ class MappingBindingValidatorSpecs extends Observes {
 
   describe("when binding and validating a testing class and some invalid values are provided to the validation phase") {
 
-    val result = sut.bindAndValidate(full_map.updated("anInt", List("-2000")), mapOp)
+    val result = sut.bindAndValidate(full_map.updated("anInt", List("-2000")), mapOp, identityLocalization)
 
     it("should have returned an error for the anInt field") {
       result shouldHaveValidationErrorFor "anInt"
