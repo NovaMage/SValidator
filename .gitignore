@@ -23,3 +23,4 @@ log/
 .settings/
 .DS_Store
 .cache
+project/project/
