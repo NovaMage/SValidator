@@ -14,8 +14,7 @@ log/
 .scala_dependencies
 
 #Intellij-IDEA specific
-.idea/workspace.xml
-.idea/tasks.xml
+.idea/**
 
 #Eclipse
 .classpath
