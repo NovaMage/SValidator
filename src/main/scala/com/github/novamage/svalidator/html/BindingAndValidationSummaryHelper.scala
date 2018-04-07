@@ -1,6 +1,7 @@
 package com.github.novamage.svalidator.html
 
 import com.github.novamage.svalidator.validation.binding.BindingAndValidationSummary
+import language.implicitConversions
 
 class BindingAndValidationSummaryHelper[A](summary: BindingAndValidationSummary[A]) {
 
