@@ -2,19 +2,18 @@ package com.github.novamage.svalidator.html
 
 import com.github.novamage.svalidator.validation.binding.BindingAndValidationSummary
 
-class HTMLFactory[A](converter: String => A,
-                     inputDecorator: HtmlFormElementDecorator,
-                     attributeDecorator: HtmlAttributeDecorator,
-                     extractor: HtmlValueExtractor) {
+class HtmlFactory[A](converter: String => A,
+                     inputDecorator: HtmlFormElementDecorator = DefaultHtmlFormElementDecorator,
+                     attributeDecorator: HtmlAttributeDecorator = DefaultHtmlAttributeDecorator,
+                     presenter: HtmlValuePresenter = DefaultHtmlValuePresenter) {
 
   def form(action: String,
            method: String = "POST",
            enctype: String = "application/x-www-form-urlencoded",
            attributes: Map[String, Any] = Map.empty)(body: => String): A = {
     val allAttributes = Map("action" -> action, "method" -> method, "enctype" -> enctype) ++ attributes
-    val decoratedFormBody = inputDecorator.decorateFormBody(body, allAttributes)
-    decoratedHtmlFor(FormElementType.Form, allAttributes, Some(decoratedFormBody)) { (html, decoratedAttrs) =>
-      converter(inputDecorator.decorateForm(html, decoratedAttrs))
+    decoratedHtmlFor(FormElementType.Form, allAttributes, inputDecorator.decorateFormBody(body, _), errors = Nil) { (html, decoratedAttrs) =>
+      converter.apply(inputDecorator.decorateForm(html, decoratedAttrs))
     }
   }
 
@@ -25,8 +24,8 @@ class HTMLFactory[A](converter: String => A,
     val defaultId = getDefaultIdForName(name)
     val valueAttribute = getValueUsing(summary, valueGetter, name).map("value" -> _)
     val allAttributes = Map("type" -> "hidden", "id" -> defaultId, "name" -> name) ++ valueAttribute ++ attributes
-    decoratedHtmlFor(FormElementType.Hidden, allAttributes, None) { (html, _) =>
-      converter(html)
+    decoratedHtmlFor(FormElementType.Hidden, allAttributes, None, Nil) { (html, _) =>
+      converter.apply(html)
     }
   }
 
@@ -39,25 +38,24 @@ class HTMLFactory[A](converter: String => A,
     val defaultId = getDefaultIdForName(name)
     val valueAttribute = getValueUsing(summary, valueGetter, name).map(x => ("value", x))
     val allAttributes = Map(("type", "text"), ("id", defaultId), ("name", name)) ++ valueAttribute ++ attributes
-    decoratedHtmlFor(FormElementType.TextBox, allAttributes, None) { (html, decoratedAttrs) =>
-      val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
-      val inputId = decoratedAttrs.apply("id").toString
-      converter(inputDecorator.decorateTextBox(html, inputId, name, label, errors, decoratedAttrs))
+    val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
+    decoratedHtmlFor(FormElementType.TextBox, allAttributes, None, errors) { (html, decoratedAttrs) =>
+      val inputId = decoratedAttrs.getOrElse("id", "").toString
+      converter.apply(inputDecorator.decorateTextBox(html, inputId, name, label, errors, decoratedAttrs))
     }
   }
 
   def password[B](summary: BindingAndValidationSummary[B],
                   name: String,
-                  valueGetter: B => Any,
                   label: String,
                   attributes: Map[String, Any] = Map.empty): A = {
 
     val defaultId = getDefaultIdForName(name)
     val allAttributes: Map[String, Any] = Map("type" -> "password", "id" -> defaultId, "name" -> name) ++ attributes
-    decoratedHtmlFor(FormElementType.Password, allAttributes, None) { (html, decoratedAttrs) =>
-      val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
-      val inputId = decoratedAttrs.apply("id").toString
-      converter(inputDecorator.decoratePassword(html, inputId, name, label, errors, decoratedAttrs))
+    val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
+    decoratedHtmlFor(FormElementType.Password, allAttributes, None, errors) { (html, decoratedAttrs) =>
+      val inputId = decoratedAttrs.getOrElse("id", "").toString
+      converter.apply(inputDecorator.decoratePassword(html, inputId, name, label, errors, decoratedAttrs))
     }
   }
 
@@ -72,10 +70,10 @@ class HTMLFactory[A](converter: String => A,
     val checkedAttribute = if (valueOnInstance || valueOnValuesMap) Some("checked" -> "checked") else None
 
     val allAttributes = Map("type" -> "checkbox", "id" -> defaultId, "name" -> name, "value" -> "true") ++ checkedAttribute ++ attributes
-    decoratedHtmlFor(FormElementType.CheckBox, allAttributes, None) { (html, decoratedAttrs) =>
-      val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
-      val inputId = decoratedAttrs.apply("id").toString
-      converter(inputDecorator.decorateCheckBox(html, inputId, name, label, errors, decoratedAttrs))
+    val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
+    decoratedHtmlFor(FormElementType.CheckBox, allAttributes, None, errors) { (html, decoratedAttrs) =>
+      val inputId = decoratedAttrs.getOrElse("id", "").toString
+      converter.apply(inputDecorator.decorateCheckBox(html, inputId, name, label, errors, decoratedAttrs))
     }
   }
 
@@ -92,18 +90,17 @@ class HTMLFactory[A](converter: String => A,
       case ((value, text), index) =>
         val selectedAttribute = if (value.toString == selectedValue) Some("selected" -> "selected") else None
         val optionAttributes = Map("value" -> value.toString) ++ selectedAttribute
-        decoratedHtmlFor(FormElementType.SelectOption, optionAttributes, Some(text.toString)) { (html, decoratedAttrs) =>
+        decoratedHtmlFor(FormElementType.SelectOption, optionAttributes, Some(text.toString), Nil) { (html, decoratedAttrs) =>
           inputDecorator.decorateSelectOption(html, value, text, index, decoratedAttrs)
         }
     } mkString ""
 
-    decoratedHtmlFor(FormElementType.Select, allAttributes, Some(optionsHtml)) { (html, decoratedAttrs) =>
-      val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
-      val inputId = decoratedAttrs.apply("id").toString
-      converter(inputDecorator.decorateSelect(html, inputId, name, errors, allAttributes))
+    val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
+    decoratedHtmlFor(FormElementType.Select, allAttributes, Some(optionsHtml), errors) { (html, decoratedAttrs) =>
+      val inputId = decoratedAttrs.getOrElse("id", "").toString
+      converter.apply(inputDecorator.decorateSelect(html, inputId, name, label, errors, allAttributes))
     }
   }
-
 
   def radioGroup[B](summary: BindingAndValidationSummary[B],
                     name: String,
@@ -119,13 +116,13 @@ class HTMLFactory[A](converter: String => A,
         val checked = selectedValue.contains(value.toString)
         val checkedAttribute = if (checked) Some("checked" -> "checked") else None
         val attributes = Map("id" -> defaultIdForOption, name -> name, "type" -> "radio", "value" -> value) ++ checkedAttribute
-        decoratedHtmlFor(FormElementType.RadioGroupOption, attributes, None) { (html, decoratedAttrs) =>
+        decoratedHtmlFor(FormElementType.RadioGroupOption, attributes, None, Nil) { (html, decoratedAttrs) =>
           val inputId = decoratedAttrs.getOrElse("id", "").toString
           inputDecorator.decorateRadioGroupOption(html, inputId, name, text.toString, decoratedAttrs)
         }
     }
     val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
-    converter(inputDecorator.decorateRadioGroup(radioButtonsHtml.mkString, name, errors, attributes))
+    converter.apply(inputDecorator.decorateRadioGroup(radioButtonsHtml.mkString, name, label, errors, attributes))
   }
 
   def checkBoxGroup[B](summary: BindingAndValidationSummary[B],
@@ -133,7 +130,7 @@ class HTMLFactory[A](converter: String => A,
                        valueGetter: B => List[Any],
                        optionValuesAndText: List[(Any, Any)],
                        label: String,
-                       attributes: Map[String, Any]): A = {
+                       attributes: Map[String, Any] = Map.empty): A = {
     val defaultId = getDefaultIdForName(name)
     val checkedValues = getValuesListUsing(summary, valueGetter, name)
     val checkboxesHtml = optionValuesAndText.map {
@@ -142,13 +139,13 @@ class HTMLFactory[A](converter: String => A,
         val checked = checkedValues.contains(value.toString)
         val checkedAttribute = if (checked) Some("checked" -> "checked") else None
         val attributes = Map("id" -> defaultIdForOption, name -> name, "type" -> "checkbox", "value" -> value) ++ checkedAttribute
-        decoratedHtmlFor(FormElementType.CheckBoxGroupOption, attributes, None) { (html, decoratedAttrs) =>
+        decoratedHtmlFor(FormElementType.CheckBoxGroupOption, attributes, None, Nil) { (html, decoratedAttrs) =>
           val inputId = decoratedAttrs.getOrElse("id", "").toString
           inputDecorator.decorateCheckBoxGroupOption(html, inputId, name, text.toString, decoratedAttrs)
         }
     }
     val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
-    converter(inputDecorator.decorateCheckBoxGroup(checkboxesHtml.mkString, name, errors, attributes))
+    converter.apply(inputDecorator.decorateCheckBoxGroup(checkboxesHtml.mkString, name, label, errors, attributes))
   }
 
   def textArea[B](summary: BindingAndValidationSummary[B],
@@ -159,10 +156,10 @@ class HTMLFactory[A](converter: String => A,
     val defaultId = getDefaultIdForName(name)
     val allAttributes = Map("id" -> defaultId, "name" -> name) ++ attributes
     val text = getValueUsing(summary, valueGetter, name)
-    decoratedHtmlFor(FormElementType.TextArea, allAttributes, text) { (html, decoratedAttrs) =>
+    val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
+    decoratedHtmlFor(FormElementType.TextArea, allAttributes, text, errors) { (html, decoratedAttrs) =>
       val inputId = decoratedAttrs.getOrElse("id", "").toString
-      val errors = summary.validationFailures.filter(_.fieldName == name).map(_.message)
-      converter(inputDecorator.decorateTextArea(html, inputId, name, errors, decoratedAttrs))
+      converter.apply(inputDecorator.decorateTextArea(html, inputId, name, label, errors, decoratedAttrs))
     }
   }
 
@@ -173,9 +170,9 @@ class HTMLFactory[A](converter: String => A,
 
     val defaultId = getDefaultIdForName(name)
     val allAttributes = Map("id" -> defaultId, "name" -> name, "type" -> "button") ++ attributes
-    decoratedHtmlFor(FormElementType.Button, allAttributes, None) { (html, decoratedAttrs) =>
+    decoratedHtmlFor(FormElementType.Button, allAttributes, None, Nil) { (html, decoratedAttrs) =>
       val inputId = decoratedAttrs.getOrElse("id", "").toString
-      converter(inputDecorator.decorateButton(html, inputId, name, value, decoratedAttrs))
+      converter.apply(inputDecorator.decorateButton(html, inputId, name, value, decoratedAttrs))
     }
   }
 
@@ -186,9 +183,9 @@ class HTMLFactory[A](converter: String => A,
 
     val defaultId = getDefaultIdForName(name)
     val allAttributes = Map("id" -> defaultId, "name" -> name, "type" -> "submit", "value" -> value) ++ attributes
-    decoratedHtmlFor(FormElementType.Submit, allAttributes, None) { (html, decoratedAttrs) =>
+    decoratedHtmlFor(FormElementType.Submit, allAttributes, None, Nil) { (html, decoratedAttrs) =>
       val inputId = decoratedAttrs.getOrElse("id", "").toString
-      converter(inputDecorator.decorateSubmit(html, inputId, name, value, decoratedAttrs))
+      converter.apply(inputDecorator.decorateSubmit(html, inputId, name, value, decoratedAttrs))
     }
   }
 
@@ -198,16 +195,21 @@ class HTMLFactory[A](converter: String => A,
 
   private def decoratedHtmlFor[B](elementType: FormElementType,
                                   attributes: Map[String, Any],
-                                  content: Option[String])(decorator: (String, Map[String, Any]) => B): B = {
+                                  content: Option[String],
+                                  errors: List[String])(decorator: (String, Map[String, Any]) => B): B = {
+    decoratedHtmlFor(elementType, attributes, _ => content.getOrElse(""), errors)(decorator)
+  }
 
-    val decoratedAttributes = attributeDecorator.decorateAttributes(elementType, attributes)
+  private def decoratedHtmlFor[B](elementType: FormElementType,
+                                  attributes: Map[String, Any],
+                                  content: Map[String, Any] => String,
+                                  errors: List[String])(decorator: (String, Map[String, Any]) => B): B = {
+
+    val decoratedAttributes = attributeDecorator.decorateAttributes(elementType, attributes, errors)
     val attributeString = decoratedAttributes map {
       case (attrName, attrValue) => "%s=\"%s\"".format(attrName, attrValue)
     } mkString " "
-    val element = content match {
-      case Some(c) => s"<${ elementType.htmlElementName } $attributeString >$c</${ elementType.htmlElementName }>"
-      case None => s"<${ elementType.htmlElementName } $attributeString />"
-    }
+    val element = s"<${ elementType.htmlElementName } $attributeString >${ content(decoratedAttributes) }</${ elementType.htmlElementName }>"
     decorator(element, decoratedAttributes)
   }
 
@@ -215,7 +217,7 @@ class HTMLFactory[A](converter: String => A,
                                valueGetter: (B) => Any,
                                name: String): Option[String] = {
     summary.instance.map(valueGetter) match {
-      case Some(value) => extractor.extractValueFromProperty(value)
+      case Some(value) => presenter.getValueToPresentFor(value)
       case None => summary.valuesMap.get(name) match {
         case None => None
         case Some(listOfValues) => listOfValues.headOption.map(_.trim)
@@ -224,7 +226,7 @@ class HTMLFactory[A](converter: String => A,
   }
 
   private def getValuesListUsing[B, C](summary: BindingAndValidationSummary[B], valueGetter: (B) => List[C], name: String): List[String] = {
-    summary.instance.map(valueGetter).map(_.flatMap(listValue => extractor.extractValueFromProperty(listValue))) match {
+    summary.instance.map(valueGetter).map(_.flatMap(listValue => presenter.getValueToPresentFor(listValue))) match {
       case Some(list) => list
       case None => summary.valuesMap.get(name) match {
         case None => Nil

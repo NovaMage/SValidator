@@ -32,6 +32,7 @@ trait HtmlFormElementDecorator {
   def decorateSelect(selectHtml: String,
                      id: String,
                      name: String,
+                     label: String,
                      errors: List[String],
                      attributes: Map[String, Any]): String
 
@@ -43,6 +44,7 @@ trait HtmlFormElementDecorator {
 
   def decorateRadioGroup(radioGroupHtml: String,
                          name: String,
+                         label:String,
                          errors: List[String],
                          attributes: Map[String, Any]): String
 
@@ -55,6 +57,7 @@ trait HtmlFormElementDecorator {
 
   def decorateCheckBoxGroup(radioGroupHtml: String,
                             name: String,
+                            label:String,
                             errors: List[String],
                             attributes: Map[String, Any]): String
 
@@ -67,6 +70,7 @@ trait HtmlFormElementDecorator {
   def decorateTextArea(textAreaHtml: String,
                        id: String,
                        name: String,
+                       label:String,
                        errors: List[String],
                        attributes: Map[String, Any]): String
 
