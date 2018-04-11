@@ -6,7 +6,7 @@ import testUtils.Observes
 
 class ShouldExtensionsSpecs extends Observes {
 
-  val summary = mock[ValidationSummary]
+  private val summary = mock[ValidationSummary]
 
   describe("when using the shouldBeValid view on a validation summary") {
 
@@ -15,8 +15,7 @@ class ShouldExtensionsSpecs extends Observes {
       when(summary.isValid) thenReturn true
 
       lazy val result = try {
-        val unitResult = summary.shouldBeValid()
-        Left(unitResult)
+        Left(summary.shouldBeValid())
       } catch {
         case e: ValidationTestingException => Right(e)
       }
@@ -33,8 +32,7 @@ class ShouldExtensionsSpecs extends Observes {
       when(summary.validationFailures) thenReturn failures
 
       lazy val result = try {
-        val unitResult = summary.shouldBeValid()
-        Left(unitResult)
+        Left(summary.shouldBeValid())
       } catch {
         case e: ValidationTestingException => Right(e)
       }
@@ -49,12 +47,11 @@ class ShouldExtensionsSpecs extends Observes {
 
     describe("and there's no error for specified field") {
 
-      val failures = List(ValidationFailure("aField", "aMessage"), ValidationFailure("anotherField", "anotherMessage"))
+      val failures = List(ValidationFailure("aField", "aMessage", Map.empty), ValidationFailure("anotherField", "anotherMessage", Map.empty))
       when(summary.validationFailures) thenReturn failures
 
       lazy val result = try {
-        val result = summary shouldHaveValidationErrorFor "aDifferentField"
-        Left(result)
+        Left(summary shouldHaveValidationErrorFor "aDifferentField")
       } catch {
         case e: ValidationTestingException => Right(e)
       }
@@ -67,12 +64,11 @@ class ShouldExtensionsSpecs extends Observes {
 
     describe("and there's an error for the specified field") {
 
-      val failures = List(ValidationFailure("aField", "aMessage"), ValidationFailure("aDifferentField", "anotherMessage"))
+      val failures = List(ValidationFailure("aField", "aMessage", Map.empty), ValidationFailure("aDifferentField", "anotherMessage", Map.empty))
       when(summary.validationFailures) thenReturn failures
 
       lazy val unitResult = try {
-        val result = summary shouldHaveValidationErrorFor "aDifferentField"
-        Left(result)
+        Left(summary shouldHaveValidationErrorFor "aDifferentField")
       } catch {
         case e: ValidationTestingException => Right(e)
       }
@@ -88,12 +84,11 @@ class ShouldExtensionsSpecs extends Observes {
 
     describe("and there's no error for specified field") {
 
-      val failures = List(ValidationFailure("aField", "aMessage"), ValidationFailure("anotherField", "anotherMessage"))
+      val failures = List(ValidationFailure("aField", "aMessage", Map.empty), ValidationFailure("anotherField", "anotherMessage", Map.empty))
       when(summary.validationFailures) thenReturn failures
 
       lazy val unitResult = try {
-        val result = summary shouldNotHaveValidationErrorFor "aDifferentField"
-        Left(result)
+        Left(summary shouldNotHaveValidationErrorFor "aDifferentField")
       } catch {
         case e: ValidationTestingException => Right(e)
       }
@@ -106,12 +101,11 @@ class ShouldExtensionsSpecs extends Observes {
 
     describe("and there's an error for the specified field") {
 
-      val failures = List(ValidationFailure("aField", "aMessage"), ValidationFailure("aDifferentField", "anotherMessage"))
+      val failures = List(ValidationFailure("aField", "aMessage", Map.empty), ValidationFailure("aDifferentField", "anotherMessage", Map.empty))
       when(summary.validationFailures) thenReturn failures
 
       lazy val result = try {
-        val result = summary shouldNotHaveValidationErrorFor "aDifferentField"
-        Left(result)
+        Left(summary shouldNotHaveValidationErrorFor "aDifferentField")
       } catch {
         case e: ValidationTestingException => Right(e)
       }

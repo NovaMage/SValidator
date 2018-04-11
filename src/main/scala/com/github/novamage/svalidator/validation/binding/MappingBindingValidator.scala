@@ -13,14 +13,14 @@ abstract class MappingBindingValidator[A] extends SimpleValidator[A] {
   def bindAndValidate[B](valuesMap: Map[String, Seq[String]], mapOp: B => A, localizationFunction: String => String)(implicit tag: ru.TypeTag[B]): BindingAndValidationSummary[A] = {
     val bindingResult = MapToObjectBinder.bind[B](valuesMap, localizationFunction)
     bindingResult match {
-      case BindingFailure(errors, cause) => Failure(errors.map(error => ValidationFailure(error.fieldName, error.errorMessage)), Map.empty[String, List[String]], valuesMap, None)
+      case BindingFailure(errors, cause) => Failure(errors.map(error => ValidationFailure(error.fieldName, error.errorMessage, Map.empty)), valuesMap, None)
       case BindingPass(value) =>
         val mappedValue = mapOp(value)
         val validatedValue = validate(mappedValue)
         if (validatedValue.isValid)
-          Success(mappedValue, valuesMap, validatedValue.metadata)
+          Success(mappedValue, valuesMap)
         else
-          Failure(validatedValue.validationFailures, validatedValue.metadata, valuesMap, Some(mappedValue))
+          Failure(validatedValue.validationFailures, valuesMap, Some(mappedValue))
     }
 
   }

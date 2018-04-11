@@ -6,16 +6,16 @@ import testUtils.Observes
 
 class SimpleValidatorSpecs extends Observes {
 
-  val rule_builder_1 = mock[IRuleBuilder[SampleValidatedClass]]
-  val rule_builder_2 = mock[IRuleBuilder[SampleValidatedClass]]
-  val rule_builder_3 = mock[IRuleBuilder[SampleValidatedClass]]
-  val rule_builder_4 = mock[IRuleBuilder[SampleValidatedClass]]
+  private val rule_builder_1 = mock[IRuleBuilder[SampleValidatedClass]]
+  private val rule_builder_2 = mock[IRuleBuilder[SampleValidatedClass]]
+  private val rule_builder_3 = mock[IRuleBuilder[SampleValidatedClass]]
+  private val rule_builder_4 = mock[IRuleBuilder[SampleValidatedClass]]
 
   case class SampleValidatedClass(a: String, b: Long) {
   }
 
   class SampleSimpleValidator extends SimpleValidator[SampleValidatedClass] {
-    def validate(implicit instance: SampleValidatedClass) = WithRules(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
+    def validate(implicit instance: SampleValidatedClass): ValidationSummary = WithRules(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
   }
 
   describe("when performing validation assisted by an instance of a child class of simple validator") {
@@ -27,22 +27,22 @@ class SimpleValidatorSpecs extends Observes {
     val rule_1 = mock[IValidationRule[SampleValidatedClass]]
     val rule_2 = mock[IValidationRule[SampleValidatedClass]]
     val rule_3 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_1 = RuleStreamCollection(List(Stream(rule_1, rule_2, rule_3)), Map.empty[String, List[Any]])
+    val rule_list_1 = RuleStreamCollection(List(Stream(rule_1, rule_2, rule_3)))
 
     val rule_4 = mock[IValidationRule[SampleValidatedClass]]
     val rule_5 = mock[IValidationRule[SampleValidatedClass]]
     val rule_6 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_2 = RuleStreamCollection(List(Stream(rule_4, rule_5, rule_6)), Map.empty[String, List[Any]])
+    val rule_list_2 = RuleStreamCollection(List(Stream(rule_4, rule_5, rule_6)))
 
     val rule_7 = mock[IValidationRule[SampleValidatedClass]]
     val rule_8 = mock[IValidationRule[SampleValidatedClass]]
     val rule_9 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_3 = RuleStreamCollection(List(Stream(rule_7, rule_8, rule_9)), Map.empty[String, List[Any]])
+    val rule_list_3 = RuleStreamCollection(List(Stream(rule_7, rule_8, rule_9)))
 
     val rule_10 = mock[IValidationRule[SampleValidatedClass]]
     val rule_11 = mock[IValidationRule[SampleValidatedClass]]
     val rule_12 = mock[IValidationRule[SampleValidatedClass]]
-    val rule_list_4 = RuleStreamCollection(List(Stream(rule_10, rule_11, rule_12)), Map.empty[String, List[Any]])
+    val rule_list_4 = RuleStreamCollection(List(Stream(rule_10, rule_11, rule_12)))
 
     when(rule_builder_1.buildRules(instance)) thenReturn rule_list_1
     when(rule_1.apply(instance)) thenReturn Nil
@@ -55,10 +55,10 @@ class SimpleValidatorSpecs extends Observes {
 
     describe("and some of the rule sets return validation failures") {
 
-      val failure_1 = ValidationFailure("fieldNameInSet2", "errorMessageInRule4")
-      val failure_2 = ValidationFailure("fieldNameInSet3", "errorMessageInRule8")
-      val failure_3 = ValidationFailure("fieldNameInSet4", "errorMessageInRule12")
-      val failure_4 = ValidationFailure("fieldNameInSet5", "errorMessageInRule8 second time")
+      val failure_1 = ValidationFailure("fieldNameInSet2", "errorMessageInRule4", Map.empty)
+      val failure_2 = ValidationFailure("fieldNameInSet3", "errorMessageInRule8", Map.empty)
+      val failure_3 = ValidationFailure("fieldNameInSet4", "errorMessageInRule12", Map.empty)
+      val failure_4 = ValidationFailure("fieldNameInSet5", "errorMessageInRule8 second time", Map.empty)
 
       when(rule_4.apply(instance)) thenReturn List(failure_1)
 

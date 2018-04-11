@@ -318,12 +318,12 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
   }
 
-  val c: BindingAndValidationSummary[String] = Success.apply("Hola", Map.empty[String, Seq[String]], Map.empty[String, List[Any]])
+  val c: BindingAndValidationSummary[String] = Success.apply("Hola", Map.empty)
 
   //This is just sort of a compile time test to ensure binding validation summaries can be unapplied properly.
   c match {
     case Success(instance) => instance.length
-    case Failure(failures, metadata) => failures.size + metadata.size
+    case Failure(failures) => failures.size
   }
 
 }

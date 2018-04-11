@@ -1,6 +1,5 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.utils.Utils
 import com.github.novamage.svalidator.validation.IRuleBuilder
 
 class ConditionedGroupValidationRuleBuilder[A](conditionalExpression: A => Boolean) {
@@ -16,7 +15,7 @@ class ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression: A =
   protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
     if (conditionalExpression(instance)) {
       val ruleStreamCollections = ruleBuilders.map(_.buildRules(instance))
-      RuleStreamCollection(ruleStreamCollections.flatMap(_.ruleStreams), ruleStreamCollections.map(_.metadata).reduce(Utils.mergeMaps))
+      RuleStreamCollection(ruleStreamCollections.flatMap(_.ruleStreams))
     } else {
       RuleStreamCollection.Empty
     }

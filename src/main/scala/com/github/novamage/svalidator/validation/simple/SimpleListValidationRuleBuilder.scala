@@ -10,16 +10,16 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
                                             markIndexesOfFieldNameErrors: Boolean,
                                             currentMetadata: Map[String, List[Any]]) extends IRuleBuilder[A] {
 
-  private lazy val defaultErrorMessageBuilder: ((A, B) => String) = (instance, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
-  private lazy val defaultConditionedValidation: A => Boolean = x => true
+  private lazy val defaultErrorMessageBuilder: ((A, B) => String) = (_, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
+  private lazy val defaultConditionedValidation: A => Boolean = _ => true
   private lazy val notFunctor: ((B, A) => Boolean) => ((B, A) => Boolean) = originalExpression => (propertyValue, instanceValue) => !originalExpression(propertyValue, instanceValue)
 
-  def when(conditionedValidation: A => Boolean) = {
+  def when(conditionedValidation: A => Boolean): SimpleListValidationRuleBuilder[A, B] = {
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(conditionalValidation = Some(conditionedValidation)), validationExpressions, fieldName, currentMetadata)
   }
 
   def must(ruleExpressionReceivingPropertyValue: B => Boolean): SimpleListValidationRuleBuilder[A, B] = {
-    val syntheticExpressionWithInstance: (B, A) => Boolean = (property, instance) => ruleExpressionReceivingPropertyValue(property)
+    val syntheticExpressionWithInstance: (B, A) => Boolean = (property, _) => ruleExpressionReceivingPropertyValue(property)
     addRuleExpressionToList(syntheticExpressionWithInstance)
   }
 
@@ -40,7 +40,7 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
   }
 
   def mustNot(ruleExpressionReceivingPropertyValue: B => Boolean): SimpleListValidationRuleBuilder[A, B] = {
-    val syntheticExpressionWithInstance: (B, A) => Boolean = (property, instance) => ruleExpressionReceivingPropertyValue(property)
+    val syntheticExpressionWithInstance: (B, A) => Boolean = (property, _) => ruleExpressionReceivingPropertyValue(property)
     addRuleExpressionToList(applyNotFunctor(syntheticExpressionWithInstance))
   }
 
@@ -49,7 +49,7 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
   }
 
   def withMessage(aFormatStringReceivingFieldValue: String): SimpleListValidationRuleBuilder[A, B] = {
-    val errorMessageAlternateBuilder: ((A, B) => String) = (instance, fieldValue) => aFormatStringReceivingFieldValue.format(fieldValue)
+    val errorMessageAlternateBuilder: ((A, B) => String) = (_, fieldValue) => aFormatStringReceivingFieldValue.format(fieldValue)
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder)), validationExpressions, fieldName, currentMetadata)
   }
 
@@ -64,11 +64,11 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
       case null => validationExpressions
       case x => validationExpressions :+ x
     }
-    processRuleStructures(instance, ruleStructures, currentMetadata)
+    processRuleStructures(instance, ruleStructures)
   }
 
 
-  private def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]], currentMetadata: Map[String, List[Any]]): RuleStreamCollection[A] = {
+  private def processRuleStructures(instance: A, ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): RuleStreamCollection[A] = {
     lazy val lazyPropertyListValue = propertyListExpression(instance)
     val ruleStream = ruleStructuresList.toStream map {
       ruleStructureContainer =>
@@ -80,7 +80,7 @@ class SimpleListValidationRuleBuilder[A, B](propertyListExpression: A => List[B]
           ruleStructureContainer.conditionalValidation.getOrElse(defaultConditionedValidation),
           markIndexesOfFieldNameErrors)
     }
-    RuleStreamCollection(List(ruleStream), currentMetadata)
+    RuleStreamCollection(List(ruleStream))
   }
 
 }
