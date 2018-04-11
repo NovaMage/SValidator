@@ -16,7 +16,7 @@ class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
       lazyPropertyExtractor.zipWithIndex.collect {
         case (propertyValue, index) if !ruleExpression(propertyValue, instance) =>
           val indexString = if (markIndexesOfFieldNameErrors) "[" + index + "]" else Constants.emptyString
-          ValidationFailure(fieldName + indexString, errorMessage(instance, propertyValue))
+          ValidationFailure(fieldName + indexString, errorMessage(instance, propertyValue), Map.empty)
       }
     }
 
