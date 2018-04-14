@@ -15,34 +15,34 @@ abstract class SimpleValidator[A] extends IValidate[A] {
     ValidationSummary(firstFailingResultForEachGroup.flatten)
   }
 
-  def When(conditionalExpression: A => Boolean) = {
+  def When(conditionalExpression: A => Boolean): ConditionedGroupValidationRuleBuilder[A] = {
     new ConditionedGroupValidationRuleBuilder(conditionalExpression)
   }
 
-  def For[B](propertyExpression: A => B) = {
+  def For[B](propertyExpression: A => B): FieldListRequiringSimpleValidatorRuleBuilder[A, B] = {
     val composedFunction: (A => List[B]) = x => propertyExpression(x) :: Nil
     new FieldListRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 
-  def ForEach[B](propertyListExpression: A => List[B]) = {
+  def ForEach[B](propertyListExpression: A => List[B]): FieldListRequiringSimpleValidatorRuleBuilder[A, B] = {
     new FieldListRequiringSimpleValidatorRuleBuilder[A, B](propertyListExpression, true)
   }
 
-  def ForOptional[B](optionalPropertyExpression: A => Option[B]) = {
+  def ForOptional[B](optionalPropertyExpression: A => Option[B]): FieldListRequiringSimpleValidatorRuleBuilder[A, B] = {
     val composedFunction: (A => List[B]) = x => optionalPropertyExpression(x).toList
     new FieldListRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 
-  def ForComponent[B](componentPropertyExpression: A => B) = {
+  def ForComponent[B](componentPropertyExpression: A => B): ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B] = {
     val composedFunction: (A => List[B]) = x => componentPropertyExpression(x) :: Nil
     new ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 
-  def ForEachComponent[B](componentListPropertyExpression: A => List[B]) = {
+  def ForEachComponent[B](componentListPropertyExpression: A => List[B]): ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B] = {
     new ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B](componentListPropertyExpression, true)
   }
 
-  def ForOptionalComponent[B](optionalComponentPropertyExpression: A => Option[B]) = {
+  def ForOptionalComponent[B](optionalComponentPropertyExpression: A => Option[B]): ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B] = {
     val composedFunction: (A => List[B]) = x => optionalComponentPropertyExpression(x).toList
     new ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }

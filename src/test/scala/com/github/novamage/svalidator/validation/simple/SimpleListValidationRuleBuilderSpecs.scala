@@ -15,7 +15,7 @@ class SimpleListValidationRuleBuilderSpecs extends Observes {
 
       val property_expression = stubUnCallableFunction[SampleValidatedClass, List[Long]]
 
-      val sut = new SimpleListValidationRuleBuilder[SampleValidatedClass, Long](property_expression, null, List(), "fieldName", false,null)
+      val sut = new SimpleListValidationRuleBuilder[SampleValidatedClass, Long](property_expression, null, List(), "fieldName", false)
 
       lazy val result = sut.buildRules(instance)
 
@@ -28,9 +28,9 @@ class SimpleListValidationRuleBuilderSpecs extends Observes {
     describe("and build rules is called with a current rule structure that is not null") {
       val property_expression = stubUnCallableFunction[SampleValidatedClass, List[Long]]
       val rule_expression = stubUnCallableFunction[Long, SampleValidatedClass, Boolean]
-      val rule_structure_container = SimpleValidationRuleStructureContainer[SampleValidatedClass, Long](rule_expression, None, None)
+      val rule_structure_container = SimpleValidationRuleStructureContainer[SampleValidatedClass, Long](rule_expression, None, None, Map.empty)
 
-      val sut = new SimpleListValidationRuleBuilder[SampleValidatedClass, Long](property_expression, rule_structure_container, List(), "fieldName", false, null)
+      val sut = new SimpleListValidationRuleBuilder[SampleValidatedClass, Long](property_expression, rule_structure_container, List(), "fieldName", false)
 
       val result = sut.buildRules(instance)
 

@@ -7,7 +7,8 @@ class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
                                      fieldName: String,
                                      errorMessage: (A, B) => String,
                                      conditionedValidation: A => Boolean,
-                                     markIndexesOfFieldNameErrors: Boolean) extends IValidationRule[A] {
+                                     markIndexesOfFieldNameErrors: Boolean,
+                                     metadata: Map[String, List[Any]]) extends IValidationRule[A] {
 
   override def apply(instance: A): List[ValidationFailure] = {
     if (!conditionedValidation(instance))
@@ -16,7 +17,7 @@ class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
       lazyPropertyExtractor.zipWithIndex.collect {
         case (propertyValue, index) if !ruleExpression(propertyValue, instance) =>
           val indexString = if (markIndexesOfFieldNameErrors) "[" + index + "]" else Constants.emptyString
-          ValidationFailure(fieldName + indexString, errorMessage(instance, propertyValue), Map.empty)
+          ValidationFailure(fieldName + indexString, errorMessage(instance, propertyValue), metadata)
       }
     }
 

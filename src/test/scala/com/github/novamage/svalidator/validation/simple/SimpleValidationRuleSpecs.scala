@@ -8,7 +8,7 @@ class SimpleValidationRuleSpecs extends Observes {
 
   describe("when using a simple validation rule to validate a specific property on an object with a given field name") {
     val field_name = "someFieldNameHere"
-    val instance = TestClass("someName", 18, true)
+    val instance = TestClass("someName", 18, single = true)
 
     describe("and the conditioned validation expression returns false") {
 
@@ -18,7 +18,7 @@ class SimpleValidationRuleSpecs extends Observes {
       val rule_expression = stubUnCallableFunction[Long, TestClass, Boolean]
       val error_message_builder = stubUnCallableFunction[TestClass, Long, String]
 
-      val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_extractor_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false)
+      val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_extractor_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false, Map.empty)
 
       val result = sut.apply(instance)
 
@@ -42,7 +42,7 @@ class SimpleValidationRuleSpecs extends Observes {
         val rule_expression = stubFunction(some_property_value, instance, true)
         val error_message_builder = stubUnCallableFunction[TestClass, Long, String]
 
-        val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_value_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false)
+        val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_value_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false, Map.empty)
 
         val result = sut.apply(instance)
 
@@ -56,7 +56,7 @@ class SimpleValidationRuleSpecs extends Observes {
         val rule_expression = stubFunction(some_property_value, instance, false)
         val error_message_builder = stubFunction(instance, some_property_value, some_error_message)
 
-        val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_value_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false)
+        val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_value_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false, Map.empty)
 
         val result = sut.apply(instance)
 

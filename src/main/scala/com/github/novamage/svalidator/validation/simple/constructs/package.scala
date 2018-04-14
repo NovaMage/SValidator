@@ -32,7 +32,7 @@ package object constructs {
       haveConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
-    private class NegatedAbstractValidationRuleBuilder(builder: SimpleListValidationRuleBuilder[A, B]) extends SimpleListValidationRuleBuilder[A, B](null, null, null, null, false, null) {
+    private class NegatedAbstractValidationRuleBuilder(builder: SimpleListValidationRuleBuilder[A, B]) extends SimpleListValidationRuleBuilder[A, B](null, null, null, null, false) {
 
       override def must(ruleExpression: (B) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.mustNot(ruleExpression)
 
