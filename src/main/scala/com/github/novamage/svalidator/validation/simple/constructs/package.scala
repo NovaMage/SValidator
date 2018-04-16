@@ -12,7 +12,7 @@ package object constructs {
 
   def equal[A](value: A): (A => Boolean) = _ == value
 
-  implicit class SimpleValidationRuleBuilderConstructExtensions[A, B, C](builder: SimpleListValidationRuleBuilder[A, B]) {
+  implicit class SimpleValidationRuleBuilderConstructExtensions[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B]) {
 
     def must(beConstruct: BeConstruct) = {
       beConstruct.prepareConstructWithRule(builder)
@@ -23,43 +23,43 @@ package object constructs {
     }
 
     def mustNot(beConstruct: BeConstruct) = {
-      val negatedBuilder = new NegatedAbstractValidationRuleBuilder(builder)
+      val negatedBuilder = new NegatedAbstractValidationRuleStarterBuilder(builder)
       beConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
     def mustNot(haveConstruct: HaveConstruct) = {
-      val negatedBuilder = new NegatedAbstractValidationRuleBuilder(builder)
+      val negatedBuilder = new NegatedAbstractValidationRuleStarterBuilder(builder)
       haveConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
-    private class NegatedAbstractValidationRuleBuilder(builder: SimpleListValidationRuleBuilder[A, B]) extends SimpleListValidationRuleBuilder[A, B](null, null, null, null, false) {
+    private class NegatedAbstractValidationRuleStarterBuilder(builder: SimpleListValidationRuleStarterBuilder[A, B]) extends SimpleListValidationRuleStarterBuilder[A, B](null, null, null, null, false) {
 
-      override def must(ruleExpression: (B) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.mustNot(ruleExpression)
+      override def must(ruleExpression: (B) => Boolean): SimpleListValidationRuleContinuationBuilder[A, B] = builder.mustNot(ruleExpression)
 
-      override def mustNot(ruleExpression: (B) => Boolean): SimpleListValidationRuleBuilder[A, B] = builder.must(ruleExpression)
+      override def mustNot(ruleExpression: (B) => Boolean): SimpleListValidationRuleContinuationBuilder[A, B] = builder.must(ruleExpression)
 
     }
 
   }
 
   class BeConstruct {
-    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleBuilder[A, B]) = {
+    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B]) = {
       new BeConstructWithRuleBuilder(builder)
     }
   }
 
   class HaveConstruct {
 
-    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleBuilder[A, B]) = {
+    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B]) = {
       new HaveConstructWithRuleBuilder(builder)
     }
   }
 
-  class BeConstructWithRuleBuilder[A, B](protected[constructs] val builder: SimpleListValidationRuleBuilder[A, B]) {
+  class BeConstructWithRuleBuilder[A, B](protected[constructs] val builder: SimpleListValidationRuleStarterBuilder[A, B]) {
 
   }
 
-  class HaveConstructWithRuleBuilder[A, B](protected[constructs] val builder: SimpleListValidationRuleBuilder[A, B]) {
+  class HaveConstructWithRuleBuilder[A, B](protected[constructs] val builder: SimpleListValidationRuleStarterBuilder[A, B]) {
 
   }
 

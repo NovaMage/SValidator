@@ -3,7 +3,7 @@ SValidator
 
 A framework for validation of scala objects in a fluent and concise way.
 
-This project is heavily inspired by the [FluentValidation library for .NET](http://fluentvalidation.codeplex.com/) and
+This project is heavily inspired by the [FluentValidation library for .NET](https://github.com/JeremySkinner/FluentValidation) and
 licensed under the MIT license.
 
 Quick Usage
