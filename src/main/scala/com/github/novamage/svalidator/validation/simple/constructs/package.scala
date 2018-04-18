@@ -14,25 +14,25 @@ package object constructs {
 
   implicit class SimpleValidationRuleBuilderConstructExtensions[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B]) {
 
-    def must(beConstruct: BeConstruct) = {
+    def must(beConstruct: BeConstruct): BeConstructWithRuleBuilder[A, B] = {
       beConstruct.prepareConstructWithRule(builder)
     }
 
-    def must(haveConstruct: HaveConstruct) = {
+    def must(haveConstruct: HaveConstruct): HaveConstructWithRuleBuilder[A, B] = {
       haveConstruct.prepareConstructWithRule(builder)
     }
 
-    def mustNot(beConstruct: BeConstruct) = {
+    def mustNot(beConstruct: BeConstruct): BeConstructWithRuleBuilder[A, B] = {
       val negatedBuilder = new NegatedAbstractValidationRuleStarterBuilder(builder)
       beConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
-    def mustNot(haveConstruct: HaveConstruct) = {
+    def mustNot(haveConstruct: HaveConstruct): HaveConstructWithRuleBuilder[A, B] = {
       val negatedBuilder = new NegatedAbstractValidationRuleStarterBuilder(builder)
       haveConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
-    private class NegatedAbstractValidationRuleStarterBuilder(builder: SimpleListValidationRuleStarterBuilder[A, B]) extends SimpleListValidationRuleStarterBuilder[A, B](null, null, null, null, false) {
+    private class NegatedAbstractValidationRuleStarterBuilder(builder: SimpleListValidationRuleStarterBuilder[A, B]) extends SimpleListValidationRuleStarterBuilder[A, B](null, null, null, null, false, null) {
 
       override def must(ruleExpression: (B) => Boolean): SimpleListValidationRuleContinuationBuilder[A, B] = builder.mustNot(ruleExpression)
 
@@ -43,14 +43,14 @@ package object constructs {
   }
 
   class BeConstruct {
-    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B]) = {
+    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B]): BeConstructWithRuleBuilder[A, B] = {
       new BeConstructWithRuleBuilder(builder)
     }
   }
 
   class HaveConstruct {
 
-    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B]) = {
+    def prepareConstructWithRule[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B]): HaveConstructWithRuleBuilder[A, B] = {
       new HaveConstructWithRuleBuilder(builder)
     }
   }
@@ -65,11 +65,11 @@ package object constructs {
 
   implicit class BeConstructWithRuleBuilderForStringExtensions[A, B](construct: BeConstructWithRuleBuilder[A, String]) {
 
-    def empty() = {
+    def empty(): SimpleListValidationRuleContinuationBuilder[A, String] = {
       construct.builder must { x => x == null || x.length == 0 }
     }
 
-    def trimmed() = {
+    def trimmed(): SimpleListValidationRuleContinuationBuilder[A, String] = {
       construct.builder must { x => x.trim.length == x.length }
     }
 
@@ -77,7 +77,7 @@ package object constructs {
 
   implicit class BeConstructWithRuleBuilderForIterableExtensions[A, B](construct: BeConstructWithRuleBuilder[A, B])(implicit evidence: B => Iterable[_]) {
 
-    def empty() = {
+    def empty(): SimpleListValidationRuleContinuationBuilder[A, B] = {
       construct.builder must { _.isEmpty }
     }
 
@@ -85,19 +85,19 @@ package object constructs {
 
   implicit class BeConstructWithRuleBuilderForNumbersExtensions[A, B](construct: BeConstructWithRuleBuilder[A, B])(implicit evidence: B => Double) {
 
-    def negative() = {
+    def negative(): SimpleListValidationRuleContinuationBuilder[A, B] = {
       construct.builder must { _ < 0 }
     }
 
-    def positive() = {
+    def positive(): SimpleListValidationRuleContinuationBuilder[A, B] = {
       construct.builder must { _ > 0 }
     }
 
-    def greaterThan(value: B) = {
+    def greaterThan(value: B): SimpleListValidationRuleContinuationBuilder[A, B] = {
       construct.builder must { _ > value }
     }
 
-    def lessThan(value: B) = {
+    def lessThan(value: B): SimpleListValidationRuleContinuationBuilder[A, B] = {
       construct.builder must { _ < value }
     }
 
@@ -105,30 +105,30 @@ package object constructs {
 
   implicit class HaveConstructWithRuleBuilderForStringExtensions[A, B](construct: HaveConstructWithRuleBuilder[A, String]) {
 
-    def maxLength(maxLength: Int) = {
+    def maxLength(maxLength: Int): SimpleListValidationRuleContinuationBuilder[A, String] = {
       construct.builder must { _.length <= maxLength }
     }
 
-    def minLength(minLength: Int) = {
+    def minLength(minLength: Int): SimpleListValidationRuleContinuationBuilder[A, String] = {
       construct.builder must { _.length >= minLength }
     }
 
-    def length(targetLength: Int) = {
+    def length(targetLength: Int): SimpleListValidationRuleContinuationBuilder[A, String] = {
       construct.builder must { _.length == targetLength }
     }
   }
 
   implicit class HaveConstructWithRuleBuilderForIterableExtensions[A, B](construct: HaveConstructWithRuleBuilder[A, B])(implicit evidence: B => Iterable[_]) {
 
-    def maxSize(maxSize: Int) = {
+    def maxSize(maxSize: Int): SimpleListValidationRuleContinuationBuilder[A, B] = {
       construct.builder must { _.size <= maxSize }
     }
 
-    def minSize(minSize: Int) = {
+    def minSize(minSize: Int): SimpleListValidationRuleContinuationBuilder[A, B] = {
       construct.builder must { _.size >= minSize }
     }
 
-    def size(targetSize: Int) = {
+    def size(targetSize: Int): SimpleListValidationRuleContinuationBuilder[A, B] = {
       construct.builder must { _.size == targetSize }
     }
   }

@@ -16,12 +16,13 @@ class SimpleListValidationRuleStarterBuilderSpecs extends Observes {
       val rule_expression = stubUnCallableFunction[Long, SampleValidatedClass, Boolean]
       val rule_structure_container = SimpleValidationRuleStructureContainer[SampleValidatedClass, Long](rule_expression, None, None, Map.empty)
 
-      val sut = new SimpleListValidationRuleContinuationBuilder[SampleValidatedClass, Long](property_expression, rule_structure_container, List(), "fieldName", false)
+      val sut = new SimpleListValidationRuleContinuationBuilder[SampleValidatedClass, Long](property_expression, Some(rule_structure_container), List(), "fieldName", false, None)
 
       val result = sut.buildRules(instance)
 
       it("should return a list with as many rules as rule expressions passed in") {
-        result.ruleStreams.head should have size 1
+        result.chains should have size 1
+        result.chains.head.mainStream should have size 1
       }
     }
 

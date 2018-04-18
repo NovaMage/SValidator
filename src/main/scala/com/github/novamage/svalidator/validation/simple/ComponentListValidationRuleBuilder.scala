@@ -14,7 +14,12 @@ class ComponentListValidationRuleBuilder[A, B](componentListPropertyExpression: 
 private class ComponentListValidationWrapper[A, B](componentListPropertyExpression: A => List[B], fieldName: String, componentValidator: IValidate[B], markIndexesOfFieldNameErrors: Boolean) extends IRuleBuilder[A] {
 
   protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
-    RuleStreamCollection(List(Stream(new ComponentListValidationRule[A, B](componentListPropertyExpression, fieldName, componentValidator, markIndexesOfFieldNameErrors))))
+    RuleStreamCollection(List(ChainedValidationStream(
+      List(Stream(new ComponentListValidationRule[A, B](
+        componentListPropertyExpression,
+        fieldName,
+        componentValidator,
+        markIndexesOfFieldNameErrors))), None)))
   }
 }
 

@@ -39,7 +39,8 @@ class AddressValidator extends SimpleValidator[Address] {
 
   def validate(implicit instance: Address) = WithRules(
     For { _.zip } ForField 'zip
-      must have maxLength 10 withMessage "Must have 10 characters or less"
+      must have maxLength 10 withMessage "Must have 10 characters or less",
+
   )
 }
 
@@ -69,14 +70,16 @@ class PersonValidator extends SimpleValidator[Person] {
       For { _.hasJob } ForField 'hasJob
         must be(false) withMessage "Must be 21 years or older to allow marking a job",
       For { _.married } ForField 'married
-        must { _ == false } withMessage s"Can't be married at ${instance.age } Must be 21 years or older to allow marking marriage"
+        must { _ == false } withMessage s"Can't be married at ${ instance.age } Must be 21 years or older to allow marking marriage"
     ),
 
 
     For { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth
       must have size 12 withMessage "Must have 12 values for the tasks completed by month",
 
-    ForOptional { _.notes } ForField 'notes
+    For { _.notes } ForField 'notes
+      must { _.isDefined } withMessage "Phone is required"
+      map { _.get }
       must have maxLength 32 withMessage "Notes can't have more than 32 characters",
 
     ForEach { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth

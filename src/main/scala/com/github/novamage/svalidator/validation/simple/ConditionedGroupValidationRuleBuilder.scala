@@ -15,7 +15,7 @@ class ConditionedGroupValidationRuleBuilderWrapper[A](conditionalExpression: A =
   protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
     if (conditionalExpression(instance)) {
       val ruleStreamCollections = ruleBuilders.map(_.buildRules(instance))
-      RuleStreamCollection(ruleStreamCollections.flatMap(_.ruleStreams))
+      RuleStreamCollection(ruleStreamCollections.flatMap(_.chains))
     } else {
       RuleStreamCollection.Empty
     }

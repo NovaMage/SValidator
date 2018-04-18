@@ -2,17 +2,31 @@ package com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.validation._
 
+import scala.collection.GenTraversableOnce
+
 abstract class SimpleValidator[A] extends IValidate[A] {
+
 
   def WithRules(ruleBuilders: IRuleBuilder[A]*)(implicit instance: A): ValidationSummary = {
     val ruleStreamCollections = ruleBuilders.toList.map(_.buildRules(instance))
-    val nonFlattenedValidationRuleStreams = ruleStreamCollections.flatMap(_.ruleStreams)
-    val firstFailingResultForEachGroup =
-      nonFlattenedValidationRuleStreams flatMap {
-        ruleStream =>
-          ruleStream map { _.apply(instance) } collectFirst { case result if result.nonEmpty => result }
+    val results = ruleStreamCollections.flatMap {
+      collection => processRuleStreamCollection(instance, collection)
+    }
+    ValidationSummary(results)
+  }
+
+  def processRuleStreamCollection(instance: A, collection: RuleStreamCollection[A]): List[ValidationFailure] = {
+    collection.chains.flatMap { chain =>
+      val upstreamResults = chain.dependsOnUpstream.map(processRuleStreamCollection(instance, _)).getOrElse(Nil)
+      if (upstreamResults.isEmpty) {
+        chain.mainStream.flatMap {
+          ruleStream =>
+            ruleStream map { _.apply(instance) } collectFirst { case result if result.nonEmpty => result }
+        }.flatten
+      } else {
+        upstreamResults
       }
-    ValidationSummary(firstFailingResultForEachGroup.flatten)
+    }
   }
 
   def When(conditionalExpression: A => Boolean): ConditionedGroupValidationRuleBuilder[A] = {
