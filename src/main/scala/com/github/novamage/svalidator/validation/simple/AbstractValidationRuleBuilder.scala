@@ -1,7 +1,5 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.IRuleBuilder
-
 //A is the type of the whole validated instance
 //B is the type of the properly directly extracted
 //C is the direct type used on validation rules (varies according if it's a list, an option, etc)

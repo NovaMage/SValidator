@@ -2,10 +2,7 @@ package com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.validation._
 
-import scala.collection.GenTraversableOnce
-
 abstract class SimpleValidator[A] extends IValidate[A] {
-
 
   def WithRules(ruleBuilders: IRuleBuilder[A]*)(implicit instance: A): ValidationSummary = {
     val ruleStreamCollections = ruleBuilders.toList.map(_.buildRules(instance))
@@ -15,7 +12,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
     ValidationSummary(results)
   }
 
-  def processRuleStreamCollection(instance: A, collection: RuleStreamCollection[A]): List[ValidationFailure] = {
+  private def processRuleStreamCollection(instance: A, collection: RuleStreamCollection[A]): List[ValidationFailure] = {
     collection.chains.flatMap { chain =>
       val upstreamResults = chain.dependsOnUpstream.map(processRuleStreamCollection(instance, _)).getOrElse(Nil)
       if (upstreamResults.isEmpty) {

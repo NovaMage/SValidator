@@ -2,6 +2,7 @@ package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.testing._
 import com.github.novamage.svalidator.utils.TypeBasedEnumeration
+import com.github.novamage.svalidator.validation.ValidationSummary
 import com.github.novamage.svalidator.validation.binding.{BindingAndValidationSummary, Failure, Success}
 import com.github.novamage.svalidator.validation.simple.SimpleValidator
 import com.github.novamage.svalidator.validation.simple.constructs._
@@ -37,7 +38,7 @@ case class Person(firstName: String,
 
 class AddressValidator extends SimpleValidator[Address] {
 
-  def validate(implicit instance: Address) = WithRules(
+  def validate(implicit instance: Address): ValidationSummary = WithRules(
     For { _.zip } ForField 'zip
       must have maxLength 10 withMessage "Must have 10 characters or less",
 
@@ -45,7 +46,7 @@ class AddressValidator extends SimpleValidator[Address] {
 }
 
 class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
-  def validate(implicit instance: PhoneNumber) = WithRules(
+  def validate(implicit instance: PhoneNumber): ValidationSummary = WithRules(
     For { _.areaCode } ForField 'areaCode
       must have maxLength 4 withMessage "The area code can not exceed 4 characters"
   )
@@ -53,7 +54,7 @@ class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
 
 class PersonValidator extends SimpleValidator[Person] {
 
-  override def validate(implicit instance: Person) = WithRules(
+  override def validate(implicit instance: Person): ValidationSummary = WithRules(
 
     For { _.firstName } ForField 'firstName
       mustNot be empty() withMessage "First name is required"
@@ -77,10 +78,13 @@ class PersonValidator extends SimpleValidator[Person] {
     For { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth
       must have size 12 withMessage "Must have 12 values for the tasks completed by month",
 
-    For { _.notes } ForField 'notes
+    For { x => println("Access 1"); x.notes } ForField 'notes
       must { _.isDefined } withMessage "Phone is required"
-      map { _.get }
-      must have maxLength 32 withMessage "Notes can't have more than 32 characters",
+      map { x => println("Access 2"); x.get }
+      must have maxLength 32 withMessage "Notes can't have more than 32 characters"
+      map { x => println("Access 3"); x.charAt(0) }
+      must { _.isLetter } withMessage "Must start with a letter"
+    ,
 
     ForEach { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth
       must be positive() withMessage "Must be a positive number",
@@ -197,13 +201,21 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
       val result = sut.validate(instance.copy(notes = None))
 
-      it("should not have a validation error for the notes field") {
-        result shouldNotHaveValidationErrorFor 'notes
+      it("should have a validation error for the notes field") {
+        result shouldHaveValidationErrorFor 'notes
       }
     }
 
     describe("and the notes are defined but have more than 32 characters") {
       val result = sut.validate(instance.copy(notes = Some("A ridiculously long string that should have more than 32 characters by all means")))
+
+      it("should have a validation error for the notes field") {
+        result shouldHaveValidationErrorFor 'notes
+      }
+    }
+
+    describe("and the notes are defined and have less than 32 characters but don't start with a letter") {
+      val result = sut.validate(instance.copy(notes = Some("3 This starts with a number")))
 
       it("should have a validation error for the notes field") {
         result shouldHaveValidationErrorFor 'notes

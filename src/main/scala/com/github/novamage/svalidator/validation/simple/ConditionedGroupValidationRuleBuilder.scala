@@ -1,7 +1,5 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.IRuleBuilder
-
 class ConditionedGroupValidationRuleBuilder[A](conditionalExpression: A => Boolean) {
 
   def apply(ruleBuilder: IRuleBuilder[A]*): IRuleBuilder[A] = {
