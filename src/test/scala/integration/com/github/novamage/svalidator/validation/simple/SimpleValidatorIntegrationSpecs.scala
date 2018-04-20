@@ -83,8 +83,7 @@ class PersonValidator extends SimpleValidator[Person] {
       map { _.get }
       must have maxLength 32 withMessage "Notes can't have more than 32 characters"
       map { _.charAt(0) }
-      must { _.isLetter } withMessage "Must start with a letter"
-    ,
+      must { _.isLetter } withMessage "Must start with a letter",
 
     ForEach { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth
       must be positive() withMessage "Must be a positive number",
