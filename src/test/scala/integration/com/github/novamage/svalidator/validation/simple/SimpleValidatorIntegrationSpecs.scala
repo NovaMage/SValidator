@@ -78,11 +78,11 @@ class PersonValidator extends SimpleValidator[Person] {
     For { _.tasksCompletedByMonth } ForField 'tasksCompletedByMonth
       must have size 12 withMessage "Must have 12 values for the tasks completed by month",
 
-    For { x => println("Access 1"); x.notes } ForField 'notes
+    For { _.notes } ForField 'notes
       must { _.isDefined } withMessage "Phone is required"
-      map { x => println("Access 2"); x.get }
+      map { _.get }
       must have maxLength 32 withMessage "Notes can't have more than 32 characters"
-      map { x => println("Access 3"); x.charAt(0) }
+      map { _.charAt(0) }
       must { _.isLetter } withMessage "Must start with a letter"
     ,
 
