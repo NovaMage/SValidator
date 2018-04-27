@@ -215,7 +215,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and all values are provided") {
 
-      val result = sut.bind[AComplexClass](full_map, identityLocalization)
+      val result = sut.bind[AComplexClass](full_map, identityLocalizer)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it via constructor") {
         //Testing values individually for granularity purposes on test failure
@@ -235,7 +235,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required string is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "aString", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "aString", identityLocalizer)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -245,7 +245,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required int is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "anInt", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "anInt", identityLocalizer)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -255,7 +255,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required long is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "aLong", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "aLong", identityLocalizer)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -265,7 +265,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required boolean is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "aBoolean", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "aBoolean", identityLocalizer)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it " +
         "via constructor and use false for the missing boolean") {
@@ -275,7 +275,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required timestamp is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "aTimestamp", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "aTimestamp", identityLocalizer)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -285,7 +285,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required enum is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "enumeratedValue", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "enumeratedValue", identityLocalizer)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -295,7 +295,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required simple object based enum is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "aSimpleObjectBasedEnum", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "aSimpleObjectBasedEnum", identityLocalizer)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -305,7 +305,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required type based enum is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "aTypeBasedEnum", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "aTypeBasedEnum", identityLocalizer)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -315,7 +315,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the optional text is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "optionalText", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "optionalText", identityLocalizer)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it via constructor") {
         result should equal(BindingPass(full_class.copy(optionalText = None)))
@@ -324,7 +324,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the optional int is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "optionalInt", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "optionalInt", identityLocalizer)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it via constructor") {
         result should equal(BindingPass(full_class.copy(optionalInt = None)))
@@ -333,7 +333,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the list of integers is missing") {
 
-      val result = sut.bind[AComplexClass](full_map - "intList", identityLocalization)
+      val result = sut.bind[AComplexClass](full_map - "intList", identityLocalizer)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it via constructor") {
         result should equal(BindingPass(full_class.copy(intList = List())))
@@ -354,7 +354,7 @@ class MapToObjectBinderSpecs extends Observes {
         "recursiveClass.someBoolean" -> List("true")
       )
 
-      val result = sut.bind[ASimpleRecursiveClass](value_map, identityLocalization)
+      val result = sut.bind[ASimpleRecursiveClass](value_map, identityLocalizer)
 
       it("should have bound properly the top class and the recursively bound class") {
         result should equal(BindingPass(ASimpleRecursiveClass("anotherValue", new ClassUsedInRecursiveClass(8, true))))
@@ -372,7 +372,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have bound properly the top class and the recursively bound class") {
         intercept[NoBinderFoundException] {
-          sut.bind[ASimpleRecursiveClass](value_map, identityLocalization)
+          sut.bind[ASimpleRecursiveClass](value_map, identityLocalizer)
         }
       }
     }
@@ -392,7 +392,7 @@ class MapToObjectBinderSpecs extends Observes {
         "anIndexedList[3].longField" -> List("39")
       )
 
-      val result = sut.bind[AClassWithAnIndexedList](value_map, identityLocalization)
+      val result = sut.bind[AClassWithAnIndexedList](value_map, identityLocalizer)
 
       it("should have bound properly the list and the recursive values") {
         result should equal(BindingPass(AClassWithAnIndexedList(List(
@@ -419,7 +419,7 @@ class MapToObjectBinderSpecs extends Observes {
         "anIndexedList[3][longField]" -> List("39")
       )
 
-      val result = sut.bind[AClassWithAnIndexedList](value_map, identityLocalization)
+      val result = sut.bind[AClassWithAnIndexedList](value_map, identityLocalizer)
 
       it("should have bound properly the list and the recursive values") {
         result should equal(BindingPass(AClassWithAnIndexedList(List(
@@ -438,7 +438,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the type based enum has an alternate constructor") {
 
-      val result = sut.bind[AnotherObjectBasedEnumWithAnAlternativeConstructor](values_map, identityLocalization, Some(fieldName))
+      val result = sut.bind[AnotherObjectBasedEnumWithAnAlternativeConstructor](values_map, identityLocalizer, Some(fieldName))
 
       it("should have successfully bound the enum using the primary constructor") {
         result should equal(BindingPass(AnotherObjectBasedEnumWithAnAlternativeConstructor.AnotherFirstOption))
@@ -450,7 +450,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor](values_map, identityLocalization, Some(fieldName))
+          sut.bind[AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor](values_map, identityLocalizer, Some(fieldName))
         }
       }
 
@@ -460,7 +460,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor](values_map, identityLocalization, Some(fieldName))
+          sut.bind[AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor](values_map, identityLocalizer, Some(fieldName))
         }
       }
 
@@ -470,7 +470,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectEnumWithAnEnumValueOutsideCompanionObject](values_map, identityLocalization, Some(fieldName))
+          sut.bind[AnObjectEnumWithAnEnumValueOutsideCompanionObject](values_map, identityLocalizer, Some(fieldName))
         }
       }
 
@@ -480,7 +480,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectEnumWithAnEnumValueThatIsNotAModuleClass](values_map, identityLocalization, Some(fieldName))
+          sut.bind[AnObjectEnumWithAnEnumValueThatIsNotAModuleClass](values_map, identityLocalizer, Some(fieldName))
         }
       }
 
@@ -490,7 +490,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[ANonSealedObjectBasedEnum](values_map, identityLocalization, Some(fieldName))
+          sut.bind[ANonSealedObjectBasedEnum](values_map, identityLocalizer, Some(fieldName))
         }
       }
 
@@ -500,7 +500,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[ANonAbstractBaseClassObjectBasedEnum](values_map, identityLocalization, Some(fieldName))
+          sut.bind[ANonAbstractBaseClassObjectBasedEnum](values_map, identityLocalizer, Some(fieldName))
         }
       }
 
@@ -510,7 +510,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectBasedEnumWithNoCompanionObject](values_map, identityLocalization, Some(fieldName))
+          sut.bind[AnObjectBasedEnumWithNoCompanionObject](values_map, identityLocalizer, Some(fieldName))
         }
       }
 
@@ -520,7 +520,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectBasedEnumWithNoDescendants](values_map, identityLocalization, Some(fieldName))
+          sut.bind[AnObjectBasedEnumWithNoDescendants](values_map, identityLocalizer, Some(fieldName))
         }
       }
 
@@ -536,10 +536,10 @@ class MapToObjectBinderSpecs extends Observes {
 
     val direct_binder = mock[TypedBinder[AComplexClass]]
     val direct_bind_result = mock[BindingResult[AComplexClass]]
-    when(direct_binder.bind("", values_map, identityLocalization)) thenReturn direct_bind_result
+    when(direct_binder.bind("", values_map, identityLocalizer)) thenReturn direct_bind_result
     TypeBinderRegistry.registerBinder(direct_binder)
 
-    val result = MapToObjectBinder.bind[AComplexClass](values_map, identityLocalization)
+    val result = MapToObjectBinder.bind[AComplexClass](values_map, identityLocalizer)
 
     it("should have returned the result done by the direct binder") {
       result should be theSameInstanceAs direct_bind_result
@@ -554,7 +554,7 @@ class MapToObjectBinderSpecs extends Observes {
       "aString" -> List("aVeryRidiculouslyLongString")
     )
 
-    val result = sut.bind[AClassWithMultipleConstructors](values_map, identityLocalization)
+    val result = sut.bind[AClassWithMultipleConstructors](values_map, identityLocalizer)
 
     it("should have properly bound the class using its primary constructor") {
       result should equal(BindingPass(new AClassWithMultipleConstructors(5)))
@@ -570,7 +570,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     it("should have thrown an exception complaining about the lack of a constructor or direct binder for the trait") {
       intercept[NoDirectBinderNorConstructorForBindingException] {
-        MapToObjectBinder.bind[SomeTrait](values_map, identityLocalization)
+        MapToObjectBinder.bind[SomeTrait](values_map, identityLocalizer)
       }
     }
 
@@ -584,10 +584,10 @@ class MapToObjectBinderSpecs extends Observes {
 
     val direct_binder = mock[TypedBinder[SomeTrait]]
     val direct_bind_result = mock[BindingResult[SomeTrait]]
-    when(direct_binder.bind("", values_map, identityLocalization)) thenReturn direct_bind_result
+    when(direct_binder.bind("", values_map, identityLocalizer)) thenReturn direct_bind_result
     TypeBinderRegistry.registerBinder(direct_binder)
 
-    val result = MapToObjectBinder.bind[SomeTrait](values_map, identityLocalization)
+    val result = MapToObjectBinder.bind[SomeTrait](values_map, identityLocalizer)
 
     it("should have returned the result done by the direct binder") {
       result should be theSameInstanceAs direct_bind_result

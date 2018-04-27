@@ -2,19 +2,20 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, BindingResult, FieldError}
+import com.github.novamage.svalidator.validation.binding.BindingLocalizer
 
 import scala.collection.mutable.ListBuffer
 
 class ListBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[List[Any]] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizationFunction: String => String): BindingResult[List[Any]] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer:BindingLocalizer): BindingResult[List[Any]] = {
     val fieldErrors = new ListBuffer[FieldError]
     val validValues = new ListBuffer[Any]
     val nonIndexedFieldName = valueMap.get(fieldName)
     nonIndexedFieldName match {
       case Some(values) =>
         values.toList map {
-          value => wrappedBinder.bind(fieldName, Map(fieldName -> List(value)), localizationFunction)
+          value => wrappedBinder.bind(fieldName, Map(fieldName -> List(value)), localizer)
         } foreach {
           case x: BindingFailure[_] => fieldErrors.appendAll(x.fieldErrors.map(_.copy(fieldName = fieldName)))
           case BindingPass(validValue) => validValues.append(validValue)
@@ -25,7 +26,7 @@ class ListBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[List[Any]] {
         (for {
           i <- indexes
         } yield {
-          wrappedBinder.bind(s"$fieldName[$i]", valueMap, localizationFunction)
+          wrappedBinder.bind(s"$fieldName[$i]", valueMap, localizer)
         }) foreach {
           case x: BindingFailure[_] => fieldErrors.appendAll(x.fieldErrors)
           case BindingPass(validValue) => validValues.append(validValue)

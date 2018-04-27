@@ -1,5 +1,6 @@
 package testUtils
 
+import com.github.novamage.svalidator.validation.binding.BindingLocalizer
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
@@ -9,7 +10,7 @@ import org.scalatest.path
 
 class Observes extends path.FunSpec with MockitoSugar with scalatest.Matchers with FunctionStubbingHelpers {
 
-  val identityLocalization: String => String = x => x
+  implicit val identityLocalizer: BindingLocalizer = (input: String) => input
 
   def when[T](method_call: T): OngoingStubbing[T] = {
     Mockito.when(method_call)

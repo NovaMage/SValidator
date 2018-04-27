@@ -24,22 +24,15 @@ package object constructs {
     }
 
     def mustNot(beConstruct: BeConstruct): BeConstructWithRuleBuilder[A, B] = {
-      val negatedBuilder = new NegatedAbstractValidationRuleStarterBuilder(builder)
+      val negatedBuilder = builder.negated
       beConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
     def mustNot(haveConstruct: HaveConstruct): HaveConstructWithRuleBuilder[A, B] = {
-      val negatedBuilder = new NegatedAbstractValidationRuleStarterBuilder(builder)
+      val negatedBuilder = builder.negated
       haveConstruct.prepareConstructWithRule(negatedBuilder)
     }
 
-    private class NegatedAbstractValidationRuleStarterBuilder(builder: SimpleListValidationRuleStarterBuilder[A, B, C]) extends SimpleListValidationRuleStarterBuilder[A, B, C](null, null, null, null, false, null, null, null) {
-
-      override def must(ruleExpression: (B) => Boolean): SimpleListValidationRuleContinuationBuilder[A, B, C] = builder.mustNot(ruleExpression)
-
-      override def mustNot(ruleExpression: (B) => Boolean): SimpleListValidationRuleContinuationBuilder[A, B, C] = builder.must(ruleExpression)
-
-    }
 
   }
 

@@ -3,6 +3,7 @@ package com.github.novamage.svalidator.binding.binders.special
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.exceptions.{NoBinderFoundException, NoDirectBinderNorConstructorForBindingException}
 import com.github.novamage.svalidator.binding.{BindingPass, FieldError, _}
+import com.github.novamage.svalidator.validation.binding.BindingLocalizer
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.{universe => ru}
@@ -10,10 +11,10 @@ import scala.reflect.runtime.{universe => ru}
 
 object MapToObjectBinder {
 
-  def bind[T](dataMap: Map[String, Seq[String]], localizationFunction: String => String, globalFieldName: Option[String] = None)(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+  def bind[A](dataMap: Map[String, Seq[String]], localizer: BindingLocalizer, globalFieldName: Option[String] = None)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
     val normalizedMap = normalizeKeys(dataMap)
     val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror, allowRecursiveBinders = false)
-    typeBinderOption.map(_.asInstanceOf[TypedBinder[T]].bind(globalFieldName.getOrElse(""), normalizedMap, localizationFunction)).getOrElse(bind[T](globalFieldName.filterNot(_.isEmpty), normalizedMap, localizationFunction))
+    typeBinderOption.map(_.asInstanceOf[TypedBinder[A]].bind(globalFieldName.getOrElse(""), normalizedMap, localizer)).getOrElse(bind[A](globalFieldName.filterNot(_.isEmpty), normalizedMap, localizer))
   }
 
   private def normalizeKeys(map: Map[String, Seq[String]]): Map[String, Seq[String]] = {
@@ -29,7 +30,7 @@ object MapToObjectBinder {
     }
   }
 
-  protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]], localizationFunction: String => String)(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+  protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]], localizer: BindingLocalizer)(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
     val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)
@@ -56,7 +57,7 @@ object MapToObjectBinder {
         val typeBinder = TypeBinderRegistry.getBinderForType(parameterType, runtimeMirror)
         typeBinder match {
           case Some(binder) =>
-            binder.bind(parameterName, normalizedMap, localizationFunction) match {
+            binder.bind(parameterName, normalizedMap, localizer) match {
               case BindingPass(value) => argList.append(value)
               case BindingFailure(errors, cause) =>
                 errorList.appendAll(errors)

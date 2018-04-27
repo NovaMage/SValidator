@@ -14,7 +14,7 @@ class DoubleBinderSpecs extends Observes {
 
     describe("and the argument is not present in the values map") {
 
-      val result = sut.bind(fieldName, Map("someOtherDouble" -> List("8.8")), identityLocalization)
+      val result = sut.bind(fieldName, Map("someOtherDouble" -> List("8.8")), identityLocalizer)
 
       it("should have returned a Binding Failure with an error for the double field") {
         result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -23,7 +23,7 @@ class DoubleBinderSpecs extends Observes {
 
     describe("and the argument is present in the values map but it is not a valid double") {
 
-      val result = sut.bind(fieldName, Map(fieldName -> List("aStringThatCanNotBeParsedAsDouble")), identityLocalization)
+      val result = sut.bind(fieldName, Map(fieldName -> List("aStringThatCanNotBeParsedAsDouble")), identityLocalizer)
 
       it("should have returned a Binding Failure with an error for the double field") {
         result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -32,7 +32,7 @@ class DoubleBinderSpecs extends Observes {
 
     describe("and the argument is present in the values map and is a valid double") {
 
-      val result = sut.bind(fieldName, Map(fieldName -> List("170.5")), identityLocalization)
+      val result = sut.bind(fieldName, Map(fieldName -> List("170.5")), identityLocalizer)
 
       it("should have bound the valueGetter  properly") {
         result should equal(BindingPass(170.5D))

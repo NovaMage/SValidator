@@ -2,12 +2,13 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
+import com.github.novamage.svalidator.validation.binding.BindingLocalizer
 
 import scala.reflect.runtime.{universe => ru}
 
 class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 
-  override def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizationFunction: String => String): BindingResult[Any] = {
+  override def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: BindingLocalizer): BindingResult[Any] = {
     try {
       val intValue = valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get
       val classSymbol = runtimeType.typeSymbol.asClass
@@ -23,7 +24,7 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
       val enclosingObjectInstance = reflectedEnclosingModule.instance
       val enclosingInstanceMirror = mirror.reflect(enclosingObjectInstance)
       val enclosingInstanceSymbol = enclosingInstanceMirror.symbol
-      val knownDescendants = classSymbol.knownDirectSubclasses.toIterable
+      val knownDescendants = classSymbol.knownDirectSubclasses
       val matchedCaseObjectOption = knownDescendants map {
         descendantType =>
           val innerObjectModule = enclosingInstanceSymbol.typeSignature.member(ru.TermName(descendantType.name.decodedName.toString)).asModule
@@ -44,11 +45,11 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
       }
       matchedCaseObjectOption match {
         case Some(caseObjectEnum) => BindingPass(caseObjectEnum)
-        case None => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizationFunction), None)
+        case None => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizer), None)
       }
     } catch {
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizationFunction), Some(ex))
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName, localizationFunction), Some(ex))
+      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizer), Some(ex))
+      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName, localizer), Some(ex))
     }
   }
 }

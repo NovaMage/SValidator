@@ -2,6 +2,7 @@ package integration.com.github.novamage.svalidator.validation.binding
 
 import com.github.novamage.svalidator.binding.TypeBinderRegistry
 import com.github.novamage.svalidator.testing.ShouldExtensions
+import com.github.novamage.svalidator.validation.ValidationSummary
 import com.github.novamage.svalidator.validation.binding.MappingBindingValidator
 import com.github.novamage.svalidator.validation.simple.constructs._
 import testUtils.Observes
@@ -12,7 +13,7 @@ case class AMappedTestingClass(aMappedString: String, aMappedInt: Int, aMappedFl
 
 class AMappedTestingClassValidator extends MappingBindingValidator[AMappedTestingClass] {
 
-  def validate(implicit instance: AMappedTestingClass) = WithRules(
+  def validate(implicit instance: AMappedTestingClass): ValidationSummary = WithRules(
     For { _.aMappedString } ForField 'aString
       must { _.contains("K") } withMessage "A string must contain at least a 'K'",
 
@@ -40,7 +41,7 @@ class MappingBindingValidatorSpecs extends Observes {
 
   describe("when binding and validating a testing class and all values are provided and valid") {
 
-    val result = sut.bindAndValidate(full_map, mapOp, identityLocalization)
+    val result = sut.bindAndValidate(full_map, mapOp)
 
     it("should have returned a valid summary") {
       result.isValid should be(true)
@@ -53,7 +54,7 @@ class MappingBindingValidatorSpecs extends Observes {
 
   describe("when binding and validating a testing class and some invalid values are provided in the bind") {
 
-    val result = sut.bindAndValidate(full_map.updated("anInt", List("90.9")), mapOp, identityLocalization)
+    val result = sut.bindAndValidate(full_map.updated("anInt", List("90.9")), mapOp)
 
     it("should have returned an error for the anInt field") {
       result shouldHaveValidationErrorFor "anInt"
@@ -63,7 +64,7 @@ class MappingBindingValidatorSpecs extends Observes {
 
   describe("when binding and validating a testing class and some invalid values are provided to the validation phase") {
 
-    val result = sut.bindAndValidate(full_map.updated("anInt", List("-2000")), mapOp, identityLocalization)
+    val result = sut.bindAndValidate(full_map.updated("anInt", List("-2000")), mapOp)
 
     it("should have returned an error for the anInt field") {
       result shouldHaveValidationErrorFor "anInt"

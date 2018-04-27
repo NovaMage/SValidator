@@ -9,9 +9,8 @@ import scala.reflect.runtime.{universe => ru}
 
 abstract class MappingBindingValidator[A] extends SimpleValidator[A] {
 
-
-  def bindAndValidate[B](valuesMap: Map[String, Seq[String]], mapOp: B => A, localizationFunction: String => String)(implicit tag: ru.TypeTag[B]): BindingAndValidationSummary[A] = {
-    val bindingResult = MapToObjectBinder.bind[B](valuesMap, localizationFunction)
+  def bindAndValidate[B](valuesMap: Map[String, Seq[String]], mapOp: B => A)(implicit localizer: BindingLocalizer, tag: ru.TypeTag[B]): BindingAndValidationSummary[A] = {
+    val bindingResult = MapToObjectBinder.bind[B](valuesMap, localizer)
     bindingResult match {
       case BindingFailure(errors, cause) => Failure(errors.map(error => ValidationFailure(error.fieldName, error.errorMessage, Map.empty)), valuesMap, None)
       case BindingPass(value) =>
@@ -22,8 +21,8 @@ abstract class MappingBindingValidator[A] extends SimpleValidator[A] {
         else
           Failure(validatedValue.validationFailures, valuesMap, Some(mappedValue))
     }
-
   }
+
 
 }
 

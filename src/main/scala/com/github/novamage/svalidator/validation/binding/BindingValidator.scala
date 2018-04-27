@@ -4,8 +4,9 @@ import scala.reflect.runtime.{universe => ru}
 
 abstract class BindingValidator[A: ru.TypeTag] extends MappingBindingValidator[A] {
 
-  def bindAndValidate(valuesMap: Map[String, Seq[String]], localizationFunction: String => String): BindingAndValidationSummary[A] = {
-    super.bindAndValidate(valuesMap, (x: A) => x, localizationFunction)
+  def bindAndValidate[B](valuesMap: Map[String, Seq[String]])(implicit localizer: BindingLocalizer, tag: ru.TypeTag[B]): BindingAndValidationSummary[A] = {
+    super.bindAndValidate(valuesMap, (x: A) => x)
   }
+
 
 }
