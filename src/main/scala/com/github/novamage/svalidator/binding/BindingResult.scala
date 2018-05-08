@@ -11,20 +11,23 @@ sealed abstract class BindingResult[A] {
 
 
 case class BindingPass[A](private val boundValue: A) extends BindingResult[A] {
-  def isValid = true
 
-  def value = Option(boundValue)
+  override def isValid = true
 
-  def fieldErrors = Nil
+  override def value = Option(boundValue)
+
+  override def fieldErrors: List[FieldError] = Nil
+
 }
 
 case class BindingFailure[A](private val errors: List[FieldError], cause: Option[Throwable]) extends BindingResult[A] {
 
-  def this(fieldName: String, error: String, cause: Option[Throwable]) = this(List(new FieldError(fieldName, error)), cause)
+  def this(fieldName: String, error: String, cause: Option[Throwable]) = this(List(FieldError(fieldName, error)), cause)
 
-  def isValid = false
+  override def isValid = false
 
-  def value = None
+  override def value: Option[A] = None
 
-  def fieldErrors = errors
+  override def fieldErrors: List[FieldError] = errors
+
 }

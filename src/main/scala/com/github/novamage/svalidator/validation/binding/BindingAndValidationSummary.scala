@@ -83,7 +83,7 @@ object Failure {
     result
   }
 
-  def unapply[A](input: Failure[A]): Option[(List[ValidationFailure])] = {
+  def unapply[A](input: Failure[A]): Option[List[ValidationFailure]] = {
     Some(input.validationFailures)
   }
 

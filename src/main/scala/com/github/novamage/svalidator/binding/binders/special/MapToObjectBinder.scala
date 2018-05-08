@@ -17,8 +17,8 @@ object MapToObjectBinder {
     typeBinderOption.map(_.asInstanceOf[TypedBinder[A]].bind(globalFieldName.getOrElse(""), normalizedMap, localizer)).getOrElse(bind[A](globalFieldName.filterNot(_.isEmpty), normalizedMap, localizer))
   }
 
-  private def normalizeKeys(map: Map[String, Seq[String]]): Map[String, Seq[String]] = {
-    map map {
+  private def normalizeKeys(valuesMap: Map[String, Seq[String]]): Map[String, Seq[String]] = {
+    valuesMap map {
       case (key, value) if key.contains("[") =>
         val dotNotationKey = key.replace("]", "").replace("[", ".")
         val tokens = dotNotationKey.split("\\.")
@@ -45,42 +45,26 @@ object MapToObjectBinder {
     }
     val primaryConstructorMethod = constructorMethodOption.get
     val paramSymbols = primaryConstructorMethod.paramLists
-    val argList = ListBuffer[Any]()
-    val errorList = ListBuffer[FieldError]()
-    val causeList = ListBuffer[Throwable]()
-    val prefix = fieldPrefix.map(_ + ".").getOrElse("")
-    paramSymbols.flatten foreach {
+    val reflectiveParamsInfo = paramSymbols.flatten.map {
       symbol =>
         val paramTermSymbol = symbol.asTerm
-        val parameterName = prefix + paramTermSymbol.name.decodedName.toString
+        val constructorParamName = paramTermSymbol.name.decodedName.toString
         val parameterType = paramTermSymbol.typeSignature
         val typeBinder = TypeBinderRegistry.getBinderForType(parameterType, runtimeMirror)
         typeBinder match {
           case Some(binder) =>
-            binder.bind(parameterName, normalizedMap, localizer) match {
-              case BindingPass(value) => argList.append(value)
-              case BindingFailure(errors, cause) =>
-                errorList.appendAll(errors)
-                cause.foreach(causeList.append(_))
-            }
+            new ReflectiveParamInformation(constructorParamName, binder)
           case None => throw new NoBinderFoundException(parameterType)
         }
     }
 
-
-    errorList.toList match {
-      case Nil =>
-        val classToBind = runtimeType.typeSymbol.asClass
-        val reflectClass = runtimeMirror.reflectClass(classToBind)
-        val constructorMirror = reflectClass.reflectConstructor(primaryConstructorMethod)
-        BindingPass(constructorMirror.apply(argList.toList: _*).asInstanceOf[T])
-      case nonEmptyList =>
-        if (argList.forall(x => x == None || x == false) && causeList.forall(_.isInstanceOf[NoSuchElementException])) {
-          BindingFailure[T](nonEmptyList, Some(new NoSuchElementException()))
-        } else {
-          BindingFailure[T](nonEmptyList, None)
-        }
-    }
+    val classToBind = runtimeType.typeSymbol.asClass
+    val reflectClass = runtimeMirror.reflectClass(classToBind)
+    val constructorMirror = reflectClass.reflectConstructor(primaryConstructorMethod)
+    val binderInformation = new ReflectiveBinderInformation(constructorMirror, reflectiveParamsInfo)
+    val reflectiveBinder = new ReflectivelyBuiltDirectBinder[T](binderInformation)
+    TypeBinderRegistry.registerBinder[T](reflectiveBinder)(tag)
+    reflectiveBinder.bind(fieldPrefix.getOrElse(""), normalizedMap, localizer)
   }
 
 }
