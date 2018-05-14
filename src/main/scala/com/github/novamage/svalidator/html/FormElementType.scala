@@ -4,7 +4,9 @@ import com.github.novamage.svalidator.utils.TypeBasedEnumeration
 
 sealed abstract case class FormElementType(id: Int, htmlElementName: String) extends FormElementType.Value {
 
-  override def description: String = getClass.getSimpleName.replace("$", "")
+  override def description: String = {
+    getClass.getSimpleName.replace("$", "")
+  }
 
 }
 

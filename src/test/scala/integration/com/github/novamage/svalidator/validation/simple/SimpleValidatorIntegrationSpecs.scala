@@ -2,7 +2,7 @@ package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.testing._
 import com.github.novamage.svalidator.utils.TypeBasedEnumeration
-import com.github.novamage.svalidator.validation.ValidationSummary
+import com.github.novamage.svalidator.validation.{Localizer, ValidationSummary}
 import com.github.novamage.svalidator.validation.binding.{BindingAndValidationSummary, Failure, Success}
 import com.github.novamage.svalidator.validation.simple.SimpleValidator
 import com.github.novamage.svalidator.validation.simple.constructs._
@@ -38,7 +38,7 @@ case class Person(firstName: String,
 
 class AddressValidator extends SimpleValidator[Address] {
 
-  def validate(implicit instance: Address): ValidationSummary = WithRules(
+  def validate(implicit instance: Address, localizer: Localizer): ValidationSummary = WithRules(
     For { _.zip } ForField 'zip
       must have maxLength 10 withMessage "Must have 10 characters or less",
 
@@ -46,7 +46,7 @@ class AddressValidator extends SimpleValidator[Address] {
 }
 
 class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
-  def validate(implicit instance: PhoneNumber): ValidationSummary = WithRules(
+  def validate(implicit instance: PhoneNumber, localizer: Localizer): ValidationSummary = WithRules(
     For { _.areaCode } ForField 'areaCode
       must have maxLength 4 withMessage "The area code can not exceed 4 characters"
   )
@@ -54,7 +54,7 @@ class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
 
 class PersonValidator extends SimpleValidator[Person] {
 
-  override def validate(implicit instance: Person): ValidationSummary = WithRules(
+  override def validate(implicit instance: Person, localizer: Localizer): ValidationSummary = WithRules(
 
     For { _.firstName } ForField 'firstName
       mustNot be empty() withMessage "First name is required"
@@ -126,7 +126,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and all fields are filled properly") {
 
-      val result = sut.validate(instance)
+      val result = sut.validate(instance, identityLocalizer)
 
       it("should be valid") {
         result.shouldBeValid()
@@ -135,7 +135,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the first name is null") {
 
-      val result = sut.validate(instance.copy(firstName = null))
+      val result = sut.validate(instance.copy(firstName = null), identityLocalizer)
 
       it("should have a validation error for the firstName field") {
         result shouldHaveValidationErrorFor 'firstName
@@ -144,7 +144,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the first name is empty") {
 
-      val result = sut.validate(instance.copy(firstName = ""))
+      val result = sut.validate(instance.copy(firstName = ""), identityLocalizer)
 
       it("should have a validation error for the firstName field") {
         result shouldHaveValidationErrorFor 'firstName
@@ -153,7 +153,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the first name has more than 32 characters") {
 
-      val result = sut.validate(instance.copy(firstName = "012345678901234567890123456789012"))
+      val result = sut.validate(instance.copy(firstName = "012345678901234567890123456789012"), identityLocalizer)
 
       it("should have a validation error for the firstName field") {
         result shouldHaveValidationErrorFor 'firstName
@@ -162,7 +162,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the last name is null") {
 
-      val result = sut.validate(instance.copy(lastName = null))
+      val result = sut.validate(instance.copy(lastName = null), identityLocalizer)
 
       it("should have a validation error for the lastName field") {
         result shouldHaveValidationErrorFor 'lastName
@@ -171,7 +171,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the last name is empty") {
 
-      val result = sut.validate(instance.copy(lastName = ""))
+      val result = sut.validate(instance.copy(lastName = ""), identityLocalizer)
 
       it("should have a validation error for the lastName field") {
         result shouldHaveValidationErrorFor 'lastName
@@ -180,7 +180,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the last name has more than 32 characters") {
 
-      val result = sut.validate(instance.copy(lastName = "012345678901234567890123456789012"))
+      val result = sut.validate(instance.copy(lastName = "012345678901234567890123456789012"), identityLocalizer)
 
       it("should have a validation error for the lastName field") {
         result shouldHaveValidationErrorFor 'lastName
@@ -189,7 +189,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the age is negative") {
 
-      val result = sut.validate(instance.copy(age = -1))
+      val result = sut.validate(instance.copy(age = -1), identityLocalizer)
 
       it("should have a validation error for the age field") {
         result shouldHaveValidationErrorFor 'age
@@ -198,7 +198,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the notes are not present") {
 
-      val result = sut.validate(instance.copy(notes = None))
+      val result = sut.validate(instance.copy(notes = None), identityLocalizer)
 
       it("should have a validation error for the notes field") {
         result shouldHaveValidationErrorFor 'notes
@@ -206,7 +206,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
     }
 
     describe("and the notes are defined but have more than 32 characters") {
-      val result = sut.validate(instance.copy(notes = Some("A ridiculously long string that should have more than 32 characters by all means")))
+      val result = sut.validate(instance.copy(notes = Some("A ridiculously long string that should have more than 32 characters by all means")), identityLocalizer)
 
       it("should have a validation error for the notes field") {
         result shouldHaveValidationErrorFor 'notes
@@ -214,7 +214,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
     }
 
     describe("and the notes are defined and have less than 32 characters but don't start with a letter") {
-      val result = sut.validate(instance.copy(notes = Some("3 This starts with a number")))
+      val result = sut.validate(instance.copy(notes = Some("3 This starts with a number")), identityLocalizer)
 
       it("should have a validation error for the notes field") {
         result shouldHaveValidationErrorFor 'notes
@@ -223,7 +223,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the married flag is set to true but the age is lower than the marriageable age of 21") {
 
-      val result = sut.validate(instance.copy(age = 20, married = true))
+      val result = sut.validate(instance.copy(age = 20, married = true), identityLocalizer)
 
       it("should have a validation error for the married field") {
         result shouldHaveValidationErrorFor 'married
@@ -233,7 +233,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the hasJob flag is set to true but the age is lower than the minimum working age of 21") {
 
-      val result = sut.validate(instance.copy(age = 20, hasJob = true))
+      val result = sut.validate(instance.copy(age = 20, hasJob = true), identityLocalizer)
 
       it("should have a validation error for the married field") {
         result shouldHaveValidationErrorFor 'hasJob
@@ -242,7 +242,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the primary address component zip is longer than 10 characters") {
 
-      val result = sut.validate(instance.copy(primaryAddress = instance.primaryAddress.copy(zip = "ARidiculouslyLongZipCodeHere")))
+      val result = sut.validate(instance.copy(primaryAddress = instance.primaryAddress.copy(zip = "ARidiculouslyLongZipCodeHere")), identityLocalizer)
 
       it("should have a validation error for the primary address zip") {
         result shouldHaveValidationErrorFor "primaryAddress.zip"
@@ -252,7 +252,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and one of the addresses zip is longer than 10 characters") {
 
-      val result = sut.validate(instance.copy(otherAddresses = List(Address("line1", "line2", "city", "state", "someZip"), Address("anotherLine1", "anotherLine2", "anotherCity", "anotherState", "aVeryLongZipCodeHere"))))
+      val result = sut.validate(instance.copy(otherAddresses = List(Address("line1", "line2", "city", "state", "someZip"), Address("anotherLine1", "anotherLine2", "anotherCity", "anotherState", "aVeryLongZipCodeHere"))), identityLocalizer)
 
       it("should have a validation error for the addresses field on the index of the invalid address followed by a dot and the name of the invalid field") {
         result shouldHaveValidationErrorFor "otherAddresses[1].zip"
@@ -261,7 +261,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and both of the addresses zip are longer than 10 characters") {
 
-      val result = sut.validate(instance.copy(otherAddresses = List(Address("line1", "line2", "city", "state", "aVeryLongZipCodeHere"), Address("anotherLine1", "anotherLine2", "anotherCity", "anotherState", "anotherVeryLongZipCodeHere"))))
+      val result = sut.validate(instance.copy(otherAddresses = List(Address("line1", "line2", "city", "state", "aVeryLongZipCodeHere"), Address("anotherLine1", "anotherLine2", "anotherCity", "anotherState", "anotherVeryLongZipCodeHere"))), identityLocalizer)
 
       it("should have a validation error for each the addresses field on the index of the invalid address followed by a dot and the name of the invalid field") {
         result shouldHaveValidationErrorFor "otherAddresses[0].zip"
@@ -271,7 +271,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the size of number of tasks completed by month is bigger than 12") {
 
-      val result = sut.validate(instance.copy(tasksCompletedByMonth = List(7, 4, 9, 3, 10, 6, 15, 59, 4, 2, 1, 2, 8)))
+      val result = sut.validate(instance.copy(tasksCompletedByMonth = List(7, 4, 9, 3, 10, 6, 15, 59, 4, 2, 1, 2, 8)), identityLocalizer)
 
       it("should have a validation error for the tasks completed by month") {
         result shouldHaveValidationErrorFor 'tasksCompletedByMonth
@@ -281,7 +281,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the size of number of tasks completed by month is less than 12") {
 
-      val result = sut.validate(instance.copy(tasksCompletedByMonth = List(7, 4, 9, 3, 10, 6, 15, 59, 4, 2, 1)))
+      val result = sut.validate(instance.copy(tasksCompletedByMonth = List(7, 4, 9, 3, 10, 6, 15, 59, 4, 2, 1)), identityLocalizer)
 
       it("should have a validation error for the tasks completed by month") {
         result shouldHaveValidationErrorFor 'tasksCompletedByMonth
@@ -291,7 +291,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and one of the number of tasks is less than zero") {
 
-      val result = sut.validate(instance.copy(tasksCompletedByMonth = List(7, 4, -9, 3, -10, 6, 15, 59, 4, -2, 1, 19)))
+      val result = sut.validate(instance.copy(tasksCompletedByMonth = List(7, 4, -9, 3, -10, 6, 15, 59, 4, -2, 1, 19)), identityLocalizer)
 
       it("should have a validation error for the tasks completed by month in the invalid indexes") {
         result shouldHaveValidationErrorFor "tasksCompletedByMonth[2]"
@@ -303,7 +303,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
     describe("and the emergency phone number is not provided") {
 
       describe("and the person is 21 or older") {
-        val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 21))
+        val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 21), identityLocalizer)
 
         it("should not have a validation error for the emergencyPhoneNumber field") {
           result shouldNotHaveValidationErrorFor 'emergencyPhoneNumber
@@ -311,7 +311,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
       }
 
       describe("and the person is younger than 21") {
-        val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 20))
+        val result = sut.validate(instance.copy(emergencyPhoneNumber = None, age = 20), identityLocalizer)
 
         it("should have a validation error for the emergencyPhoneNumber field") {
           result shouldHaveValidationErrorFor 'emergencyPhoneNumber
@@ -322,7 +322,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
     describe("and the emergency phone number is provided and the area code has more than four digits") {
 
-      val result = sut.validate(instance.copy(emergencyPhoneNumber = Some(PhoneNumber(areaCode = "99990", number = "aNumber"))))
+      val result = sut.validate(instance.copy(emergencyPhoneNumber = Some(PhoneNumber(areaCode = "99990", number = "aNumber"))), identityLocalizer)
 
       it("should have a validation error for the emergencyPhoneNumber.areaCode field") {
         result shouldHaveValidationErrorFor "emergencyPhoneNumber.areaCode"

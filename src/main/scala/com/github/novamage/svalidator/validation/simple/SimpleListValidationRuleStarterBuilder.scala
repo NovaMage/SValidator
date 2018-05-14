@@ -11,7 +11,7 @@ class SimpleListValidationRuleStarterBuilder[A, B, +C](propertyListExpression: A
                                                        previousMappedBuilderValueConverter: Option[C => B]) {
 
 
-  private lazy val notFunctor: ((B, A) => Boolean) => ((B, A) => Boolean) = originalExpression => (propertyValue, instanceValue) => !originalExpression(propertyValue, instanceValue)
+  private lazy val notFunctor: ((B, A) => Boolean) => (B, A) => Boolean = originalExpression => (propertyValue, instanceValue) => !originalExpression(propertyValue, instanceValue)
 
   protected[simple] def negated: SimpleListValidationRuleStarterBuilder[A, B, C] = {
     new SimpleListValidationRuleStarterBuilder(propertyListExpression,
@@ -49,7 +49,7 @@ class SimpleListValidationRuleStarterBuilder[A, B, +C](propertyListExpression: A
       case None => validationExpressions
       case Some(ruleStructure) => validationExpressions ::: ruleStructure :: Nil
     }
-    buildNextInstanceInChain(propertyListExpression, Some(SimpleValidationRuleStructureContainer[A, B](ruleExpression, None, None, Map.empty)), ruleList, fieldName)
+    buildNextInstanceInChain(propertyListExpression, Some(SimpleValidationRuleStructureContainer[A, B](ruleExpression, None, None, None, Map.empty)), ruleList, fieldName)
   }
 
   protected[validation] def buildNextInstanceInChain(propertyExpression: A => List[B],

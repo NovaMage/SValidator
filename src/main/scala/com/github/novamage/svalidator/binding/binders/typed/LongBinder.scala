@@ -2,11 +2,11 @@ package com.github.novamage.svalidator.binding.binders.typed
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
-import com.github.novamage.svalidator.validation.binding.BindingLocalizer
+import com.github.novamage.svalidator.validation.Localizer
 
 class LongBinder(config: BindingConfig) extends TypedBinder[Long] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: BindingLocalizer): BindingResult[Long] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: Localizer): BindingResult[Long] = {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toLong).get)
     } catch {

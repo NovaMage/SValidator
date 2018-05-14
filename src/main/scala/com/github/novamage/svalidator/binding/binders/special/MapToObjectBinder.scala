@@ -3,14 +3,14 @@ package com.github.novamage.svalidator.binding.binders.special
 import com.github.novamage.svalidator.binding._
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.exceptions.{NoBinderFoundException, NoDirectBinderNorConstructorForBindingException}
-import com.github.novamage.svalidator.validation.binding.BindingLocalizer
+import com.github.novamage.svalidator.validation.Localizer
 
 import scala.reflect.runtime.{universe => ru}
 
 
 object MapToObjectBinder {
 
-  def bind[A](dataMap: Map[String, Seq[String]], localizer: BindingLocalizer, globalFieldName: Option[String] = None)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
+  def bind[A](dataMap: Map[String, Seq[String]], localizer: Localizer, globalFieldName: Option[String] = None)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
     val normalizedMap = normalizeKeys(dataMap)
     val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror, allowRecursiveBinders = false)
     typeBinderOption.map(_.asInstanceOf[TypedBinder[A]].bind(globalFieldName.getOrElse(""), normalizedMap, localizer)).getOrElse(bind[A](globalFieldName.filterNot(_.isEmpty), normalizedMap, localizer))
@@ -29,7 +29,7 @@ object MapToObjectBinder {
     }
   }
 
-  protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]], localizer: BindingLocalizer)(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+  protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]], localizer: Localizer)(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
     val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)

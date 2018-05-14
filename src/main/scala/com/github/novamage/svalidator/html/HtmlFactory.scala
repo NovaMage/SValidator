@@ -209,12 +209,17 @@ class HtmlFactory[A](converter: String => A,
     val attributeString = decoratedAttributes map {
       case (attrName, attrValue) => "%s=\"%s\"".format(attrName, attrValue)
     } mkString " "
-    val element = s"<${ elementType.htmlElementName } $attributeString >${ content(decoratedAttributes) }</${ elementType.htmlElementName }>"
+    val finalContent = content(decoratedAttributes).trim
+    val element = if (finalContent.isEmpty) {
+      s"<${ elementType.htmlElementName } $attributeString />"
+    } else {
+      s"<${ elementType.htmlElementName } $attributeString >${ finalContent }</${ elementType.htmlElementName }>"
+    }
     decorator(element, decoratedAttributes)
   }
 
   private def getValueUsing[B](summary: BindingAndValidationSummary[B],
-                               valueGetter: (B) => Any,
+                               valueGetter: B => Any,
                                name: String): Option[String] = {
     summary.instance.map(valueGetter) match {
       case Some(value) => presenter.getValueToPresentFor(value)
@@ -225,7 +230,7 @@ class HtmlFactory[A](converter: String => A,
     }
   }
 
-  private def getValuesListUsing[B, C](summary: BindingAndValidationSummary[B], valueGetter: (B) => List[C], name: String): List[String] = {
+  private def getValuesListUsing[B, C](summary: BindingAndValidationSummary[B], valueGetter: B => List[C], name: String): List[String] = {
     summary.instance.map(valueGetter).map(_.flatMap(listValue => presenter.getValueToPresentFor(listValue))) match {
       case Some(list) => list
       case None => summary.valuesMap.get(name) match {

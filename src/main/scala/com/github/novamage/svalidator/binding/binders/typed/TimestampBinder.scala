@@ -5,10 +5,10 @@ import java.text.{ParseException, SimpleDateFormat}
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
-import com.github.novamage.svalidator.validation.binding.BindingLocalizer
+import com.github.novamage.svalidator.validation.Localizer
 
 class TimestampBinder(config: BindingConfig) extends TypedBinder[Timestamp] {
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: BindingLocalizer): BindingResult[Timestamp] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: Localizer): BindingResult[Timestamp] = {
     val formatter = new SimpleDateFormat(config.dateFormat)
     try {
       BindingPass(new Timestamp(formatter.parse(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).get).getTime))

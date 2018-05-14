@@ -18,9 +18,17 @@ class SimpleValidationRuleSpecs extends Observes {
       val rule_expression = stubUnCallableFunction[Long, TestClass, Boolean]
       val error_message_builder = stubUnCallableFunction[TestClass, Long, String]
 
-      val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_extractor_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false, Map.empty)
+      val sut: IValidationRule[TestClass] = new SimpleListValidationRule(
+        property_extractor_expression,
+        rule_expression,
+        field_name,
+        Some("error.key"),
+        None,
+        conditioned_validation,
+        false,
+        Map.empty)
 
-      val result = sut.apply(instance)
+      val result = sut.apply(instance, identityLocalizer)
 
       it("should have returned an empty list as the validation result") {
         result should equal(Nil)
@@ -40,11 +48,18 @@ class SimpleValidationRuleSpecs extends Observes {
 
       describe("and the rule expression returns true") {
         val rule_expression = stubFunction(some_property_value, instance, true)
-        val error_message_builder = stubUnCallableFunction[TestClass, Long, String]
 
-        val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_value_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false, Map.empty)
+        val sut: IValidationRule[TestClass] = new SimpleListValidationRule(
+          property_value_expression,
+          rule_expression,
+          field_name,
+          Some("error.key"),
+          None,
+          conditioned_validation,
+          false,
+          Map.empty)
 
-        val result = sut.apply(instance)
+        val result = sut.apply(instance, identityLocalizer)
 
         it("should have returned an empty list as the validation result") {
           result should equal(Nil)
@@ -54,11 +69,18 @@ class SimpleValidationRuleSpecs extends Observes {
       describe("and the rule expression returns false") {
 
         val rule_expression = stubFunction(some_property_value, instance, false)
-        val error_message_builder = stubFunction(instance, some_property_value, some_error_message)
 
-        val sut: IValidationRule[TestClass] = new SimpleListValidationRule(property_value_expression, rule_expression, field_name, error_message_builder, conditioned_validation, false, Map.empty)
+        val sut: IValidationRule[TestClass] = new SimpleListValidationRule(
+          property_value_expression,
+          rule_expression,
+          field_name,
+          Some("error.key"),
+          None,
+          conditioned_validation,
+          false,
+          Map.empty)
 
-        val result = sut.apply(instance)
+        val result = sut.apply(instance, identityLocalizer)
 
         it("should have returned a non empty list containing a single validation failure") {
           result.asInstanceOf[List[ValidationFailure]] should have size 1
@@ -71,7 +93,7 @@ class SimpleValidationRuleSpecs extends Observes {
 
         it("should have set the error message to the valueGetter generated using the field name and valueGetter") {
           val resultFailure = result.asInstanceOf[List[ValidationFailure]].head
-          resultFailure.message should equal(some_error_message)
+          resultFailure.message should equal("error.key")
         }
       }
 

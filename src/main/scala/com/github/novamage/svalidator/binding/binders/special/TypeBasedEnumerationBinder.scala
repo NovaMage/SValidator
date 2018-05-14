@@ -2,13 +2,13 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
-import com.github.novamage.svalidator.validation.binding.BindingLocalizer
+import com.github.novamage.svalidator.validation.Localizer
 
 import scala.reflect.runtime.{universe => ru}
 
 class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 
-  override def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: BindingLocalizer): BindingResult[Any] = {
+  override def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: Localizer): BindingResult[Any] = {
     try {
       val intValue = valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get
       val classSymbol = runtimeType.typeSymbol.asClass

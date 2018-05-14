@@ -15,7 +15,7 @@ class SimpleValidatorSpecs extends Observes {
   }
 
   class SampleSimpleValidator extends SimpleValidator[SampleValidatedClass] {
-    def validate(implicit instance: SampleValidatedClass): ValidationSummary = WithRules(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
+    def validate(implicit instance: SampleValidatedClass, localizer: Localizer): ValidationSummary = WithRules(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)(instance, localizer)
   }
 
   describe("when performing validation assisted by an instance of a child class of simple validator") {
@@ -45,9 +45,9 @@ class SimpleValidatorSpecs extends Observes {
     val rule_list_4 = RuleStreamCollection(List(ChainedValidationStream(List(Stream(rule_10, rule_11, rule_12)), None)))
 
     when(rule_builder_1.buildRules(instance)) thenReturn rule_list_1
-    when(rule_1.apply(instance)) thenReturn Nil
-    when(rule_2.apply(instance)) thenReturn Nil
-    when(rule_3.apply(instance)) thenReturn Nil
+    when(rule_1.apply(instance, identityLocalizer)) thenReturn Nil
+    when(rule_2.apply(instance, identityLocalizer)) thenReturn Nil
+    when(rule_3.apply(instance, identityLocalizer)) thenReturn Nil
 
     when(rule_builder_2.buildRules(instance)) thenReturn rule_list_2
     when(rule_builder_3.buildRules(instance)) thenReturn rule_list_3
@@ -60,16 +60,16 @@ class SimpleValidatorSpecs extends Observes {
       val failure_3 = ValidationFailure("fieldNameInSet4", "errorMessageInRule12", Map.empty)
       val failure_4 = ValidationFailure("fieldNameInSet5", "errorMessageInRule8 second time", Map.empty)
 
-      when(rule_4.apply(instance)) thenReturn List(failure_1)
+      when(rule_4.apply(instance, identityLocalizer)) thenReturn List(failure_1)
 
-      when(rule_7.apply(instance)) thenReturn Nil
-      when(rule_8.apply(instance)) thenReturn List(failure_2, failure_4)
+      when(rule_7.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_8.apply(instance, identityLocalizer)) thenReturn List(failure_2, failure_4)
 
-      when(rule_10.apply(instance)) thenReturn Nil
-      when(rule_11.apply(instance)) thenReturn Nil
-      when(rule_12.apply(instance)) thenReturn List(failure_3)
+      when(rule_10.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_11.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_12.apply(instance, identityLocalizer)) thenReturn List(failure_3)
 
-      lazy val result = sut.validate(instance)
+      lazy val result = sut.validate(instance, identityLocalizer)
 
       it("return the first validation failure in each rule list") {
         result.validationFailures should equal(List(failure_1, failure_2, failure_4, failure_3))
@@ -77,32 +77,32 @@ class SimpleValidatorSpecs extends Observes {
 
       it("should have applied any rules in the lists after the first validation failure") {
         rule_5 wasNeverToldTo {
-          _.apply(any[SampleValidatedClass])
+          _.apply(any[SampleValidatedClass], any[Localizer])
         }
         rule_6 wasNeverToldTo {
-          _.apply(any[SampleValidatedClass])
+          _.apply(any[SampleValidatedClass], any[Localizer])
         }
         rule_9 wasNeverToldTo {
-          _.apply(any[SampleValidatedClass])
+          _.apply(any[SampleValidatedClass], any[Localizer])
         }
       }
     }
 
     describe("and some of the rule sets return validation failures") {
 
-      when(rule_4.apply(instance)) thenReturn Nil
-      when(rule_5.apply(instance)) thenReturn Nil
-      when(rule_6.apply(instance)) thenReturn Nil
+      when(rule_4.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_5.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_6.apply(instance, identityLocalizer)) thenReturn Nil
 
-      when(rule_7.apply(instance)) thenReturn Nil
-      when(rule_8.apply(instance)) thenReturn Nil
-      when(rule_9.apply(instance)) thenReturn Nil
+      when(rule_7.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_8.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_9.apply(instance, identityLocalizer)) thenReturn Nil
 
-      when(rule_10.apply(instance)) thenReturn Nil
-      when(rule_11.apply(instance)) thenReturn Nil
-      when(rule_12.apply(instance)) thenReturn Nil
+      when(rule_10.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_11.apply(instance, identityLocalizer)) thenReturn Nil
+      when(rule_12.apply(instance, identityLocalizer)) thenReturn Nil
 
-      lazy val result = sut.validate(instance)
+      lazy val result = sut.validate(instance, identityLocalizer)
 
       it("return no validation failures") {
         result.validationFailures should be('empty)

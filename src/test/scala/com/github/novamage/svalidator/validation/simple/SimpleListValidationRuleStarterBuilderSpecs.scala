@@ -14,7 +14,7 @@ class SimpleListValidationRuleStarterBuilderSpecs extends Observes {
     describe("and build rules is called with a current rule structure that is not null") {
       val property_expression = stubUnCallableFunction[SampleValidatedClass, List[Long]]
       val rule_expression = stubUnCallableFunction[Long, SampleValidatedClass, Boolean]
-      val rule_structure_container = SimpleValidationRuleStructureContainer[SampleValidatedClass, Long](rule_expression, None, None, Map.empty)
+      val rule_structure_container = SimpleValidationRuleStructureContainer[SampleValidatedClass, Long](rule_expression, None, None, None, Map.empty)
 
       val sut = new SimpleListValidationRuleContinuationBuilder[SampleValidatedClass, Long, Nothing](property_expression, Some(rule_structure_container), List(), "fieldName", false, None, None, None)
 

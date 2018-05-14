@@ -25,19 +25,13 @@ private class ComponentListValidationWrapper[A, B](componentListPropertyExpressi
 
 private class ComponentListValidationRule[A, B](componentListPropertyExpression: A => List[B], fieldName: String, componentValidator: IValidate[B], markIndexesOfFieldNameErrors: Boolean) extends IValidationRule[A] {
 
-  def apply(instance: A): List[ValidationFailure] = {
+  def apply(instance: A, localizer: Localizer): List[ValidationFailure] = {
     val components = componentListPropertyExpression.apply(instance)
-    //TODO Cant return metadata just yet from here because it would disobey the IValidationRule trait.  Gotta refactor that somehow
-    //    val metadata = mutable.HashMap[String, List[Any]]()
     val validationResults = components.zipWithIndex.flatMap {
       case (component, index) =>
-        val summary = componentValidator.validate(component)
+        //We pass in the identity localizer here, and let the top level validator handle the localization
+        val summary = componentValidator.validate(component, (x: String) => x)
         val indexInfo = if (markIndexesOfFieldNameErrors) "[" + index + "]" else Constants.emptyString
-        //        if (summary.metadata.nonEmpty){
-        //          summary.metadata foreach {
-        //            case (key, value) => metadata.+=((indexInfo + "." + key) -> value)
-        //          }
-        //        }
         summary.validationFailures.map(x => x.copy(fieldName + indexInfo + "." + x.fieldName))
 
     }

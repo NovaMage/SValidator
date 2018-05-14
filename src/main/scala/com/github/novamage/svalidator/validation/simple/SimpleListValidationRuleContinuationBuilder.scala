@@ -36,16 +36,23 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
   }
 
 
-  private lazy val defaultErrorMessageBuilder: ((A, B) => String) = (_, fieldValue) => s"$fieldValue is not a valid value for $fieldName"
   private lazy val defaultConditionedValidation: A => Boolean = _ => true
 
   def when(conditionedValidation: A => Boolean): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.map(_.copy(conditionalValidation = Some(conditionedValidation))), validationExpressions, fieldName)
   }
 
-  def withMessage(aFormatStringReceivingFieldValue: String): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
-    val errorMessageAlternateBuilder: ((A, B) => String) = (_, fieldValue) => aFormatStringReceivingFieldValue.format(fieldValue)
-    buildNextInstanceInChain(propertyListExpression, currentRuleStructure.map(_.copy(errorMessageBuilder = Some(errorMessageAlternateBuilder))), validationExpressions, fieldName)
+  def withMessage(errorMessageKey: String): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
+    buildNextInstanceInChain(propertyListExpression, currentRuleStructure.map(_.copy(errorMessageKey = Some(errorMessageKey))), validationExpressions, fieldName)
+  }
+
+  def withFormattedMessage(messageKey: String, args: Any*): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
+    val formatValues: B => List[Any] = x => args.toList
+    buildNextInstanceInChain(
+      propertyListExpression,
+      currentRuleStructure.map(_.copy(errorMessageKey = Some(messageKey), errorMessageFormatValues = Some(formatValues))),
+      validationExpressions,
+      fieldName)
   }
 
   def withMetadata(key: String, value: Any): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
@@ -80,7 +87,8 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
           lazyPropertyListValue,
           ruleStructureContainer.validationExpression,
           fieldName,
-          ruleStructureContainer.errorMessageBuilder.getOrElse(defaultErrorMessageBuilder),
+          ruleStructureContainer.errorMessageKey,
+          ruleStructureContainer.errorMessageFormatValues,
           ruleStructureContainer.conditionalValidation.getOrElse(defaultConditionedValidation),
           markIndexesOfFieldNameErrors,
           ruleStructureContainer.metadata)

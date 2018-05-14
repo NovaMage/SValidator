@@ -11,7 +11,7 @@ abstract class TypeBasedEnumeration[A: ru.TypeTag] {
 
     def description: String
 
-    override def toString = description
+    override def toString: String = description
 
     override def hashCode: Int = id.hashCode()
 

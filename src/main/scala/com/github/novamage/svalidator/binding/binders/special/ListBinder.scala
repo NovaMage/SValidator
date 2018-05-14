@@ -2,13 +2,13 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, BindingResult, FieldError}
-import com.github.novamage.svalidator.validation.binding.BindingLocalizer
+import com.github.novamage.svalidator.validation.Localizer
 
 import scala.collection.mutable.ListBuffer
 
 class ListBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[List[Any]] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer:BindingLocalizer): BindingResult[List[Any]] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer:Localizer): BindingResult[List[Any]] = {
     val fieldErrors = new ListBuffer[FieldError]
     val validValues = new ListBuffer[Any]
     val nonIndexedFieldName = valueMap.get(fieldName)

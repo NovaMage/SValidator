@@ -2,10 +2,10 @@ package com.github.novamage.svalidator.binding.binders.typed
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass}
-import com.github.novamage.svalidator.validation.binding.BindingLocalizer
+import com.github.novamage.svalidator.validation.Localizer
 
 class BigDecimalBinder(config: BindingConfig) extends TypedBinder[BigDecimal] {
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: BindingLocalizer) = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: Localizer) = {
 
     try {
       BindingPass(BigDecimal(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).get))

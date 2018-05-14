@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding._
 import com.github.novamage.svalidator.binding.binders.TypedBinder
-import com.github.novamage.svalidator.validation.binding.BindingLocalizer
+import com.github.novamage.svalidator.validation.Localizer
 
 import scala.collection.mutable.ListBuffer
 
@@ -10,7 +10,7 @@ class ReflectivelyBuiltDirectBinder[A](information: ReflectiveBinderInformation)
 
   override def bind(fieldName: String,
                     valueMap: Map[String, Seq[String]],
-                    localizer: BindingLocalizer): BindingResult[A] = {
+                    localizer: Localizer): BindingResult[A] = {
 
     val argList = ListBuffer[Any]()
     val errorList = ListBuffer[FieldError]()
