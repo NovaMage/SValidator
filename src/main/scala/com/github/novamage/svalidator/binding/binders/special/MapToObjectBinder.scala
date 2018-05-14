@@ -1,11 +1,10 @@
 package com.github.novamage.svalidator.binding.binders.special
 
+import com.github.novamage.svalidator.binding._
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.exceptions.{NoBinderFoundException, NoDirectBinderNorConstructorForBindingException}
-import com.github.novamage.svalidator.binding.{BindingPass, FieldError, _}
 import com.github.novamage.svalidator.validation.binding.BindingLocalizer
 
-import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.{universe => ru}
 
 

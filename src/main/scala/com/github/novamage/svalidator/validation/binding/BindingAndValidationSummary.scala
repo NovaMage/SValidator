@@ -43,6 +43,7 @@ sealed class Success[+A] private(val instanceValue: A) extends BindingAndValidat
     case another: Success[_] => instanceValue.equals(another.instanceValue)
     case _ => false
   }
+
 }
 
 object Success {

@@ -31,7 +31,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   }
 
   def For[B](propertyExpression: A => B): FieldListRequiringSimpleValidatorRuleBuilder[A, B] = {
-    val composedFunction: (A => List[B]) = x => propertyExpression(x) :: Nil
+    val composedFunction: A => List[B] = x => propertyExpression(x) :: Nil
     new FieldListRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 
@@ -40,12 +40,12 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   }
 
   def ForOptional[B](optionalPropertyExpression: A => Option[B]): FieldListRequiringSimpleValidatorRuleBuilder[A, B] = {
-    val composedFunction: (A => List[B]) = x => optionalPropertyExpression(x).toList
+    val composedFunction: A => List[B] = x => optionalPropertyExpression(x).toList
     new FieldListRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 
   def ForComponent[B](componentPropertyExpression: A => B): ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B] = {
-    val composedFunction: (A => List[B]) = x => componentPropertyExpression(x) :: Nil
+    val composedFunction: A => List[B] = x => componentPropertyExpression(x) :: Nil
     new ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 
@@ -54,7 +54,7 @@ abstract class SimpleValidator[A] extends IValidate[A] {
   }
 
   def ForOptionalComponent[B](optionalComponentPropertyExpression: A => Option[B]): ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B] = {
-    val composedFunction: (A => List[B]) = x => optionalComponentPropertyExpression(x).toList
+    val composedFunction: A => List[B] = x => optionalComponentPropertyExpression(x).toList
     new ComponentListFieldRequiringSimpleValidatorRuleBuilder[A, B](composedFunction, false)
   }
 

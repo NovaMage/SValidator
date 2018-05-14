@@ -5,7 +5,7 @@ import testUtils.Observes
 
 import scala.reflect.runtime.{universe => ru}
 
-sealed class ATestCaseObjectEnum(val identifier: Int, description: String) {
+sealed abstract class ATestCaseObjectEnum(val identifier: Int, description: String) {
 
   //These methods are only to catch corner cases in the test of classes with other methods with similar names or return types
   //Everything should work fine as long as the class has only one constructor and the first arg is an Int and it has a public getter
