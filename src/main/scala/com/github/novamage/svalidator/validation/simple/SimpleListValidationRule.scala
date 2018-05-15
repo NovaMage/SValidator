@@ -1,6 +1,6 @@
 package com.github.novamage.svalidator.validation.simple
 
-import com.github.novamage.svalidator.validation.{Constants, IValidationRule, Localizer, ValidationFailure}
+import com.github.novamage.svalidator.validation._
 
 class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
                                      ruleExpression: (B, A) => Boolean,
@@ -11,18 +11,18 @@ class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
                                      markIndexesOfFieldNameErrors: Boolean,
                                      metadata: Map[String, List[Any]]) extends IValidationRule[A] {
 
-  override def apply(instance: A, localizer: Localizer): List[ValidationFailure] = {
+  override def apply(instance: A): List[ValidationFailure] = {
     if (!conditionedValidation(instance))
       Nil
     else {
       lazyPropertyExtractor.zipWithIndex.collect {
         case (propertyValue, index) if !ruleExpression(propertyValue, instance) =>
           val indexString = if (markIndexesOfFieldNameErrors) "[" + index + "]" else Constants.emptyString
-          val message = errorMessageKey.map { key =>
-            val formatValues = errorMessageFormatValues.map(_.apply(propertyValue)).getOrElse(List(propertyValue))
-            localizer.localize(key).format(formatValues: _*)
-          }.getOrElse("The value %s is not a valid value for %s".format(propertyValue.toString, fieldName))
-          ValidationFailure(fieldName + indexString, message, metadata)
+          val formatValues = errorMessageFormatValues.map(_.apply(propertyValue)).getOrElse(List(propertyValue))
+          val messageParts = MessageParts(
+            messageKey = errorMessageKey.getOrElse("invalid.value"),
+            messageFormatValues = formatValues)
+          ValidationFailure(fieldName + indexString, messageParts, metadata)
       }
     }
 

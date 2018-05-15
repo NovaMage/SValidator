@@ -28,7 +28,7 @@ class SimpleValidationRuleSpecs extends Observes {
         false,
         Map.empty)
 
-      val result = sut.apply(instance, identityLocalizer)
+      val result = sut.apply(instance)
 
       it("should have returned an empty list as the validation result") {
         result should equal(Nil)
@@ -59,7 +59,7 @@ class SimpleValidationRuleSpecs extends Observes {
           false,
           Map.empty)
 
-        val result = sut.apply(instance, identityLocalizer)
+        val result = sut.apply(instance)
 
         it("should have returned an empty list as the validation result") {
           result should equal(Nil)
@@ -80,7 +80,7 @@ class SimpleValidationRuleSpecs extends Observes {
           false,
           Map.empty)
 
-        val result = sut.apply(instance, identityLocalizer)
+        val result = sut.apply(instance)
 
         it("should have returned a non empty list containing a single validation failure") {
           result.asInstanceOf[List[ValidationFailure]] should have size 1

@@ -1,18 +1,18 @@
 package com.github.novamage.svalidator.validation
 
-class ValidationSummary(val validationFailures: List[ValidationFailure]) {
+case class ValidationSummary(validationFailures: List[ValidationFailure]) {
 
   def isValid: Boolean = validationFailures.isEmpty
 
   def merge(another: ValidationSummary): ValidationSummary = {
-    new ValidationSummary(validationFailures ++ another.validationFailures)
+    ValidationSummary(validationFailures ++ another.validationFailures)
   }
+
+  def localize(implicit localizer: Localizer): ValidationSummary = ValidationSummary(validationFailures.map(_.localize))
 
 }
 
 object ValidationSummary {
 
-  def apply(validationFailures: List[ValidationFailure]) = new ValidationSummary(validationFailures)
-
-  final val Empty: ValidationSummary = new ValidationSummary(Nil)
+  final val Empty: ValidationSummary = ValidationSummary(Nil)
 }

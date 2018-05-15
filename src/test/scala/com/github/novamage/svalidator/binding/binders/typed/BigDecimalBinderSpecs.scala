@@ -14,7 +14,7 @@ class BigDecimalBinderSpecs extends Observes {
 
     describe("and the argument is not present in the values map") {
 
-      val result = sut.bind(fieldName, Map("someOtherDouble" -> List("315.00")), identityLocalizer)
+      val result = sut.bind(fieldName, Map("someOtherDouble" -> List("315.00")))
 
       it("should have returned a Binding Failure with an error for the decimal field") {
         result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -23,7 +23,7 @@ class BigDecimalBinderSpecs extends Observes {
 
     describe("and the argument is present in the values map but it is not a valid decimal") {
 
-      val result = sut.bind(fieldName, Map(fieldName -> List("aStringThatCanNotBeParsedAsDecimal")), identityLocalizer)
+      val result = sut.bind(fieldName, Map(fieldName -> List("aStringThatCanNotBeParsedAsDecimal")))
 
       it("should have returned a Binding Failure with an error for the decimal field") {
         result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -32,7 +32,7 @@ class BigDecimalBinderSpecs extends Observes {
 
     describe("and the argument is present in the values map and is a valid decimal") {
 
-      val result = sut.bind(fieldName, Map(fieldName -> List("170.5000")), identityLocalizer)
+      val result = sut.bind(fieldName, Map(fieldName -> List("170.5000")))
 
       it("should have bound the valueGetter  properly") {
         result should equal(BindingPass(BigDecimal("170.5000")))

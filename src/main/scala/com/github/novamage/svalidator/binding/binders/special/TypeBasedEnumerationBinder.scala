@@ -2,15 +2,15 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
-import com.github.novamage.svalidator.validation.Localizer
 
 import scala.reflect.runtime.{universe => ru}
 
 class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 
-  override def bind(fieldName: String, valueMap: Map[String, Seq[String]], localizer: Localizer): BindingResult[Any] = {
+  override def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Any] = {
+    val receivedValue = valueMap.getOrElse(fieldName, Nil).headOption.map(_.trim).filterNot(_.isEmpty)
     try {
-      val intValue = valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get
+      val intValue = receivedValue.map(_.toInt).get
       val classSymbol = runtimeType.typeSymbol.asClass
       val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)
       val constructor = constructorSymbols.asTerm.alternatives.collectFirst {
@@ -45,11 +45,11 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
       }
       matchedCaseObjectOption match {
         case Some(caseObjectEnum) => BindingPass(caseObjectEnum)
-        case None => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizer), None)
+        case None => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, receivedValue.getOrElse("")), None)
       }
     } catch {
-      case ex: NumberFormatException => new BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, localizer), Some(ex))
-      case ex: NoSuchElementException => new BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName, localizer), Some(ex))
+      case ex: NumberFormatException => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, receivedValue.getOrElse("")), Some(ex))
+      case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
     }
   }
 }

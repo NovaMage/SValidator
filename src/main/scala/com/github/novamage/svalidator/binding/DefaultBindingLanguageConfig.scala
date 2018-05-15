@@ -1,64 +1,55 @@
 package com.github.novamage.svalidator.binding
 
-import com.github.novamage.svalidator.validation.Localizer
+import com.github.novamage.svalidator.validation.MessageParts
 
 object DefaultBindingLanguageConfig extends BindingLanguageConfig {
 
-  def noValueProvidedMessage(fieldName: String,
-                             localizer: Localizer): String = {
-    localizer.localize("This field is required")
+  def noValueProvidedMessage(fieldName: String): MessageParts = {
+    MessageParts("required.field", List(fieldName))
   }
 
-  def invalidNonEmptyTextMessage(fieldName: String,
-                                 localizer: Localizer): String = {
-    localizer.localize("This field must be a valid non-empty text")
+  def invalidNonEmptyTextMessage(fieldName: String): MessageParts = {
+    MessageParts("required.field", List(fieldName))
   }
 
   def invalidBooleanMessage(fieldName: String,
-                            fieldValue: String,
-                            localizer: Localizer): String = {
-    localizer.localize("The value '%s' is not a valid boolean.").format(fieldValue)
+                            fieldValue: String): MessageParts = {
+    MessageParts("invalid.boolean", List(fieldValue))
   }
 
   def invalidIntegerMessage(fieldName: String,
-                            fieldValue: String,
-                            localizer: Localizer): String = {
-    localizer.localize("The value '%s' is not a valid integer").format(fieldValue)
+                            fieldValue: String): MessageParts = {
+    MessageParts("invalid.integer", List(fieldValue))
   }
 
   def invalidLongMessage(fieldName: String,
-                         fieldValue: String,
-                         localizer: Localizer): String = {
-    localizer.localize("The value '%s' is not a valid long").format(fieldValue)
+                         fieldValue: String): MessageParts = {
+    MessageParts("invalid.long", List(fieldValue))
   }
 
   def invalidFloatMessage(fieldName: String,
-                          fieldValue: String,
-                          localizer: Localizer): String = {
-    localizer.localize("The value '%s' is not a valid float").format(fieldValue)
+                          fieldValue: String): MessageParts = {
+    MessageParts("invalid.float", List(fieldValue))
   }
 
   def invalidDoubleMessage(fieldName: String,
-                           fieldValue: String,
-                           localizer: Localizer): String = {
-    localizer.localize("The value '%s' is not a valid double").format(fieldValue)
+                           fieldValue: String): MessageParts = {
+    MessageParts("invalid.double", List(fieldValue))
   }
 
   def invalidDecimalMessage(fieldName: String,
-                            fieldValue: String,
-                            localizer: Localizer): String = {
-    localizer.localize("The value '%s' is not a valid decimal").format(fieldValue)
+                            fieldValue: String): MessageParts = {
+    MessageParts("invalid.decimal", List(fieldValue))
   }
 
   def invalidTimestampMessage(fieldName: String,
-                              fieldValue: String,
-                              localizer: Localizer): String = {
-    localizer.localize("The value '%s' is not a valid date").format(fieldValue)
+                              fieldValue: String): MessageParts = {
+    MessageParts("invalid.timestamp", List(fieldValue))
   }
 
   def invalidEnumerationMessage(fieldName: String,
-                                localizer: Localizer): String = {
-    localizer.localize("The value provided for '%s' is not valid").format(fieldName)
+                                fieldValue: String): MessageParts = {
+    MessageParts("invalid.enumeration", List(fieldValue))
   }
 }
 

@@ -19,7 +19,7 @@ class SimpleSummarySpecs extends Observes {
 
     describe("and the validation summary contains one or more validation failures") {
 
-      val sut = ValidationSummary(List(ValidationFailure("someFieldName", "someErrorMessage", Map.empty)))
+      val sut = ValidationSummary(List(ValidationFailure("someFieldName", MessageParts("someErrorMessage"), Map.empty)))
 
       lazy val result = sut.isValid
 

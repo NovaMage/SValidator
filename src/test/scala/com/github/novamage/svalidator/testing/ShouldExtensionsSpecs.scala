@@ -1,7 +1,7 @@
 package com.github.novamage.svalidator.testing
 
 import com.github.novamage.svalidator.testing.exceptions.ValidationTestingException
-import com.github.novamage.svalidator.validation.{ValidationFailure, ValidationSummary}
+import com.github.novamage.svalidator.validation.{MessageParts, ValidationFailure, ValidationSummary}
 import testUtils.Observes
 
 class ShouldExtensionsSpecs extends Observes {
@@ -47,7 +47,7 @@ class ShouldExtensionsSpecs extends Observes {
 
     describe("and there's no error for specified field") {
 
-      val failures = List(ValidationFailure("aField", "aMessage", Map.empty), ValidationFailure("anotherField", "anotherMessage", Map.empty))
+      val failures = List(ValidationFailure("aField", MessageParts("aMessage"), Map.empty), ValidationFailure("anotherField", MessageParts("anotherMessage"), Map.empty))
       when(summary.validationFailures) thenReturn failures
 
       lazy val result = try {
@@ -64,7 +64,7 @@ class ShouldExtensionsSpecs extends Observes {
 
     describe("and there's an error for the specified field") {
 
-      val failures = List(ValidationFailure("aField", "aMessage", Map.empty), ValidationFailure("aDifferentField", "anotherMessage", Map.empty))
+      val failures = List(ValidationFailure("aField", MessageParts("aMessage"), Map.empty), ValidationFailure("aDifferentField", MessageParts("anotherMessage"), Map.empty))
       when(summary.validationFailures) thenReturn failures
 
       lazy val unitResult = try {
@@ -84,7 +84,7 @@ class ShouldExtensionsSpecs extends Observes {
 
     describe("and there's no error for specified field") {
 
-      val failures = List(ValidationFailure("aField", "aMessage", Map.empty), ValidationFailure("anotherField", "anotherMessage", Map.empty))
+      val failures = List(ValidationFailure("aField", MessageParts("aMessage"), Map.empty), ValidationFailure("anotherField", MessageParts("anotherMessage"), Map.empty))
       when(summary.validationFailures) thenReturn failures
 
       lazy val unitResult = try {
@@ -101,7 +101,7 @@ class ShouldExtensionsSpecs extends Observes {
 
     describe("and there's an error for the specified field") {
 
-      val failures = List(ValidationFailure("aField", "aMessage", Map.empty), ValidationFailure("aDifferentField", "anotherMessage", Map.empty))
+      val failures = List(ValidationFailure("aField", MessageParts("aMessage"), Map.empty), ValidationFailure("aDifferentField", MessageParts("anotherMessage"), Map.empty))
       when(summary.validationFailures) thenReturn failures
 
       lazy val result = try {

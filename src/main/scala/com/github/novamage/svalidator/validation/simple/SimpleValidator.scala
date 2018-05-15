@@ -4,23 +4,22 @@ import com.github.novamage.svalidator.validation._
 
 abstract class SimpleValidator[A] extends IValidate[A] {
 
-  def WithRules(ruleBuilders: IRuleBuilder[A]*)(implicit instance: A, localizer: Localizer): ValidationSummary = {
+  def WithRules(ruleBuilders: IRuleBuilder[A]*)(implicit instance: A): ValidationSummary = {
     val ruleStreamCollections = ruleBuilders.toList.map(_.buildRules(instance))
     val results = ruleStreamCollections.flatMap {
-      collection => processRuleStreamCollection(instance, collection, localizer)
+      collection => processRuleStreamCollection(instance, collection)
     }
     ValidationSummary(results)
   }
 
   private def processRuleStreamCollection(instance: A,
-                                          collection: RuleStreamCollection[A],
-                                          localizer: Localizer): List[ValidationFailure] = {
+                                          collection: RuleStreamCollection[A]): List[ValidationFailure] = {
     collection.chains.flatMap { chain =>
-      val upstreamResults = chain.dependsOnUpstream.map(processRuleStreamCollection(instance, _, localizer)).getOrElse(Nil)
+      val upstreamResults = chain.dependsOnUpstream.map(processRuleStreamCollection(instance, _)).getOrElse(Nil)
       if (upstreamResults.isEmpty) {
         chain.mainStream.flatMap {
           ruleStream =>
-            ruleStream map { _.apply(instance, localizer) } collectFirst { case result if result.nonEmpty => result }
+            ruleStream map { _.apply(instance) } collectFirst { case result if result.nonEmpty => result }
         }.flatten
       } else {
         upstreamResults

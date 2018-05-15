@@ -30,7 +30,7 @@ object ATestCaseObjectEnum {
 class TypeBasedEnumerationBinderSpecs extends Observes {
 
 
-  val tag = ru.typeTag[ATestCaseObjectEnum]
+  private val tag = ru.typeTag[ATestCaseObjectEnum]
 
   val sut = new TypeBasedEnumerationBinder(tag.tpe, tag.mirror, BindingConfig.defaultConfig)
 
@@ -40,7 +40,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
     describe("and no value is provided") {
 
-      val result = sut.bind(field_name, Map("someOtherFieldName" -> List("3")), identityLocalizer)
+      val result = sut.bind(field_name, Map("someOtherFieldName" -> List("3")))
 
       it("should have return a bind failure with no such element exception as the cause") {
         val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
@@ -52,7 +52,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
       describe("and it is not a valid int") {
 
-        val result = sut.bind(field_name, Map(field_name -> List("b")), identityLocalizer)
+        val result = sut.bind(field_name, Map(field_name -> List("b")))
 
         it("should have return a bind failure with an exception that is not no such element exception as the cause") {
           val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
@@ -65,7 +65,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
         describe("and it is not within the list of valid identifiers") {
 
-          val result = sut.bind(field_name, Map(field_name -> List("200")), identityLocalizer)
+          val result = sut.bind(field_name, Map(field_name -> List("200")))
 
           it("should have return a bind failure with no cause") {
             val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
@@ -78,7 +78,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
           describe("and the first value is tested") {
 
-            val result = sut.bind(field_name, Map(field_name -> List("1")), identityLocalizer)
+            val result = sut.bind(field_name, Map(field_name -> List("1")))
 
             it("should have return a binding pass with the right value") {
               result should equal(BindingPass(ATestCaseObjectEnum.FirstValue))
@@ -87,7 +87,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
           describe("and the second value is tested") {
 
-            val result = sut.bind(field_name, Map(field_name -> List("2")), identityLocalizer)
+            val result = sut.bind(field_name, Map(field_name -> List("2")))
 
             it("should have return a binding pass with the right value") {
               result should equal(BindingPass(ATestCaseObjectEnum.SecondValue))
@@ -96,7 +96,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
           describe("and the third value is tested") {
 
-            val result = sut.bind(field_name, Map(field_name -> List("3")), identityLocalizer)
+            val result = sut.bind(field_name, Map(field_name -> List("3")))
 
             it("should have return a binding pass with the right value") {
               result should equal(BindingPass(ATestCaseObjectEnum.ThirdValue))
