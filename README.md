@@ -6,6 +6,15 @@ A library for validation of scala objects in a fluent and concise manner.
 This project is heavily inspired by the [FluentValidation library for .NET](https://github.com/JeremySkinner/FluentValidation) and
 licensed under the MIT license.
 
+Installation
+===========
+
+SValidator is available on Maven for scala 2.12.  Just add the following line to your build.sbt:
+
+```
+libraryDependencies += "com.github.novamage" % "svalidator_2.12" % "0.9.4"
+```
+
 Quick Usage
 ===========
 
