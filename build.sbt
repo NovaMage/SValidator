@@ -2,7 +2,9 @@ organization := "com.github.novamage"
 
 name := "SValidator"
 
-version := "0.9.2"
+description := "A library for validation of scala objects in a fluent and concise manner"
+
+version := "0.9.3"
 
 scalaVersion := "2.12.5"
 
@@ -36,7 +38,7 @@ publishTo := {
 
 publishArtifact in Test := false
 
-coverageEnabled := true
+coverageEnabled := false
 
 scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
 
