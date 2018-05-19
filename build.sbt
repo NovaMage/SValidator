@@ -4,7 +4,7 @@ name := "SValidator"
 
 description := "A library for validation of scala objects in a fluent and concise manner"
 
-version := "0.9.3"
+version := "0.9.4"
 
 scalaVersion := "2.12.5"
 
@@ -38,8 +38,6 @@ publishTo := {
 
 publishArtifact in Test := false
 
-coverageEnabled := false
-
 scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
 
 exportJars := true
@@ -48,8 +46,8 @@ parallelExecution in Test := false
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.12.5"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
 
-libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19" % "test"
+libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19" % Test
 
 pomIncludeRepository := { _ => false }
