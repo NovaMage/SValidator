@@ -55,7 +55,7 @@ and make a fluent and elegant validation by using the `WithRules` builder on you
     )
 ```
 
-To perform the actual validation, create an instance of your validator class, and call the method validate passing in 
+To perform the actual validation, create an instance of your validator class, and call the method `validate` passing in 
 the instance to validate.
 
 Check the [wiki](https://github.com/NovaMage/SValidator/wiki/SValidator) for more details.
