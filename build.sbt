@@ -4,9 +4,9 @@ name := "SValidator"
 
 description := "A library for validation of scala objects in a fluent and concise manner"
 
-version := "0.9.4"
+version := "0.9.5"
 
-scalaVersion := "2.12.5"
+scalaVersion := "2.12.6"
 
 licenses := Seq("MIT" -> url("https://github.com/NovaMage/SValidator/blob/master/LICENSE.txt"))
 
@@ -44,7 +44,7 @@ exportJars := true
 
 parallelExecution in Test := false
 
-libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.12.5"
+libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.12.6"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
 
