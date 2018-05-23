@@ -1,3 +1,5 @@
+import ReleaseTransformations._
+
 organization := "com.github.novamage"
 
 name := "SValidator"
@@ -51,3 +53,20 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
 libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19" % Test
 
 pomIncludeRepository := { _ => false }
+
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  publishArtifacts,
+  setNextVersion,
+  commitNextVersion,
+  releaseStepCommand("sonatypeReleaseAll"),
+  pushChanges
+)
