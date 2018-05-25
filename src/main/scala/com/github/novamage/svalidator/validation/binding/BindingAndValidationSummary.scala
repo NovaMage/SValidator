@@ -1,6 +1,6 @@
 package com.github.novamage.svalidator.validation.binding
 
-import com.github.novamage.svalidator.validation.{ValidationFailure, ValidationSummary}
+import com.github.novamage.svalidator.validation.{Localizer, ValidationFailure, ValidationSummary}
 
 import scala.language.implicitConversions
 
@@ -14,6 +14,13 @@ sealed abstract class BindingAndValidationSummary[+A](validationFailures: List[V
     this match {
       case Success(value) => Success(f(value), valuesMap)
       case Failure(failures) => Failure(failures, valuesMap, instance.map(f))
+    }
+  }
+
+  override def localize(implicit localizer: Localizer): BindingAndValidationSummary[A] = {
+    this match {
+      case Success(_) => this
+      case Failure(failures) => Failure(failures.map(_.localize(localizer)), valuesMap, instance)
     }
   }
 
