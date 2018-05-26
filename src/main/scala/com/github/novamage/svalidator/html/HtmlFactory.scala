@@ -110,7 +110,7 @@ class HtmlFactory[A](converter: String => A,
                     attributes: Map[String, Any] = Map.empty): A = {
     val defaultId = getDefaultIdForName(name)
     val selectedValue = getValueUsing(summary, valueGetter, name)
-    val radioButtonsHtml = optionValuesAndText.zipWithIndex.map {
+    val radioButtonsHtml = optionValuesAndText.map {
       case (value, text) =>
         val defaultIdForOption = defaultId + "_" + value.toString
         val checked = selectedValue.contains(value.toString)
