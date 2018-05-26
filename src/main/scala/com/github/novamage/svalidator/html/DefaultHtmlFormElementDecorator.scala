@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.html
 
 object DefaultHtmlFormElementDecorator extends HtmlFormElementDecorator {
 
-  private def errorClassFor(errors: List[String]): String = if (errors.nonEmpty) "class=\"has-errors\"" else ""
+  private def errorClassFor(errors: List[String]): String = if (errors.nonEmpty) " class=\"has-errors\"" else ""
 
   override def decorateForm(formHtml: String,
                             attributes: Map[String, Any]): String = formHtml
@@ -51,7 +51,7 @@ object DefaultHtmlFormElementDecorator extends HtmlFormElementDecorator {
                                   errors: List[String],
                                   attributes: Map[String, Any]): String = {
     s"""
-       |<div ${ errorClassFor(errors) }>
+       |<div${errorClassFor(errors)}>
        |<label>$label</label>
        |<div>
        |$radioGroupHtml
@@ -79,7 +79,7 @@ object DefaultHtmlFormElementDecorator extends HtmlFormElementDecorator {
                                      errors: List[String],
                                      attributes: Map[String, Any]): String = {
     s"""
-       |<div ${ errorClassFor(errors) }>
+       |<div${errorClassFor(errors)}>
        |<label>$label</label>
        |<div>
        |$checkBoxGroupHtml
@@ -143,9 +143,9 @@ object DefaultHtmlFormElementDecorator extends HtmlFormElementDecorator {
                                     errors: List[String]): String = {
 
     s"""
-       |<div ${ errorClassFor(errors) }>
+       |<div${errorClassFor(errors)}>
        |<label for="$id">$label</label>
-       |${ appendErrors(inputHtml, errors) }
+       |${appendErrors(inputHtml, errors) }
        |</div>
     """.stripMargin
   }

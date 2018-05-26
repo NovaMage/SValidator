@@ -210,7 +210,7 @@ class HtmlFactory[A](converter: String => A,
       case (attrName, attrValue) => "%s=\"%s\"".format(attrName, attrValue)
     } mkString " "
     val finalContent = content(decoratedAttributes).trim
-    val element = if (finalContent.isEmpty) {
+    val element = if (finalContent.isEmpty && elementType != FormElementType.TextArea) {
       s"<${ elementType.htmlElementName } $attributeString />"
     } else {
       s"<${ elementType.htmlElementName } $attributeString >${ finalContent }</${ elementType.htmlElementName }>"
