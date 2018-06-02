@@ -115,7 +115,7 @@ class HtmlFactory[A](converter: String => A,
         val defaultIdForOption = defaultId + "_" + value.toString
         val checked = selectedValue.contains(value.toString)
         val checkedAttribute = if (checked) Some("checked" -> "checked") else None
-        val attributes = Map("id" -> defaultIdForOption, name -> name, "type" -> "radio", "value" -> value) ++ checkedAttribute
+        val attributes = Map("id" -> defaultIdForOption, "name" -> name, "type" -> "radio", "value" -> value) ++ checkedAttribute
         decoratedHtmlFor(FormElementType.RadioGroupOption, attributes, None, Nil) { (html, decoratedAttrs) =>
           val inputId = decoratedAttrs.getOrElse("id", "").toString
           inputDecorator.decorateRadioGroupOption(html, inputId, name, text.toString, decoratedAttrs)
@@ -138,7 +138,7 @@ class HtmlFactory[A](converter: String => A,
         val defaultIdForOption = defaultId + "_" + value.toString
         val checked = checkedValues.contains(value.toString)
         val checkedAttribute = if (checked) Some("checked" -> "checked") else None
-        val attributes = Map("id" -> defaultIdForOption, name -> name, "type" -> "checkbox", "value" -> value) ++ checkedAttribute
+        val attributes = Map("id" -> defaultIdForOption, "name" -> name, "type" -> "checkbox", "value" -> value) ++ checkedAttribute
         decoratedHtmlFor(FormElementType.CheckBoxGroupOption, attributes, None, Nil) { (html, decoratedAttrs) =>
           val inputId = decoratedAttrs.getOrElse("id", "").toString
           inputDecorator.decorateCheckBoxGroupOption(html, inputId, name, text.toString, decoratedAttrs)
