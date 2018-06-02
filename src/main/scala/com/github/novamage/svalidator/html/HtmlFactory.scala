@@ -8,9 +8,9 @@ class HtmlFactory[A](converter: String => A,
                      presenter: HtmlValuePresenter = DefaultHtmlValuePresenter) {
 
   def form(action: String,
-           method: String = "POST",
-           enctype: String = "application/x-www-form-urlencoded",
-           attributes: Map[String, Any] = Map.empty)(body: => String): A = {
+           method: String,
+           enctype: String,
+           attributes: Map[String, Any])(body: => String): A = {
     val allAttributes = Map("action" -> action, "method" -> method, "enctype" -> enctype) ++ attributes
     decoratedHtmlFor(FormElementType.Form, allAttributes, inputDecorator.decorateFormBody(body, _), errors = Nil) { (html, decoratedAttrs) =>
       converter.apply(inputDecorator.decorateForm(html, decoratedAttrs))
