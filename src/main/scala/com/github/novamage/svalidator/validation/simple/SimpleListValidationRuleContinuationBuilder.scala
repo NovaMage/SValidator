@@ -54,6 +54,14 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
       fieldName)
   }
 
+  def withFormattedMessage(messageKey: String, args: Any*): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
+    buildNextInstanceInChain(
+      propertyListExpression,
+      currentRuleStructure.map(_.copy(errorMessageKey = Some(messageKey), errorMessageFormatValues = Some(_ => args.toList))),
+      validationExpressions,
+      fieldName)
+  }
+
   def withMetadata(key: String, value: Any): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
     val nextCurrentRuleStructure = currentRuleStructure.map { ruleStructure =>
       val nextValueForKey = value :: ruleStructure.metadata.getOrElse(key, Nil)
