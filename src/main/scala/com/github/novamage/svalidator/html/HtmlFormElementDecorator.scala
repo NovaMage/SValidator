@@ -55,7 +55,7 @@ trait HtmlFormElementDecorator {
                                attributes: Map[String, Any]): String
 
 
-  def decorateCheckBoxGroup(radioGroupHtml: String,
+  def decorateCheckBoxGroup(checkBoxGroupHtml: String,
                             name: String,
                             label:String,
                             errors: List[String],

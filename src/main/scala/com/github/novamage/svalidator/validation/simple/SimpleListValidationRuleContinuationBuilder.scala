@@ -42,11 +42,7 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.map(_.copy(conditionalValidation = Some(conditionedValidation))), validationExpressions, fieldName)
   }
 
-  def withMessage(errorMessageKey: String): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
-    buildNextInstanceInChain(propertyListExpression, currentRuleStructure.map(_.copy(errorMessageKey = Some(errorMessageKey))), validationExpressions, fieldName)
-  }
-
-  def withFormattedMessage(messageKey: String, args: B => List[Any]): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
+  def withMessage(messageKey: String, args: B => List[Any]): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
     buildNextInstanceInChain(
       propertyListExpression,
       currentRuleStructure.map(_.copy(errorMessageKey = Some(messageKey), errorMessageFormatValues = Some(args))),
@@ -54,10 +50,11 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
       fieldName)
   }
 
-  def withFormattedMessage(messageKey: String, args: Any*): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
+  def withMessage(messageKey: String, args: Any*): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
+    val formatValues = Some((_: B) => args.toList).filter(_ => args.nonEmpty)
     buildNextInstanceInChain(
       propertyListExpression,
-      currentRuleStructure.map(_.copy(errorMessageKey = Some(messageKey), errorMessageFormatValues = Some(_ => args.toList))),
+      currentRuleStructure.map(_.copy(errorMessageKey = Some(messageKey), errorMessageFormatValues = formatValues)),
       validationExpressions,
       fieldName)
   }

@@ -12,7 +12,7 @@ Installation
 SValidator is available on Maven for scala 2.12.  Just add the following line to your build.sbt:
 
 ```
-libraryDependencies += "com.github.novamage" % "svalidator_2.12" % "0.9.13"
+libraryDependencies += "com.github.novamage" % "svalidator_2.12" % "0.9.14"
 ```
 
 Quick Usage
