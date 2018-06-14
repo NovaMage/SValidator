@@ -6,6 +6,8 @@ A library for validation of scala objects in a fluent and concise manner.
 This project is heavily inspired by the [FluentValidation library for .NET](https://github.com/JeremySkinner/FluentValidation) and
 licensed under the MIT license.
 
+An [additional library](https://github.com/NovaMage/svalidator-play) is provided for easy integration with the [Play! framework](https://www.playframework.com/).
+
 Installation
 ===========
 
