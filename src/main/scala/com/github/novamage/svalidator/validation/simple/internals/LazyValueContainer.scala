@@ -1,4 +1,4 @@
-package com.github.novamage.svalidator.validation.simple
+package com.github.novamage.svalidator.validation.simple.internals
 
 class LazyValueContainer[A](value: => A) {
 

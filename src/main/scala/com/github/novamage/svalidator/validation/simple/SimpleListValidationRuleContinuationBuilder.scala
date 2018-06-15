@@ -1,12 +1,20 @@
 package com.github.novamage.svalidator.validation.simple
 
+import com.github.novamage.svalidator.validation.simple.internals._
 
+
+/** Builder for appending messages, metadata, adding conditional validation, or mapping properties into something else.
+  *
+  * @tparam A Type of the instance being validated
+  * @tparam B Type of the extracted property being validated
+  * @tparam C If the property has been mapped, type the property had before the map, otherwise, [[scala.Nothing Nothing]]
+  */
 class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpression: A => List[B],
                                                             currentRuleStructure: Option[SimpleValidationRuleStructureContainer[A, B]],
                                                             validationExpressions: List[SimpleValidationRuleStructureContainer[A, B]],
                                                             fieldName: String,
                                                             markIndexesOfFieldNameErrors: Boolean,
-                                                            previousMappedBuilderInChain: Option[IRuleBuilder[A]],
+                                                            previousMappedBuilderInChain: Option[RuleBuilder[A]],
                                                             previousMappedBuilderValueProvider: Option[UpstreamLazyValueProvider[List[C]]],
                                                             previousMappedBuilderValueConverter: Option[C => B])
   extends SimpleListValidationRuleStarterBuilder[A, B, C](propertyListExpression,
@@ -16,7 +24,7 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
     markIndexesOfFieldNameErrors,
     previousMappedBuilderInChain,
     previousMappedBuilderValueProvider,
-    previousMappedBuilderValueConverter) with IRuleBuilder[A] with UpstreamLazyValueProvider[List[B]] {
+    previousMappedBuilderValueConverter) with RuleBuilder[A] with UpstreamLazyValueProvider[List[B]] {
 
   private var lazyExtractedProperty: LazyValueContainer[List[B]] = _
 

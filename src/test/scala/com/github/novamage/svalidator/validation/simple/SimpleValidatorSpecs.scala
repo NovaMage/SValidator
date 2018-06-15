@@ -1,15 +1,16 @@
 package com.github.novamage.svalidator.validation.simple
 
+import com.github.novamage.svalidator.validation.simple.internals.{ChainedValidationStream, IValidationRule, RuleBuilder, RuleStreamCollection}
 import com.github.novamage.svalidator.validation.{ValidationFailure, _}
 import org.mockito.Matchers.any
 import testUtils.Observes
 
 class SimpleValidatorSpecs extends Observes {
 
-  private val rule_builder_1 = mock[IRuleBuilder[SampleValidatedClass]]
-  private val rule_builder_2 = mock[IRuleBuilder[SampleValidatedClass]]
-  private val rule_builder_3 = mock[IRuleBuilder[SampleValidatedClass]]
-  private val rule_builder_4 = mock[IRuleBuilder[SampleValidatedClass]]
+  private val rule_builder_1 = mock[RuleBuilder[SampleValidatedClass]]
+  private val rule_builder_2 = mock[RuleBuilder[SampleValidatedClass]]
+  private val rule_builder_3 = mock[RuleBuilder[SampleValidatedClass]]
+  private val rule_builder_4 = mock[RuleBuilder[SampleValidatedClass]]
 
   case class SampleValidatedClass(a: String, b: Long) {
   }
@@ -20,7 +21,7 @@ class SimpleValidatorSpecs extends Observes {
 
   describe("when performing validation assisted by an instance of a child class of simple validator") {
 
-    val sut: IValidate[SampleValidatedClass] = new SampleSimpleValidator
+    val sut: Validator[SampleValidatedClass] = new SampleSimpleValidator
 
     val instance = mock[SampleValidatedClass]
 

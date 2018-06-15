@@ -1,6 +1,7 @@
 package com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.validation._
+import com.github.novamage.svalidator.validation.simple.internals.IValidationRule
 
 class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
                                      ruleExpression: (B, A) => Boolean,
@@ -17,7 +18,7 @@ class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
     else {
       lazyPropertyExtractor.zipWithIndex.collect {
         case (propertyValue, index) if !ruleExpression(propertyValue, instance) =>
-          val indexString = if (markIndexesOfFieldNameErrors) "[" + index + "]" else Constants.emptyString
+          val indexString = if (markIndexesOfFieldNameErrors) "[" + index + "]" else ""
           val formatValues = errorMessageFormatValues.map(_.apply(propertyValue)).getOrElse(List(propertyValue))
           val messageParts = MessageParts(
             messageKey = errorMessageKey.getOrElse("invalid.value"),

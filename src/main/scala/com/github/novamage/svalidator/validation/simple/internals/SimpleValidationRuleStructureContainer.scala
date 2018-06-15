@@ -1,4 +1,4 @@
-package com.github.novamage.svalidator.validation.simple
+package com.github.novamage.svalidator.validation.simple.internals
 
 case class SimpleValidationRuleStructureContainer[A, B](validationExpression: (B, A) => Boolean,
                                                         conditionalValidation: Option[A => Boolean],

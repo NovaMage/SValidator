@@ -1,5 +1,6 @@
 package com.github.novamage.svalidator.validation.simple
 
+import com.github.novamage.svalidator.validation.simple.internals.SimpleValidationRuleStructureContainer
 import testUtils.Observes
 
 class SimpleListValidationRuleStarterBuilderSpecs extends Observes {
