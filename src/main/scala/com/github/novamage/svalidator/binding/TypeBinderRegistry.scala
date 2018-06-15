@@ -37,7 +37,7 @@ object TypeBinderRegistry {
   }
 
   def registerBinder[A](binder: TypedBinder[A])(implicit tag: ru.TypeTag[A]) {
-    directBinders.append((binder, tag))
+    directBinders.prepend((binder, tag))
   }
 
   def clearBinders() {
@@ -45,7 +45,7 @@ object TypeBinderRegistry {
   }
 
   def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]) {
-    recursiveBinders.append((new RecursiveBinder[A](), tag))
+    recursiveBinders.prepend((new RecursiveBinder[A](), tag))
   }
 
   protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror, allowRecursiveBinders: Boolean = true): Option[TypedBinder[_]] = {
