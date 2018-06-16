@@ -4,7 +4,7 @@ organization := "com.github.novamage"
 
 name := "SValidator"
 
-description := "A library for validation of scala objects in a fluent and concise manner"
+description := "A library for validation and data binding of scala objects in a fluent and concise manner"
 
 version := "1.0.0"
 
