@@ -1,7 +1,7 @@
 SValidator
 ==========
 
-A library for validation of scala objects in a fluent and concise manner.
+A library for validation and data binding of scala objects in a fluent and concise manner.
 
 This project is heavily inspired by the [FluentValidation library for .NET](https://github.com/JeremySkinner/FluentValidation) and
 licensed under the MIT license.
