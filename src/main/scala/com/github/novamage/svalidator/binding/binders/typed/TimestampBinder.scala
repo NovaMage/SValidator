@@ -6,6 +6,11 @@ import java.text.{ParseException, SimpleDateFormat}
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
 
+/** Performs binding of a [[java.sql.Timestamp Timestamp]] field, parsing dates according to the format specified in the
+  * passed configuration
+  *
+  * @param config The configuration to use for error messages, and format for parsing dates
+  */
 class TimestampBinder(config: BindingConfig) extends TypedBinder[Timestamp] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Timestamp] = {
     val formatter = new SimpleDateFormat(config.dateFormat)

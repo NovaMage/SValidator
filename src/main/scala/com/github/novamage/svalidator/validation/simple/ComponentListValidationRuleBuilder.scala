@@ -3,10 +3,17 @@ package com.github.novamage.svalidator.validation.simple
 import com.github.novamage.svalidator.validation._
 import com.github.novamage.svalidator.validation.simple.internals.{ChainedValidationStream, IValidationRule, RuleBuilder, RuleStreamCollection}
 
-//import scala.collection.mutable
-
+/** Chain builder for delegating component validation to a separate validator.
+  *
+  * @tparam A Type of the instance being validated
+  * @tparam B Type of the extracted component to delegate validation
+  */
 class ComponentListValidationRuleBuilder[A, B](componentListPropertyExpression: A => List[B], fieldName: String, markIndexesOfFieldNameErrors: Boolean) {
 
+  /** Returns a rule builder that will validate the extracted property component(s) using the passed in validator.
+    *
+    * @param validator Validator to delegate validation of the specified component(s)
+    */
   def validateUsing(validator: Validator[B]): RuleBuilder[A] = {
     new ComponentListValidationWrapper[A, B](componentListPropertyExpression, fieldName, validator, markIndexesOfFieldNameErrors)
   }

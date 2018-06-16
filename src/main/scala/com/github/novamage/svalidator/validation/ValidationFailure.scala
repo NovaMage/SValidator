@@ -20,7 +20,6 @@ case class ValidationFailure(fieldName: String,
     * [[com.github.novamage.svalidator.validation.MessageParts#localize MessageParts.localize]]'s method.
     *
     * @param localizer Localizer to apply to the [[com.github.novamage.svalidator.validation.MessageParts MessageParts]]
-    * @return
     */
   def localize(implicit localizer: Localizer): ValidationFailure = {
     ValidationFailure(fieldName, messageParts.localize, metadata)

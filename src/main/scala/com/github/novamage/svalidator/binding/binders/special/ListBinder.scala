@@ -5,6 +5,8 @@ import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, Bind
 
 import scala.collection.mutable.ListBuffer
 
+/** Binds lists of a given type, provided that a binder for the type parameter is provided.
+  */
 class ListBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[List[Any]] {
 
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[List[Any]] = {

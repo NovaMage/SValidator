@@ -5,6 +5,9 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
 
 import scala.reflect.runtime.{universe => ru}
 
+/** Binder for classes that follow the case-object style described in
+  * [[https://github.com/NovaMage/SValidator/wiki/Type-Based-Enumerations Type Based Enumerations]].
+  */
 class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 
   override def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Any] = {

@@ -2,6 +2,9 @@ package com.github.novamage.svalidator.binding
 
 import com.github.novamage.svalidator.validation.MessageParts
 
+/** Default implementation for [[com.github.novamage.svalidator.binding.BindingLanguageConfig BindingLanguageConfig]]
+  *
+  */
 object DefaultBindingLanguageConfig extends BindingLanguageConfig {
 
   def noValueProvidedMessage(fieldName: String): MessageParts = {

@@ -7,18 +7,23 @@ import com.github.novamage.svalidator.binding.binders.typed._
 import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.{universe => ru}
 
+/** Provides methods for initializing, registering or clearing binders
+  */
 object TypeBinderRegistry {
-
 
   private val directBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
   private val recursiveBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
   private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
 
-  def initializeBinders() {
+  /** Initializes SValidator's default binders with the default binding configuration
+    */
+  def initializeBinders(): Unit = {
     initializeBinders(BindingConfig.defaultConfig)
   }
 
-  def initializeBinders(config: BindingConfig) {
+  /** Initializes SValidator's default binders with the passed in binding configuration
+    */
+  def initializeBinders(config: BindingConfig): Unit = {
     clearBinderBuffers()
     registerBinder(new StringBinder(config))
     registerBinder(new IntBinder(config))
@@ -31,20 +36,28 @@ object TypeBinderRegistry {
     currentBindingConfig = config
   }
 
-  private def clearBinderBuffers() {
-    directBinders.clear()
-    recursiveBinders.clear()
-  }
-
-  def registerBinder[A](binder: TypedBinder[A])(implicit tag: ru.TypeTag[A]) {
+  /** Adds the given binder to the list of registered binders, taking priority over any previously registered binders of
+    * the same type
+    *
+    * @param binder Binder to register
+    * @tparam A The type of instances bindable by the binder
+    */
+  def registerBinder[A](binder: TypedBinder[A])(implicit tag: ru.TypeTag[A]): Unit = {
     directBinders.prepend((binder, tag))
   }
 
-  def clearBinders() {
+  /** Removes all registered binders from this object
+    */
+  def clearBinders(): Unit = {
     clearBinderBuffers()
   }
 
-  def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]) {
+  /** Configures the registry to allow reflectively binding via constructor parameters if no binder is found for the
+    * specified type, instead of throwing an exception.
+    *
+    * @tparam A Type that will be allowed to reflectively bind.
+    */
+  def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]): Unit = {
     recursiveBinders.prepend((new RecursiveBinder[A](), tag))
   }
 
@@ -77,6 +90,11 @@ object TypeBinderRegistry {
     }
 
 
+  }
+
+  private def clearBinderBuffers() {
+    directBinders.clear()
+    recursiveBinders.clear()
   }
 
   private def isTypeATypeBasedEnum(runtimeType: ru.Type): Boolean = {

@@ -1,7 +1,7 @@
 package com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.validation.ValidationFailure
-import com.github.novamage.svalidator.validation.simple.internals.IValidationRule
+import com.github.novamage.svalidator.validation.simple.internals.{IValidationRule, SimpleListValidationRule}
 import testUtils.Observes
 
 class SimpleValidationRuleSpecs extends Observes {

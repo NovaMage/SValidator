@@ -3,6 +3,10 @@ package com.github.novamage.svalidator.binding.binders.typed
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
 
+/** Performs binding of a [[scala.BigDecimal BigDecimal]] field
+  *
+  * @param config The configuration to use for error messages
+  */
 class BigDecimalBinder(config: BindingConfig) extends TypedBinder[BigDecimal] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[BigDecimal] = {
 

@@ -6,6 +6,8 @@ import java.util.Locale
 
 import com.github.novamage.svalidator.utils.TypeBasedEnumeration
 
+/** Default implementation for [[com.github.novamage.svalidator.html.HtmlValuePresenter HtmlValuePresenter]]
+  */
 object DefaultHtmlValuePresenter extends HtmlValuePresenter {
 
   def getValueToPresentFor(propertyValue: Any): Option[String] = {

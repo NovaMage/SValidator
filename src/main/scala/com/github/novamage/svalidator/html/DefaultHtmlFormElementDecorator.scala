@@ -1,5 +1,7 @@
 package com.github.novamage.svalidator.html
 
+/** Default implementation for [[com.github.novamage.svalidator.html.HtmlFormElementDecorator HtmlFormElementDecorator]]
+  */
 object DefaultHtmlFormElementDecorator extends HtmlFormElementDecorator {
 
   private def errorClassFor(errors: List[String]): String = if (errors.nonEmpty) " class=\"has-errors\"" else ""
@@ -65,6 +67,7 @@ object DefaultHtmlFormElementDecorator extends HtmlFormElementDecorator {
                                         id: String,
                                         name: String,
                                         label: String,
+                                        index: Int,
                                         attributes: Map[String, Any]): String = {
     s"""
        |<label for="$id">$label</label>
@@ -93,6 +96,7 @@ object DefaultHtmlFormElementDecorator extends HtmlFormElementDecorator {
                                            id: String,
                                            name: String,
                                            label: String,
+                                           index: Int,
                                            attributes: Map[String, Any]): String = {
 
     s"""

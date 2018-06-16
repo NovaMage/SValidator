@@ -26,10 +26,13 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
     previousMappedBuilderValueProvider,
     previousMappedBuilderValueConverter) with RuleBuilder[A] with UpstreamLazyValueProvider[List[B]] {
 
-  private var lazyExtractedProperty: LazyValueContainer[List[B]] = _
-
-  override def fetchValue: List[B] = lazyExtractedProperty.extractValue
-
+  /** Converts the extracted property of the preceding chain by applying <strong>once</strong> the function <code>f</code> only if all the preceding
+    * validations are successful.  Further calls down the chain will work the type of the converted value.
+    *
+    *
+    * @param f Function to convert the extracted property
+    * @tparam D The new type of the property chain
+    */
   def map[D](f: B => D): SimpleListValidationRuleStarterBuilder[A, D, B] = {
     new SimpleListValidationRuleStarterBuilder[A, D, B](
       propertyListExpression.andThen(_.map(f)),
@@ -44,20 +47,37 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
   }
 
 
-  private lazy val defaultConditionedValidation: A => Boolean = _ => true
-
+  /** Causes the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidator#must must]] or
+    * [[[[com.github.novamage.svalidator.validation.simple.SimpleValidator#mustNot mustNot]] call to be applied only if
+    * the passed in condition evaluates to true
+    *
+    * @param conditionedValidation Condition to be applied to the instance
+    */
   def when(conditionedValidation: A => Boolean): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.map(_.copy(conditionalValidation = Some(conditionedValidation))), validationExpressions, fieldName)
   }
 
-  def withMessage(messageKey: String, args: B => List[Any]): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
+  /** Assigns the passed in as the error message for the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidator#must must]] or
+    * [[[[com.github.novamage.svalidator.validation.simple.SimpleValidator#mustNot mustNot]] call.
+    *
+    * @param messageKey The raw message or a key string for localized messages
+    * @param argsFunction A function that receives the value of the property (or a single element if using an `Each`
+    *                     builder), and should return the list of arguments used to format the error message.
+    */
+  def withMessage(messageKey: String, argsFunction: B => List[Any]): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
     buildNextInstanceInChain(
       propertyListExpression,
-      currentRuleStructure.map(_.copy(errorMessageKey = Some(messageKey), errorMessageFormatValues = Some(args))),
+      currentRuleStructure.map(_.copy(errorMessageKey = Some(messageKey), errorMessageFormatValues = Some(argsFunction))),
       validationExpressions,
       fieldName)
   }
 
+  /** Assigns the passed in as the error message for the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidator#must must]] or
+    * [[[[com.github.novamage.svalidator.validation.simple.SimpleValidator#mustNot mustNot]] call.
+    *
+    * @param messageKey The raw message or a key string for localized messages
+    * @param args List of values to use when formatting the message.
+    */
   def withMessage(messageKey: String, args: Any*): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
     val formatValues = Some((_: B) => args.toList).filter(_ => args.nonEmpty)
     buildNextInstanceInChain(
@@ -67,6 +87,14 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
       fieldName)
   }
 
+  /** Assigns the specified value to the specified key in the metadata for the preceding
+    * [[com.github.novamage.svalidator.validation.simple.SimpleValidator#must must]] or
+    * [[[[com.github.novamage.svalidator.validation.simple.SimpleValidator#mustNot mustNot]] call, if they generate a
+    * validation failure.  If the key already exists, the value is appended to the list of values of said key.
+    *
+    * @param key Key to associate
+    * @param value Value for the given key
+    */
   def withMetadata(key: String, value: Any): SimpleListValidationRuleContinuationBuilder[A, B, C] = {
     val nextCurrentRuleStructure = currentRuleStructure.map { ruleStructure =>
       val nextValueForKey = value :: ruleStructure.metadata.getOrElse(key, Nil)
@@ -76,7 +104,7 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
     buildNextInstanceInChain(propertyListExpression, nextCurrentRuleStructure, validationExpressions, fieldName)
   }
 
-  protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
+  override protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
     val ruleStructures = currentRuleStructure match {
       case None => validationExpressions
       case Some(x) => validationExpressions :+ x
@@ -84,6 +112,11 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
     processRuleStructures(instance, ruleStructures)
   }
 
+  override protected[simple] def fetchValue: List[B] = lazyExtractedProperty.extractValue
+
+  private lazy val defaultConditionedValidation: A => Boolean = _ => true
+
+  private var lazyExtractedProperty: LazyValueContainer[List[B]] = _
 
   private def processRuleStructures(instance: A,
                                     ruleStructuresList: List[SimpleValidationRuleStructureContainer[A, B]]): RuleStreamCollection[A] = {

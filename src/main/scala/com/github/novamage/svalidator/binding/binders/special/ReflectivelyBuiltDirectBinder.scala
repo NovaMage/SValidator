@@ -2,9 +2,13 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding._
 import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.internals.ReflectiveBinderInformation
 
 import scala.collection.mutable.ListBuffer
 
+/** Direct binder created by storing the information that was gained through reflection during the first time a type was
+  * bound reflectively.  Optimizes the binding process by avoiding multiple uses of reflection for binding a given type.
+  */
 class ReflectivelyBuiltDirectBinder[A](information: ReflectiveBinderInformation) extends TypedBinder[A] {
 
   override def bind(fieldName: String,

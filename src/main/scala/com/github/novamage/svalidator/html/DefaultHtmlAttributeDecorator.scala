@@ -1,5 +1,7 @@
 package com.github.novamage.svalidator.html
 
+/** Default implementation for [[com.github.novamage.svalidator.html.HtmlAttributeDecorator HtmlAttributeDecorator]]
+  */
 object DefaultHtmlAttributeDecorator extends HtmlAttributeDecorator {
 
   override def decorateAttributes(elementType: FormElementType,

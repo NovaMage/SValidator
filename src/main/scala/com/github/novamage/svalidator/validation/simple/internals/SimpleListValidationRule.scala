@@ -1,7 +1,6 @@
-package com.github.novamage.svalidator.validation.simple
+package com.github.novamage.svalidator.validation.simple.internals
 
 import com.github.novamage.svalidator.validation._
-import com.github.novamage.svalidator.validation.simple.internals.IValidationRule
 
 class SimpleListValidationRule[A, B](lazyPropertyExtractor: => List[B],
                                      ruleExpression: (B, A) => Boolean,

@@ -2,16 +2,17 @@ package com.github.novamage.svalidator.validation.simple
 
 import language.implicitConversions
 
+//TODO: Scaladoc for this class
 package object constructs {
 
 
   def be = new BeConstruct
 
-  def be[A](value: A): (A => Boolean) = _ == value
+  def be[A](value: A): A => Boolean = _ == value
 
   def have = new HaveConstruct
 
-  def equal[A](value: A): (A => Boolean) = _ == value
+  def equal[A](value: A): A => Boolean = _ == value
 
   implicit class SimpleValidationRuleBuilderConstructExtensions[A, B, C](builder: SimpleListValidationRuleStarterBuilder[A, B, C]) {
 

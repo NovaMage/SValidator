@@ -1,4 +1,4 @@
-package com.github.novamage.svalidator.binding
+package com.github.novamage.svalidator.binding.internals
 
 import scala.reflect.runtime.{universe => ru}
 

@@ -1,4 +1,4 @@
-package com.github.novamage.svalidator.binding
+package com.github.novamage.svalidator.binding.internals
 
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 

@@ -2,6 +2,12 @@ package com.github.novamage.svalidator.html
 
 import com.github.novamage.svalidator.utils.TypeBasedEnumeration
 
+/** A type based enumeration with values for each possible form element whose attributes can be intercepted by the
+  * [[com.github.novamage.svalidator.html.HtmlAttributeDecorator HtmlAttributeDecorator]]
+  *
+  * @param id An integer identifier for the enumerated value
+  * @param htmlElementName The html tag used for the type of element
+  */
 sealed abstract case class FormElementType(id: Int, htmlElementName: String) extends FormElementType.Value {
 
   override def description: String = {
@@ -10,6 +16,9 @@ sealed abstract case class FormElementType(id: Int, htmlElementName: String) ext
 
 }
 
+/** A type based enumeration with values for each possible form element whose attributes can be intercepted by the
+  * [[com.github.novamage.svalidator.html.HtmlAttributeDecorator HtmlAttributeDecorator]]
+  */
 object FormElementType extends TypeBasedEnumeration[FormElementType] {
 
   object Form extends FormElementType(1, "form")

@@ -7,6 +7,8 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
 
 import scala.reflect.runtime.{universe => ru}
 
+/** Binder for values extending [[scala.Enumeration]]
+  */
 class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
   def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Any] = {
     val enumType = runtimeType.asInstanceOf[ru.TypeRef].pre

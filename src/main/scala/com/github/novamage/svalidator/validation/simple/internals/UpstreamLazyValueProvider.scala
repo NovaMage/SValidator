@@ -3,7 +3,7 @@ package com.github.novamage.svalidator.validation.simple.internals
 trait UpstreamLazyValueProvider[A] {
 
 
-  def fetchValue: A
+  protected[simple] def fetchValue: A
 
 
 }
