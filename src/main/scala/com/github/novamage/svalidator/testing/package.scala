@@ -1,6 +1,7 @@
 package com.github.novamage.svalidator
 
 import com.github.novamage.svalidator.validation.ValidationSummary
+import scala.language.implicitConversions
 
 package object testing {
 
