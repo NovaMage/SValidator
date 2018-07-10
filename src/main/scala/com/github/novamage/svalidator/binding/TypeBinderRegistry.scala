@@ -12,7 +12,7 @@ import scala.reflect.runtime.{universe => ru}
 object TypeBinderRegistry {
 
   private val directBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
-  private val recursiveBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
+  private val recursiveBinders = ListBuffer[ru.TypeTag[_]]()
   private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
 
   /** Initializes SValidator's default binders with the default binding configuration
@@ -58,7 +58,7 @@ object TypeBinderRegistry {
     * @tparam A Type that will be allowed to reflectively bind.
     */
   def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]): Unit = {
-    recursiveBinders.prepend((new RecursiveBinder[A](), tag))
+    recursiveBinders.prepend(tag)
   }
 
   protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror, allowRecursiveBinders: Boolean = true): Option[TypedBinder[_]] = {
@@ -83,7 +83,7 @@ object TypeBinderRegistry {
       Some(new TypeBasedEnumerationBinder(runtimeType, mirror, currentBindingConfig))
     } else if (allowRecursiveBinders) {
       recursiveBinders collectFirst {
-        case (binder, tag) if tag.tpe =:= runtimeType => binder
+        case tag if tag.tpe =:= runtimeType => MapToObjectBinder.buildAndRegisterReflectiveBinderFor(tag)
       }
     } else {
       None

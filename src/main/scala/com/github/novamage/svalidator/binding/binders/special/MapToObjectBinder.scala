@@ -19,7 +19,7 @@ object MapToObjectBinder {
     * successful, the information gained through runtime reflection is stored in a special binder and will be used for any
     * future bindings of the same type, to avoid incurring the cost of repeated reflection.
     *
-    * @param dataMap Map of values used during binding
+    * @param dataMap         Map of values used during binding
     * @param globalFieldName Prefix to be prepended to all field names when scanning for values
     * @tparam A Type being bound
     * @return BindingPass with the bound value if successful, BindingFailure with errors and throwable cause otherwise
@@ -44,6 +44,11 @@ object MapToObjectBinder {
   }
 
   protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+    val reflectiveBinder = buildAndRegisterReflectiveBinderFor(tag)
+    reflectiveBinder.bind(fieldPrefix.getOrElse(""), normalizedMap)
+  }
+
+  protected[binding] def buildAndRegisterReflectiveBinderFor[T](tag: ru.TypeTag[T]): ReflectivelyBuiltDirectBinder[T] = {
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
     val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)
@@ -77,7 +82,6 @@ object MapToObjectBinder {
     val binderInformation = new ReflectiveBinderInformation(constructorMirror, reflectiveParamsInfo)
     val reflectiveBinder = new ReflectivelyBuiltDirectBinder[T](binderInformation)
     TypeBinderRegistry.registerBinder[T](reflectiveBinder)(tag)
-    reflectiveBinder.bind(fieldPrefix.getOrElse(""), normalizedMap)
+    reflectiveBinder
   }
-
 }
