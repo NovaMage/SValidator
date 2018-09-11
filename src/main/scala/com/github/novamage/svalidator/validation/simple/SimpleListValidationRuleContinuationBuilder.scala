@@ -47,7 +47,7 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
   }
 
 
-  /** Causes the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidator#must must]] or
+  /** Causes the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidatorWithData#must must]] or
     * [[[[com.github.novamage.svalidator.validation.simple.SimpleValidator#mustNot mustNot]] call to be applied only if
     * the passed in condition evaluates to true
     *
@@ -57,7 +57,7 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
     buildNextInstanceInChain(propertyListExpression, currentRuleStructure.map(_.copy(conditionalValidation = Some(conditionedValidation))), validationExpressions, fieldName)
   }
 
-  /** Assigns the passed in as the error message for the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidator#must must]] or
+  /** Assigns the passed in as the error message for the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidatorWithData#must must]] or
     * [[[[com.github.novamage.svalidator.validation.simple.SimpleValidator#mustNot mustNot]] call.
     *
     * @param messageKey The raw message or a key string for localized messages
@@ -72,7 +72,7 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
       fieldName)
   }
 
-  /** Assigns the passed in as the error message for the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidator#must must]] or
+  /** Assigns the passed in as the error message for the preceding [[com.github.novamage.svalidator.validation.simple.SimpleValidatorWithData#must must]] or
     * [[[[com.github.novamage.svalidator.validation.simple.SimpleValidator#mustNot mustNot]] call.
     *
     * @param messageKey The raw message or a key string for localized messages
@@ -88,7 +88,7 @@ class SimpleListValidationRuleContinuationBuilder[A, B, +C](propertyListExpressi
   }
 
   /** Assigns the specified value to the specified key in the metadata for the preceding
-    * [[com.github.novamage.svalidator.validation.simple.SimpleValidator#must must]] or
+    * [[com.github.novamage.svalidator.validation.simple.SimpleValidatorWithData#must must]] or
     * [[[[com.github.novamage.svalidator.validation.simple.SimpleValidator#mustNot mustNot]] call, if they generate a
     * validation failure.  If the key already exists, the value is appended to the list of values of said key.
     *

@@ -8,7 +8,7 @@ class SimpleSummarySpecs extends Observes {
 
     describe("and the validation summary contains no validation failures") {
 
-      val sut = ValidationSummary(List())
+      val sut = ValidationWithData(List(), None)
 
       lazy val result = sut.isValid
 
@@ -19,7 +19,7 @@ class SimpleSummarySpecs extends Observes {
 
     describe("and the validation summary contains one or more validation failures") {
 
-      val sut = ValidationSummary(List(ValidationFailure("someFieldName", MessageParts("someErrorMessage"), Map.empty)))
+      val sut = ValidationWithData(List(ValidationFailure("someFieldName", MessageParts("someErrorMessage"), Map.empty)), None)
 
       lazy val result = sut.isValid
 

@@ -16,12 +16,12 @@ class SimpleValidatorSpecs extends Observes {
   }
 
   class SampleSimpleValidator extends SimpleValidator[SampleValidatedClass] {
-    def validate(implicit instance: SampleValidatedClass): ValidationSummary = WithRules(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
+    def validate(implicit instance: SampleValidatedClass): ValidationWithData[Nothing] = WithRules(rule_builder_1, rule_builder_2, rule_builder_3, rule_builder_4)
   }
 
   describe("when performing validation assisted by an instance of a child class of simple validator") {
 
-    val sut: Validator[SampleValidatedClass] = new SampleSimpleValidator
+    val sut: Validator[SampleValidatedClass, Nothing] = new SampleSimpleValidator
 
     val instance = mock[SampleValidatedClass]
 

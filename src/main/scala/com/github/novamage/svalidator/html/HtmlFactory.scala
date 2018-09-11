@@ -1,9 +1,9 @@
 package com.github.novamage.svalidator.html
 
-import com.github.novamage.svalidator.validation.binding.BindingAndValidationSummary
+import com.github.novamage.svalidator.validation.binding.BindingAndValidationWithData
 
 /** Provides methods for generating html inputs alongside their errors for a
-  * [[com.github.novamage.svalidator.validation.binding.BindingAndValidationSummary BindingAndValidationSummary]]
+  * [[com.github.novamage.svalidator.validation.binding.BindingAndValidationWithData BindingAndValidationSummary]]
   *
   * @param converter Function to apply to generated markup strings on all methods of this class
   * @param inputDecorator Decorator for markup of generated html inputs
@@ -44,7 +44,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the hidden input after applying the converter function
     */
-  def hidden[B](summary: BindingAndValidationSummary[B],
+  def hidden[B](summary: BindingAndValidationWithData[B, _],
                 name: String,
                 valueGetter: B => Any,
                 attributes: Map[String, Any] = Map.empty): A = {
@@ -66,7 +66,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the input after applying the converter function
     */
-  def textBox[B](summary: BindingAndValidationSummary[B],
+  def textBox[B](summary: BindingAndValidationWithData[B, _],
                  name: String,
                  valueGetter: B => Any,
                  label: String,
@@ -96,7 +96,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the input after applying the converter function
     */
-  def password[B](summary: BindingAndValidationSummary[B],
+  def password[B](summary: BindingAndValidationWithData[B, _],
                   name: String,
                   label: String,
                   attributes: Map[String, Any] = Map.empty): A = {
@@ -125,7 +125,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the input after applying the converter function
     */
-  def checkBox[B](summary: BindingAndValidationSummary[B],
+  def checkBox[B](summary: BindingAndValidationWithData[B, _],
                   name: String,
                   valueGetter: B => Boolean,
                   label: String,
@@ -159,7 +159,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the input after applying the converter function
     */
-  def select[B](summary: BindingAndValidationSummary[B],
+  def select[B](summary: BindingAndValidationWithData[B, _],
                 name: String,
                 valueGetter: B => Any,
                 optionValuesAndText: List[(Any, Any)],
@@ -205,7 +205,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the group of inputs after applying the converter function
     */
-  def radioGroup[B](summary: BindingAndValidationSummary[B],
+  def radioGroup[B](summary: BindingAndValidationWithData[B, _],
                     name: String,
                     valueGetter: B => Any,
                     optionValuesAndText: List[(Any, Any)],
@@ -250,7 +250,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the group of inputs after applying the converter function
     */
-  def checkBoxGroup[B](summary: BindingAndValidationSummary[B],
+  def checkBoxGroup[B](summary: BindingAndValidationWithData[B, _],
                        name: String,
                        valueGetter: B => List[Any],
                        optionValuesAndText: List[(Any, Any)],
@@ -288,7 +288,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the input after applying the converter function
     */
-  def textArea[B](summary: BindingAndValidationSummary[B],
+  def textArea[B](summary: BindingAndValidationWithData[B, _],
                   name: String,
                   valueGetter: B => Any,
                   label: String,
@@ -317,7 +317,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the input after applying the converter function
     */
-  def button[B](summary: BindingAndValidationSummary[B],
+  def button[B](summary: BindingAndValidationWithData[B, _],
                 name: String,
                 text: String,
                 attributes: Map[String, Any] = Map.empty): A = {
@@ -343,7 +343,7 @@ class HtmlFactory[A](converter: String => A,
     * @tparam B Type of the instance validated by the summary
     * @return The markup of the input after applying the converter function
     */
-  def submit[B](summary: BindingAndValidationSummary[B],
+  def submit[B](summary: BindingAndValidationWithData[B, _],
                 name: String,
                 value: String,
                 attributes: Map[String, Any] = Map.empty): A = {
@@ -389,7 +389,7 @@ class HtmlFactory[A](converter: String => A,
     decorator(element, decoratedAttributes)
   }
 
-  private def getValueUsing[B](summary: BindingAndValidationSummary[B],
+  private def getValueUsing[B](summary: BindingAndValidationWithData[B, _],
                                valueGetter: B => Any,
                                name: String): Option[String] = {
     summary.instance.map(valueGetter) match {
@@ -401,7 +401,7 @@ class HtmlFactory[A](converter: String => A,
     }
   }
 
-  private def getValuesListUsing[B, C](summary: BindingAndValidationSummary[B], valueGetter: B => List[C], name: String): List[String] = {
+  private def getValuesListUsing[B, C](summary: BindingAndValidationWithData[B, _], valueGetter: B => List[C], name: String): List[String] = {
     summary.instance.map(valueGetter).map(_.flatMap(listValue => presenter.getValueToPresentFor(listValue))) match {
       case Some(list) => list
       case None => summary.valuesMap.get(name) match {

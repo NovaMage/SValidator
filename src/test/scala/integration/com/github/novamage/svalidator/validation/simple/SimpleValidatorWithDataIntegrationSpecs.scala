@@ -2,9 +2,9 @@ package integration.com.github.novamage.svalidator.validation.simple
 
 import com.github.novamage.svalidator.testing._
 import com.github.novamage.svalidator.utils.TypeBasedEnumeration
-import com.github.novamage.svalidator.validation.ValidationSummary
-import com.github.novamage.svalidator.validation.binding.{BindingAndValidationSummary, Failure, Success}
-import com.github.novamage.svalidator.validation.simple.SimpleValidator
+import com.github.novamage.svalidator.validation.ValidationWithData
+import com.github.novamage.svalidator.validation.binding.{BindingAndValidationWithData, Failure, Success}
+import com.github.novamage.svalidator.validation.simple.SimpleValidatorWithData
 import com.github.novamage.svalidator.validation.simple.constructs._
 import testUtils.Observes
 
@@ -36,25 +36,25 @@ case class Person(firstName: String,
                   emergencyPhoneNumber: Option[PhoneNumber])
 
 
-class AddressValidator extends SimpleValidator[Address] {
+class AddressValidator extends SimpleValidatorWithData[Address, Nothing] {
 
-  def validate(implicit instance: Address): ValidationSummary = WithRules(
+  def validate(implicit instance: Address): ValidationWithData[Nothing] = WithRules(
     For { _.zip } ForField 'zip
       must have maxLength 10 withMessage "Must have 10 characters or less",
 
   )
 }
 
-class PhoneNumberValidator extends SimpleValidator[PhoneNumber] {
-  def validate(implicit instance: PhoneNumber): ValidationSummary = WithRules(
+class PhoneNumberValidator extends SimpleValidatorWithData[PhoneNumber, Nothing] {
+  def validate(implicit instance: PhoneNumber): ValidationWithData[Nothing] = WithRules(
     For { _.areaCode } ForField 'areaCode
       must have maxLength 4 withMessage "The area code can not exceed 4 characters"
   )
 }
 
-class PersonValidator extends SimpleValidator[Person] {
+class PersonValidator extends SimpleValidatorWithData[Person, Nothing] {
 
-  override def validate(implicit instance: Person): ValidationSummary = WithRules(
+  override def validate(implicit instance: Person): ValidationWithData[Nothing] = WithRules(
 
     For { _.firstName } ForField 'firstName
       mustNot be empty() withMessage "First name is required"
@@ -105,7 +105,7 @@ class PersonValidator extends SimpleValidator[Person] {
 }
 
 
-class SimpleValidatorIntegrationSpecs extends Observes {
+class SimpleValidatorWithDataIntegrationSpecs extends Observes {
 
   val sut = new PersonValidator
 
@@ -332,7 +332,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
   }
 
-  val c: BindingAndValidationSummary[String] = Success.apply("Hola", Map.empty)
+  val c: BindingAndValidationWithData[String, Nothing] = Success.apply("Hola", Map.empty, None)
 
   //This is just sort of a compile time test to ensure binding validation summaries can be unapplied properly.
   c match {

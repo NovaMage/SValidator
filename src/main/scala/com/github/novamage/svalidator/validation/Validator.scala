@@ -4,14 +4,14 @@ package com.github.novamage.svalidator.validation
   *
   * @tparam A Type of objects to be validated
   */
-trait Validator[-A] {
+trait Validator[-A, +B] {
 
-  /** Returns a [[com.github.novamage.svalidator.validation.ValidationSummary ValidationSummary]] with error information
+  /** Returns a [[com.github.novamage.svalidator.validation.ValidationWithData ValidationSummary]] with error information
     * from validating the instance
     *
     * @param instance Instance to validate
     */
-  def validate(implicit instance: A): ValidationSummary
+  def validate(implicit instance: A): ValidationWithData[B]
 
 }
 

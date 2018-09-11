@@ -1,6 +1,6 @@
 package com.github.novamage.svalidator.html
 
-import com.github.novamage.svalidator.validation.binding.BindingAndValidationSummary
+import com.github.novamage.svalidator.validation.binding.BindingAndValidationWithData
 import language.implicitConversions
 
 /** Helper class that eases the use of an [[com.github.novamage.svalidator.html.HtmlFactory HtmlFactory]]
@@ -8,7 +8,7 @@ import language.implicitConversions
   * @param summary The summary whose fields will be extracted to generate html inputs for
   * @tparam A Type of the instance validated by the summary
   */
-class BindingAndValidationSummaryHelper[A](summary: BindingAndValidationSummary[A]) {
+class BindingAndValidationSummaryHelper[A](summary: BindingAndValidationWithData[A, _]) {
 
   /** Generates a &lt;input type="hidden"&gt; with the given name
     *
@@ -182,7 +182,7 @@ object BindingAndValidationSummaryHelper {
     * @tparam A Type of the instance validated for the summary
     * @return The wrapped summary with helper methods
     */
-  implicit def helper[A](summary: BindingAndValidationSummary[A]): BindingAndValidationSummaryHelper[A] = {
+  implicit def helper[A](summary: BindingAndValidationWithData[A, _]): BindingAndValidationSummaryHelper[A] = {
     new BindingAndValidationSummaryHelper(summary)
   }
 

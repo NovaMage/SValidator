@@ -2,7 +2,7 @@ package integration.com.github.novamage.svalidator.validation.binding
 
 import com.github.novamage.svalidator.binding.TypeBinderRegistry
 import com.github.novamage.svalidator.testing.ShouldExtensions
-import com.github.novamage.svalidator.validation.ValidationSummary
+import com.github.novamage.svalidator.validation.ValidationWithData
 import com.github.novamage.svalidator.validation.binding.BindingValidator
 import com.github.novamage.svalidator.validation.simple.constructs._
 import testUtils.Observes
@@ -11,7 +11,7 @@ case class ATestingClass(aString: String, anInt: Int, aFloat: Float, aDecimal: B
 
 class ATestingClassValidator extends BindingValidator[ATestingClass] {
 
-  def validate(implicit instance: ATestingClass): ValidationSummary = WithRules(
+  def validate(implicit instance: ATestingClass): ValidationWithData[Nothing] = WithRules(
     For { _.aString } ForField 'aString
       must have minLength 6 withMessage "A string must have at least 6 characters",
 

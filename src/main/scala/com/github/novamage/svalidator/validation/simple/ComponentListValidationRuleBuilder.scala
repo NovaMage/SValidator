@@ -14,12 +14,12 @@ class ComponentListValidationRuleBuilder[A, B](componentListPropertyExpression: 
     *
     * @param validator Validator to delegate validation of the specified component(s)
     */
-  def validateUsing(validator: Validator[B]): RuleBuilder[A] = {
+  def validateUsing(validator: Validator[B, _]): RuleBuilder[A] = {
     new ComponentListValidationWrapper[A, B](componentListPropertyExpression, fieldName, validator, markIndexesOfFieldNameErrors)
   }
 }
 
-private class ComponentListValidationWrapper[A, B](componentListPropertyExpression: A => List[B], fieldName: String, componentValidator: Validator[B], markIndexesOfFieldNameErrors: Boolean) extends RuleBuilder[A] {
+private class ComponentListValidationWrapper[A, B](componentListPropertyExpression: A => List[B], fieldName: String, componentValidator: Validator[B, _], markIndexesOfFieldNameErrors: Boolean) extends RuleBuilder[A] {
 
   protected[validation] def buildRules(instance: A): RuleStreamCollection[A] = {
     RuleStreamCollection(List(ChainedValidationStream(
@@ -31,7 +31,7 @@ private class ComponentListValidationWrapper[A, B](componentListPropertyExpressi
   }
 }
 
-private class ComponentListValidationRule[A, B](componentListPropertyExpression: A => List[B], fieldName: String, componentValidator: Validator[B], markIndexesOfFieldNameErrors: Boolean) extends IValidationRule[A] {
+private class ComponentListValidationRule[A, B](componentListPropertyExpression: A => List[B], fieldName: String, componentValidator: Validator[B, _], markIndexesOfFieldNameErrors: Boolean) extends IValidationRule[A] {
 
   def apply(instance: A): List[ValidationFailure] = {
     val components = componentListPropertyExpression.apply(instance)

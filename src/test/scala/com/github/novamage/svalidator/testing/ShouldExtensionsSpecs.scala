@@ -1,12 +1,12 @@
 package com.github.novamage.svalidator.testing
 
 import com.github.novamage.svalidator.testing.exceptions.ValidationTestingException
-import com.github.novamage.svalidator.validation.{MessageParts, ValidationFailure, ValidationSummary}
+import com.github.novamage.svalidator.validation.{MessageParts, ValidationFailure, ValidationWithData}
 import testUtils.Observes
 
 class ShouldExtensionsSpecs extends Observes {
 
-  private val summary = mock[ValidationSummary]
+  private val summary = mock[ValidationWithData[Nothing]]
 
   describe("when using the shouldBeValid view on a validation summary") {
 
