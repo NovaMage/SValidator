@@ -25,6 +25,12 @@ case class ValidationWithData[+A](validationFailures: List[ValidationFailure],
     ValidationWithData(validationFailures ++ another.validationFailures, newData)
   }
 
+  def mergeWithoutData(another: ValidationWithData[_]): ValidationWithData[Nothing] = {
+    ValidationWithData(validationFailures ++ another.validationFailures, None)
+  }
+
+  def withData[B](data: B): ValidationWithData[B] = copy(data = Some(data))
+
   /** Applies the given [[com.github.novamage.svalidator.validation.Localizer Localizer]] to all failures in this summary
     *
     * @param localizer Localizer to apply to failures
