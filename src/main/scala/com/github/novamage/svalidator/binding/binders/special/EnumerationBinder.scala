@@ -10,7 +10,7 @@ import scala.reflect.runtime.{universe => ru}
 /** Binder for values extending [[scala.Enumeration]]
   */
 class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Any] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Any] = {
     val enumType = runtimeType.asInstanceOf[ru.TypeRef].pre
     val classSymbol = enumType.typeSymbol.asClass
     val companionSymbol = classSymbol.companionSymbol.asModule

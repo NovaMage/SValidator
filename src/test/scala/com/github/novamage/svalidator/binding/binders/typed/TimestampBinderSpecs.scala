@@ -15,8 +15,10 @@ class TimestampBinderSpecs extends Observes {
 
 
     val fieldName = "someTimestamp"
+    val metadata = mock[Map[String, Any]]
+
     describe("and the argument is not present in the values map") {
-      val result = sut.bind(fieldName, Map("someOtherTimestamp" -> List("2013-06-08")))
+      val result = sut.bind(fieldName, Map("someOtherTimestamp" -> List("2013-06-08")), metadata)
 
       it("should have returned a Binding Failure with an error for the field") {
         result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -28,7 +30,7 @@ class TimestampBinderSpecs extends Observes {
       val formatter = new SimpleDateFormat("yyyy-MM-dd")
       val dateString = "2013-02-14"
 
-      val result = sut.bind(fieldName, Map(fieldName -> List(dateString)))
+      val result = sut.bind(fieldName, Map(fieldName -> List(dateString)), metadata)
 
       it("should have returned a Binding Pass with the valueGetter set to the parsed date") {
         result should equal(BindingPass(new Timestamp(formatter.parse(dateString).getTime)))
@@ -36,7 +38,7 @@ class TimestampBinderSpecs extends Observes {
     }
 
     describe("and the argument is present in the values map with a valueGetter that is not a valid date in the expected format") {
-      val result = sut.bind(fieldName, Map(fieldName -> List("aStringThatCanNotBeParsedAsTimestamp")))
+      val result = sut.bind(fieldName, Map(fieldName -> List("aStringThatCanNotBeParsedAsTimestamp")), metadata)
 
       it("should have returned a Binding Pass with the valueGetter set to false") {
         result.fieldErrors.filter(_.fieldName == fieldName) should have size 1

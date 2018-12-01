@@ -12,7 +12,8 @@ import scala.collection.mutable.ListBuffer
 class ReflectivelyBuiltDirectBinder[A](information: ReflectiveBinderInformation) extends TypedBinder[A] {
 
   override def bind(fieldName: String,
-                    valueMap: Map[String, Seq[String]]): BindingResult[A] = {
+                    valueMap: Map[String, Seq[String]],
+                    bindingMetadata: Map[String, Any]): BindingResult[A] = {
 
     val argList = ListBuffer[Any]()
     val errorList = ListBuffer[FieldError]()
@@ -20,7 +21,7 @@ class ReflectivelyBuiltDirectBinder[A](information: ReflectiveBinderInformation)
 
     information.paramsInfo.foreach { info =>
       val fieldNameWithPrefix = if (fieldName.trim.isEmpty) info.parameterName else fieldName.trim + "." + info.parameterName
-      info.binder.bind(fieldNameWithPrefix, valueMap) match {
+      info.binder.bind(fieldNameWithPrefix, valueMap, bindingMetadata) match {
         case BindingPass(value) => argList.append(value)
         case BindingFailure(errors, cause) =>
           errorList.appendAll(errors)

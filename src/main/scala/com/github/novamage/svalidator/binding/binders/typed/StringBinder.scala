@@ -9,7 +9,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
   * @param config The configuration to use for error messages
   */
 class StringBinder(config: BindingConfig) extends TypedBinder[String] {
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[String] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[String] = {
 
     val headOption = valueMap.get(fieldName) match {
       case None => None

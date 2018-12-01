@@ -17,12 +17,13 @@ abstract class BindingValidatorWithData[A: ru.TypeTag, B] extends MappingBinding
     * to validation failures and returned in the summary
     *
     * @param valuesMap Values map to use for binding
+    * @param bindingMetadata Additional values passed as metadata for binding
     * @tparam C Type of the instance being bound and validated
     * @return A summary of field errors or validation failures if any ocurred, or a summary containing the bound instance
     *         otherwise.
     */
-  def bindAndValidate[C](valuesMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[C]): BindingAndValidationWithData[A, B] = {
-    super.bindAndValidate(valuesMap, (x: A) => x)
+  def bindAndValidate[C](valuesMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any])(implicit tag: ru.TypeTag[C]): BindingAndValidationWithData[A, B] = {
+    super.bindAndValidate(valuesMap, (x: A) => x, bindingMetadata)
   }
 
 

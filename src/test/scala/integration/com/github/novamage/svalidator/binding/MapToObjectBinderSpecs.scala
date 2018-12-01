@@ -534,13 +534,14 @@ class MapToObjectBinderSpecs extends Observes {
     val values_map = Map(
       "someField" -> List("someValue")
     )
+    val metadata = mock[Map[String, Any]]
 
     val direct_binder = mock[TypedBinder[AComplexClass]]
     val direct_bind_result = mock[BindingResult[AComplexClass]]
-    when(direct_binder.bind("", values_map)) thenReturn direct_bind_result
+    when(direct_binder.bind("", values_map, metadata)) thenReturn direct_bind_result
     TypeBinderRegistry.registerBinder(direct_binder)
 
-    val result = MapToObjectBinder.bind[AComplexClass](values_map)
+    val result = MapToObjectBinder.bind[AComplexClass](values_map, bindingMetadata = metadata)
 
     it("should have returned the result done by the direct binder") {
       result should be theSameInstanceAs direct_bind_result
@@ -582,13 +583,14 @@ class MapToObjectBinderSpecs extends Observes {
     val values_map = Map(
       "someField" -> List("someValue")
     )
+    val metadata = mock[Map[String, Any]]
 
     val direct_binder = mock[TypedBinder[SomeTrait]]
     val direct_bind_result = mock[BindingResult[SomeTrait]]
-    when(direct_binder.bind("", values_map)) thenReturn direct_bind_result
+    when(direct_binder.bind("", values_map, metadata)) thenReturn direct_bind_result
     TypeBinderRegistry.registerBinder(direct_binder)
 
-    val result = MapToObjectBinder.bind[SomeTrait](values_map)
+    val result = MapToObjectBinder.bind[SomeTrait](values_map, bindingMetadata = metadata)
 
     it("should have returned the result done by the direct binder") {
       result should be theSameInstanceAs direct_bind_result

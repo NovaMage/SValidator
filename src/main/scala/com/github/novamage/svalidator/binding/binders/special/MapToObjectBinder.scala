@@ -24,10 +24,10 @@ object MapToObjectBinder {
     * @tparam A Type being bound
     * @return BindingPass with the bound value if successful, BindingFailure with errors and throwable cause otherwise
     */
-  def bind[A](dataMap: Map[String, Seq[String]], globalFieldName: Option[String] = None)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
+  def bind[A](dataMap: Map[String, Seq[String]], globalFieldName: Option[String] = None, bindingMetadata: Map[String, Any] = Map.empty)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
     val normalizedMap = normalizeKeys(dataMap)
     val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror, allowRecursiveBinders = false)
-    typeBinderOption.map(_.asInstanceOf[TypedBinder[A]].bind(globalFieldName.getOrElse(""), normalizedMap)).getOrElse(bind[A](globalFieldName.filterNot(_.isEmpty), normalizedMap))
+    typeBinderOption.map(_.asInstanceOf[TypedBinder[A]].bind(globalFieldName.getOrElse(""), normalizedMap, bindingMetadata)).getOrElse(bind[A](globalFieldName.filterNot(_.isEmpty), normalizedMap, bindingMetadata))
   }
 
   private def normalizeKeys(valuesMap: Map[String, Seq[String]]): Map[String, Seq[String]] = {
@@ -43,9 +43,9 @@ object MapToObjectBinder {
     }
   }
 
-  protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+  protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val reflectiveBinder = buildAndRegisterReflectiveBinderFor(tag)
-    reflectiveBinder.bind(fieldPrefix.getOrElse(""), normalizedMap)
+    reflectiveBinder.bind(fieldPrefix.getOrElse(""), normalizedMap, bindingMetadata)
   }
 
   protected[binding] def buildAndRegisterReflectiveBinderFor[T](tag: ru.TypeTag[T]): ReflectivelyBuiltDirectBinder[T] = {

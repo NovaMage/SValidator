@@ -9,7 +9,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
   */
 class LongBinder(config: BindingConfig) extends TypedBinder[Long] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Long] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Long] = {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toLong).get)
     } catch {

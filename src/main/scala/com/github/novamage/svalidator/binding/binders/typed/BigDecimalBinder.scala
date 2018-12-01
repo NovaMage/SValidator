@@ -8,7 +8,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
   * @param config The configuration to use for error messages
   */
 class BigDecimalBinder(config: BindingConfig) extends TypedBinder[BigDecimal] {
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[BigDecimal] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[BigDecimal] = {
 
     try {
       BindingPass(BigDecimal(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).get))

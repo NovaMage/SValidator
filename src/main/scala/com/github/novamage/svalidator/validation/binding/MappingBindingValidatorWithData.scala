@@ -22,13 +22,14 @@ abstract class MappingBindingValidatorWithData[A, B] extends SimpleValidatorWith
     * on the transformed value.  If not, field errors are converted to validation failures and returned in the summary
     *
     * @param valuesMap Values map to use for binding
-    * @param mapOp The transformation function from the bound value's type to the validated value's type
+    * @param mapOp     The transformation function from the bound value's type to the validated value's type
+    * @param bindingMetadata Additional values passed as metadata for binding
     * @tparam C Type of the instance being bound
     * @return A summary of field errors or validation failures if any ocurred, or a summary containing the bound instance
     *         otherwise.
     */
-  def bindAndValidate[C](valuesMap: Map[String, Seq[String]], mapOp: C => A)(implicit tag: ru.TypeTag[C]): BindingAndValidationWithData[A, B] = {
-    val bindingResult = MapToObjectBinder.bind[C](valuesMap)
+  def bindAndValidate[C](valuesMap: Map[String, Seq[String]], mapOp: C => A, bindingMetadata: Map[String, Any])(implicit tag: ru.TypeTag[C]): BindingAndValidationWithData[A, B] = {
+    val bindingResult = MapToObjectBinder.bind[C](valuesMap, bindingMetadata = bindingMetadata)
     bindingResult match {
       case BindingFailure(errors, _) => Failure(errors.map(error => ValidationFailure(error.fieldName, error.messageParts, Map.empty)), valuesMap, None, None)
       case BindingPass(value) =>

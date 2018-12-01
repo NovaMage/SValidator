@@ -9,7 +9,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
   */
 class BooleanBinder(config: BindingConfig) extends TypedBinder[Boolean] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Boolean] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Boolean] = {
     try {
       BindingPass(valueMap.get(fieldName).exists(_.headOption.exists(_.toBoolean)))
     } catch {

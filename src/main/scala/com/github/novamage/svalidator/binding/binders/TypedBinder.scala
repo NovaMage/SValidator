@@ -12,9 +12,10 @@ trait TypedBinder[A] {
   /** Binds the value in the values map with the given field name to the type parameter  of this
     * [[com.github.novamage.svalidator.binding.binders.TypedBinder TypedBinder]]
     *
-    * @param fieldName Name of the field to bind
-    * @param valueMap Map of values to provide for the binding
+    * @param fieldName       Name of the field to bind
+    * @param valueMap        Map of values to provide for the binding
+    * @param bindingMetadata Additional values passed as metadata for binding
     * @return BindingPass with the bound value if successful, BindingFailure with errors and throwable cause otherwise
     */
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[A]
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[A]
 }

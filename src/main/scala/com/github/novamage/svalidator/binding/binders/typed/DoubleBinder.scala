@@ -9,7 +9,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
   */
 class DoubleBinder(config: BindingConfig) extends TypedBinder[Double] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Double] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Double] = {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toDouble).get)
     } catch {

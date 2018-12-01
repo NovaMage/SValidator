@@ -25,7 +25,7 @@ class EnumerationBinderSpecs extends Observes {
 
     describe("and the field name is not present in the map") {
 
-      val result = sut.bind(field_name, Map())
+      val result = sut.bind(field_name, Map(), Map.empty)
 
       it("should return a bind failure as the result with no such element exception as the cause") {
         val failure = result.asInstanceOf[BindingFailure[ATestEnumeration.Value]]
@@ -36,7 +36,7 @@ class EnumerationBinderSpecs extends Observes {
     describe("and the field name is present in the map") {
 
       describe("and no value is passed in") {
-        val result = sut.bind(field_name, Map(field_name -> List()))
+        val result = sut.bind(field_name, Map(field_name -> List()), Map.empty)
 
         it("should return a bind failure as the result with no such element exception as the cause") {
           val failure = result.asInstanceOf[BindingFailure[ATestEnumeration.Value]]
@@ -49,7 +49,7 @@ class EnumerationBinderSpecs extends Observes {
 
         describe("and the passed in value is not a valid not an integer") {
 
-          val result = sut.bind(field_name, Map(field_name -> List("notAnInt")))
+          val result = sut.bind(field_name, Map(field_name -> List("notAnInt")), Map.empty)
 
           it("should return a bind failure as the result and the cause should not equal a no such element exception") {
             val failure = result.asInstanceOf[BindingFailure[ATestEnumeration.Value]]
@@ -59,7 +59,7 @@ class EnumerationBinderSpecs extends Observes {
 
         describe("and the passed in value is not a valid id of the enumeration") {
 
-          val result = sut.bind(field_name, Map(field_name -> List("1000")))
+          val result = sut.bind(field_name, Map(field_name -> List("1000")), Map.empty)
 
           it("should return a bind failure as the result and the cause should not equal a no such element exception") {
             val failure = result.asInstanceOf[BindingFailure[ATestEnumeration.Value]]
@@ -70,7 +70,7 @@ class EnumerationBinderSpecs extends Observes {
 
         describe("and the passed in value is a valid id of the enumeration") {
 
-          val result = sut.bind(field_name, Map(field_name -> List(ATestEnumeration.anotherEnumValue.id.toString)))
+          val result = sut.bind(field_name, Map(field_name -> List(ATestEnumeration.anotherEnumValue.id.toString)), Map.empty)
 
           it("should return a successful binding with the return value") {
             val boundValue = result.asInstanceOf[BindingPass[ATestEnumeration.Value]]

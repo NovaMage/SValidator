@@ -10,7 +10,7 @@ import scala.reflect.runtime.{universe => ru}
   */
 class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
 
-  override def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Any] = {
+  override def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Any] = {
     val receivedValue = valueMap.getOrElse(fieldName, Nil).headOption.map(_.trim).filterNot(_.isEmpty)
     try {
       val intValue = receivedValue.map(_.toInt).get

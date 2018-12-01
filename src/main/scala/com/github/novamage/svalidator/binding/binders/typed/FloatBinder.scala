@@ -9,7 +9,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
   */
 class FloatBinder(config: BindingConfig) extends TypedBinder[Float] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Float] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Float] = {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toFloat).get)
     } catch {

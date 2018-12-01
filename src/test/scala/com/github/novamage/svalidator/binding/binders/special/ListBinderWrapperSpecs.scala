@@ -17,6 +17,7 @@ class ListBinderWrapperSpecs extends Observes {
       val valueMap = Map(
         fieldName -> List("a", "2", "c", "4")
       )
+      val metadata = mock[Map[String, Any]]
 
       val first_failure = mock[BindingFailure[Long]]
       val second_failure = mock[BindingFailure[Long]]
@@ -26,13 +27,13 @@ class ListBinderWrapperSpecs extends Observes {
       when(first_failure.fieldErrors) thenReturn first_failure_field_errors
       when(second_failure.fieldErrors) thenReturn second_failure_field_errors
 
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("a")))) thenReturn first_failure
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("c")))) thenReturn second_failure
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("a")), metadata)) thenReturn first_failure
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("c")), metadata)) thenReturn second_failure
 
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("2")))) thenReturn BindingPass(2L)
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("4")))) thenReturn BindingPass(4L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("2")), metadata)) thenReturn BindingPass(2L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("4")), metadata)) thenReturn BindingPass(4L)
 
-      val result = sut.bind(fieldName, valueMap)
+      val result = sut.bind(fieldName, valueMap, metadata)
 
       it("should have a list of binding failures for each failure encountered, with the name of list field instead of the" +
         " name of sub-field returned by the wrappedBinder") {
@@ -56,14 +57,15 @@ class ListBinderWrapperSpecs extends Observes {
       val valueMap = Map(
         fieldName -> List("a", "2", "c", "4")
       )
+      val metadata = mock[Map[String, Any]]
 
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("a")))) thenReturn BindingPass(1L)
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("c")))) thenReturn BindingPass(3L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("a")), metadata)) thenReturn BindingPass(1L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("c")), metadata)) thenReturn BindingPass(3L)
 
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("2")))) thenReturn BindingPass(2L)
-      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("4")))) thenReturn BindingPass(4L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("2")), metadata)) thenReturn BindingPass(2L)
+      when(wrappedBinder.bind(fieldName, Map(fieldName -> List("4")), metadata)) thenReturn BindingPass(4L)
 
-      val result = sut.bind(fieldName, valueMap)
+      val result = sut.bind(fieldName, valueMap, metadata)
 
       it("should have returned BindingPass with a list with all BindingPass values bound to it") {
         result should equal(BindingPass(List(1L, 2L, 3L, 4L)))
@@ -91,14 +93,15 @@ class ListBinderWrapperSpecs extends Observes {
           fieldName + "[2]" -> List("c"),
           fieldName + "[3]" -> List("4")
         )
+        val metadata = mock[Map[String, Any]]
 
-        when(wrappedBinder.bind(fieldName + "[0]", valueMap)) thenReturn first_failure
-        when(wrappedBinder.bind(fieldName + "[2]", valueMap)) thenReturn second_failure
+        when(wrappedBinder.bind(fieldName + "[0]", valueMap, metadata)) thenReturn first_failure
+        when(wrappedBinder.bind(fieldName + "[2]", valueMap, metadata)) thenReturn second_failure
 
-        when(wrappedBinder.bind(fieldName + "[1]", valueMap)) thenReturn BindingPass(2L)
-        when(wrappedBinder.bind(fieldName + "[3]", valueMap)) thenReturn BindingPass(4L)
+        when(wrappedBinder.bind(fieldName + "[1]", valueMap, metadata)) thenReturn BindingPass(2L)
+        when(wrappedBinder.bind(fieldName + "[3]", valueMap, metadata)) thenReturn BindingPass(4L)
 
-        val result = sut.bind(fieldName, valueMap)
+        val result = sut.bind(fieldName, valueMap, metadata)
 
         it("should have returned BindingFailure with a field error for all failing values and the field name " +
           "should be the same as returned by the wrapped binder") {
@@ -124,14 +127,15 @@ class ListBinderWrapperSpecs extends Observes {
           fieldName + "[2]" -> List("c"),
           fieldName + "[3]" -> List("4")
         )
+        val metadata = mock[Map[String, Any]]
 
-        when(wrappedBinder.bind(fieldName + "[0]", valueMap)) thenReturn BindingPass(1L)
-        when(wrappedBinder.bind(fieldName + "[2]", valueMap)) thenReturn BindingPass(3L)
+        when(wrappedBinder.bind(fieldName + "[0]", valueMap, metadata)) thenReturn BindingPass(1L)
+        when(wrappedBinder.bind(fieldName + "[2]", valueMap, metadata)) thenReturn BindingPass(3L)
 
-        when(wrappedBinder.bind(fieldName + "[1]", valueMap)) thenReturn BindingPass(2L)
-        when(wrappedBinder.bind(fieldName + "[3]", valueMap)) thenReturn BindingPass(4L)
+        when(wrappedBinder.bind(fieldName + "[1]", valueMap, metadata)) thenReturn BindingPass(2L)
+        when(wrappedBinder.bind(fieldName + "[3]", valueMap, metadata)) thenReturn BindingPass(4L)
 
-        val result = sut.bind(fieldName, valueMap)
+        val result = sut.bind(fieldName, valueMap, metadata)
 
         it("should have returned BindingPass with a list with all BindingPass values bound to it") {
           result should equal(BindingPass(List(1L, 2L, 3L, 4L)))

@@ -12,7 +12,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
   * @param config The configuration to use for error messages, and format for parsing dates
   */
 class TimestampBinder(config: BindingConfig) extends TypedBinder[Timestamp] {
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Timestamp] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Timestamp] = {
     val formatter = new SimpleDateFormat(config.dateFormat)
     try {
       BindingPass(new Timestamp(formatter.parse(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).get).getTime))

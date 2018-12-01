@@ -9,14 +9,14 @@ import scala.collection.mutable.ListBuffer
   */
 class ListBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[List[Any]] {
 
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[List[Any]] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[List[Any]] = {
     val fieldErrors = new ListBuffer[FieldError]
     val validValues = new ListBuffer[Any]
     val nonIndexedFieldName = valueMap.get(fieldName)
     nonIndexedFieldName match {
       case Some(values) =>
         values.toList map {
-          value => wrappedBinder.bind(fieldName, Map(fieldName -> List(value)))
+          value => wrappedBinder.bind(fieldName, Map(fieldName -> List(value)), bindingMetadata)
         } foreach {
           case x: BindingFailure[_] => fieldErrors.appendAll(x.fieldErrors.map(_.copy(fieldName = fieldName)))
           case BindingPass(validValue) => validValues.append(validValue)
@@ -27,7 +27,7 @@ class ListBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[List[Any]] {
         (for {
           i <- indexes
         } yield {
-          wrappedBinder.bind(s"$fieldName[$i]", valueMap)
+          wrappedBinder.bind(s"$fieldName[$i]", valueMap, bindingMetadata)
         }) foreach {
           case x: BindingFailure[_] => fieldErrors.appendAll(x.fieldErrors)
           case BindingPass(validValue) => validValues.append(validValue)

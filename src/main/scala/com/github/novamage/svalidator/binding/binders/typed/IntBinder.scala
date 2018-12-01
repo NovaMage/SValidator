@@ -8,7 +8,7 @@ import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, Bi
   * @param config The configuration to use for error messages
   */
 class IntBinder(config: BindingConfig) extends TypedBinder[Int] {
-  def bind(fieldName: String, valueMap: Map[String, Seq[String]]): BindingResult[Int] = {
+  def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Int] = {
     try {
       BindingPass(valueMap(fieldName).headOption.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get)
     } catch {
