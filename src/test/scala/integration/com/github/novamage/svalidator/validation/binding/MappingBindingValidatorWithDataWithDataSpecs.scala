@@ -2,7 +2,7 @@ package integration.com.github.novamage.svalidator.validation.binding
 
 import com.github.novamage.svalidator.binding.TypeBinderRegistry
 import com.github.novamage.svalidator.testing.ShouldExtensions
-import com.github.novamage.svalidator.validation.ValidationWithData
+import com.github.novamage.svalidator.validation.{ValidationSummary, ValidationWithData}
 import com.github.novamage.svalidator.validation.binding.{MappingBindingValidator, MappingBindingValidatorWithData}
 import com.github.novamage.svalidator.validation.simple.constructs._
 import testUtils.Observes
@@ -13,7 +13,7 @@ case class AMappedTestingClass(aMappedString: String, aMappedInt: Int, aMappedFl
 
 class AMappedTestingClassValidator extends MappingBindingValidator[AMappedTestingClass] {
 
-  def validate(implicit instance: AMappedTestingClass): ValidationWithData[Nothing] = WithRules(
+  def validate(implicit instance: AMappedTestingClass): ValidationSummary = WithRules(
     For { _.aMappedString } ForField 'aString
       must { _.contains("K") } withMessage "A string must contain at least a 'K'",
 

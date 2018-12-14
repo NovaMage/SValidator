@@ -11,7 +11,7 @@ trait Validator[-A, +B] {
     *
     * @param instance Instance to validate
     */
-  def validate(implicit instance: A): ValidationWithData[B]
+  def validate(implicit instance: A): ValidationResult[B]
 
 }
 

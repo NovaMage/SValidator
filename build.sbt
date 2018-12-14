@@ -6,7 +6,7 @@ name := "SValidator"
 
 description := "A library for validation and data binding of scala objects in a fluent and concise manner"
 
-version := "2.1.0"
+version := "2.2.0"
 
 scalaVersion := "2.12.7"
 

@@ -24,7 +24,7 @@ abstract class SimpleValidatorWithData[A, B] extends Validator[A, B] {
       * @param ruleBuilders Builders to be applied to validate the instance
       * @param instance     Object to validate
       */
-    def WithRules(ruleBuilders: RuleBuilder[A]*)(implicit instance: A): ValidationWithData[B] = {
+    def WithRules(ruleBuilders: RuleBuilder[A]*)(implicit instance: A): ValidationResult[B] = {
       SimpleValidatorWithData.this.WithRulesAndData(Some(data), ruleBuilders: _*)
     }
 
@@ -32,11 +32,12 @@ abstract class SimpleValidatorWithData[A, B] extends Validator[A, B] {
 
   /**
     * Starts building a validation chain that will include the given data in its result
+    *
     * @param data The data to attach to the returned [[com.github.novamage.svalidator.validation.ValidationWithData ValidationWithData]]
     */
   def WithData(data: B): ValidationDataContinuationBuilder = new ValidationDataContinuationBuilder(data)
 
-  private def WithRulesAndData(data: Option[B], ruleBuilders: RuleBuilder[A]*)(implicit instance: A): ValidationWithData[B] = {
+  protected[simple] def WithRulesAndData(data: Option[B], ruleBuilders: RuleBuilder[A]*)(implicit instance: A): ValidationResult[B] = {
     val ruleStreamCollections = ruleBuilders.toList.map(_.buildRules(instance))
     val results = ruleStreamCollections.flatMap {
       collection => processRuleStreamCollection(instance, collection)
@@ -56,7 +57,7 @@ abstract class SimpleValidatorWithData[A, B] extends Validator[A, B] {
     * @param ruleBuilders Builders to be applied to validate the instance
     * @param instance     Object to validate
     */
-  def WithRules(ruleBuilders: RuleBuilder[A]*)(implicit instance: A): ValidationWithData[B] = {
+  def WithRules(ruleBuilders: RuleBuilder[A]*)(implicit instance: A): ValidationResult[B] = {
     WithRulesAndData(None, ruleBuilders: _*)
   }
 
