@@ -3,6 +3,7 @@ package com.github.novamage.svalidator.binding
 import com.github.novamage.svalidator.binding.binders.TypedBinder
 import com.github.novamage.svalidator.binding.binders.special._
 import com.github.novamage.svalidator.binding.binders.typed._
+import com.github.novamage.svalidator.binding.hooks.{BeforeBindingAndValidatingHook, FailedBindingHook, SuccessfulBindingAndValidationHook, SuccessfulBindingFailedValidationHook}
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.runtime.{universe => ru}
@@ -14,6 +15,11 @@ object TypeBinderRegistry {
   private val directBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
   private val recursiveBinders = ListBuffer[ru.TypeTag[_]]()
   private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
+
+  protected[svalidator] val beforeBindingAndValidationHooks: ListBuffer[BeforeBindingAndValidatingHook] = ListBuffer[BeforeBindingAndValidatingHook]()
+  protected[svalidator] val failedBindingHooks: ListBuffer[FailedBindingHook] = ListBuffer[FailedBindingHook]()
+  protected[svalidator] val successfulBindingAndValidationHooks: ListBuffer[SuccessfulBindingAndValidationHook] = ListBuffer[SuccessfulBindingAndValidationHook]()
+  protected[svalidator] val successfulBindingFailedValidationHooks: ListBuffer[SuccessfulBindingFailedValidationHook] = ListBuffer[SuccessfulBindingFailedValidationHook]()
 
   /** Initializes SValidator's default binders with the default binding configuration
     */
@@ -46,10 +52,66 @@ object TypeBinderRegistry {
     directBinders.prepend((binder, tag))
   }
 
+  /** Registers the given hook to be called globally before the binding step of
+    * [[com.github.novamage.svalidator.validation.binding.MappingBindingValidatorWithData#bindAndValidate MappingBindingValidatorWithData.bindAndValidate]]
+    * and its subclasses.
+    *
+    * Hooks will be called in the same order they are registered.  Hooking is NOT THREAD SAFE and should
+    * be done during initialization code.
+    */
+  def registerBeforeBindingAndValidationHook(hook: BeforeBindingAndValidatingHook): Unit = {
+    beforeBindingAndValidationHooks.append(hook)
+  }
+
+  /** Registers the given hook to be called globally after failing the binding step of
+    * [[com.github.novamage.svalidator.validation.binding.MappingBindingValidatorWithData#bindAndValidate MappingBindingValidatorWithData.bindAndValidate]]
+    * and its subclasses
+    *
+    * Hooks will be called in the same order they are registered.  Hooking is NOT THREAD SAFE and should
+    * be done during initialization code.
+    */
+  def registerFailedBindingHook(hook: FailedBindingHook): Unit = {
+    failedBindingHooks.append(hook)
+  }
+
+  /** Registers the given hook to be called globally after successfully binding but failing the validation step of
+    * [[com.github.novamage.svalidator.validation.binding.MappingBindingValidatorWithData#bindAndValidate MappingBindingValidatorWithData.bindAndValidate]]
+    * and its subclasses
+    *
+    * Hooks will be called in the same order they are registered.  Hooking is NOT THREAD SAFE and should
+    * be done during initialization code.
+    */
+  def registerSuccessFulBindingFailedValidationHook(hook: SuccessfulBindingFailedValidationHook): Unit = {
+    successfulBindingFailedValidationHooks.append(hook)
+  }
+
+  /** Registers the given hook to be called globally after successfully binding and validation steps of
+    * [[com.github.novamage.svalidator.validation.binding.MappingBindingValidatorWithData#bindAndValidate MappingBindingValidatorWithData.bindAndValidate]]
+    * and its subclasses
+    *
+    * Hooks will be called in the same order they are registered.  Hooking is NOT THREAD SAFE and should
+    * be done during initialization code.
+    */
+  def registerSuccessFulBindingAndValidationHook(hook: SuccessfulBindingAndValidationHook): Unit = {
+    successfulBindingAndValidationHooks.append(hook)
+  }
+
   /** Removes all registered binders from this object
     */
   def clearBinders(): Unit = {
     clearBinderBuffers()
+  }
+
+  /** Removes all registered hooks from this object
+    *
+    * Note that hooking/clearing hooks IS NOT THREAD SAFE and the calling code must be responsible for
+    * handling thread safety.
+    */
+  def clearHooks(): Unit = {
+    beforeBindingAndValidationHooks.clear()
+    failedBindingHooks.clear()
+    successfulBindingFailedValidationHooks.clear()
+    successfulBindingAndValidationHooks.clear()
   }
 
   /** Configures the registry to allow reflectively binding via constructor parameters if no binder is found for the
