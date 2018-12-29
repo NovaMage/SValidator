@@ -36,7 +36,7 @@ the type of the object you want to validate.  Then, import `com.github.novamage.
 and make a fluent and elegant validation by using the `WithRules` builder on your simple validator, like:
 
 ```scala
-  override def validate(implicit instance: Person): ValidationWithData[Nothing] = WithRules(
+  override def validate(implicit instance: Person): ValidationSummary = WithRules(
 
     For { _.firstName } ForField 'firstName
       mustNot be empty () withMessage "First name is required"
