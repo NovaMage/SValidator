@@ -1,5 +1,8 @@
 package com.github.novamage.svalidator.validation
 
+/**
+  * Provides information about errors occurred during the validation process
+  */
 trait ValidationResult[+A] {
 
   def validationFailures: List[ValidationFailure]
@@ -11,14 +14,29 @@ trait ValidationResult[+A] {
   def isValid: Boolean = validationFailures.isEmpty
 
   /** Returns a summary with the combined failures of the current summary and the passed in summary
+    * and a list of their combined data
     *
     * @param another Summary to merge failures with
     */
-  def merge[B](another: ValidationResult[B]): ValidationResult[List[Any]]
+  def merge[B](another: ValidationResult[B]): ValidationResult[List[Any]] = {
+    val newData = if (data.isDefined || another.data.isDefined) {
+      Some(List(data, another.data).flatten)
+    } else {
+      None
+    }
+    ValidationWithData(validationFailures ++ another.validationFailures, newData)
+  }
 
-  def mergeWithoutData(another: ValidationResult[_]): ValidationSummary
+  /** Returns a summary with the combined failures of the current summary and the passed in summary
+    * without any data
+    *
+    * @param another Summary to merge failures with
+    */
+  def mergeWithoutData(another: ValidationResult[_]): ValidationSummary = {
+    ValidationSummary(validationFailures ++ another.validationFailures)
+  }
 
-  def withData[B](data: B): ValidationResult[B]
+  def withData[B](data: B): ValidationResult[B] = ValidationWithData(validationFailures, Some(data))
 
   /** Applies the given [[com.github.novamage.svalidator.validation.Localizer Localizer]] to all failures in this summary
     *
