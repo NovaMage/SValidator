@@ -10,7 +10,7 @@ import scala.reflect.runtime.{universe => ru}
   *
   * @param scalaType Type whose binder was not found and reflective binding has not been enabled
   */
-class NoBinderFoundException(scalaType: ru.Type) extends Exception(s"No binder found for type: $scalaType. To allow " +
+class NoBinderFoundException(scalaType: ru.Type) extends Exception(s"No binder found for type: ${scalaType}. To allow " +
   s"recursively binding into this type, call TypeBinderRegistry.allowRecursiveBindingForType once in your initialization code " +
   s"for the given type.") {
 }

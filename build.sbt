@@ -6,7 +6,7 @@ name := "SValidator"
 
 description := "A library for validation and data binding of scala objects in a fluent and concise manner"
 
-version := "2.3.0"
+version := "2.4.0"
 
 scalaVersion := "2.12.7"
 
@@ -34,7 +34,6 @@ publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  println(isSnapshot.value)
   if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else

@@ -161,6 +161,7 @@ object TypeBinderRegistry {
 
   private def isTypeATypeBasedEnum(runtimeType: ru.Type): Boolean = {
     //The criteria applied here is that
+    // the type must be a class
     // the type must be sealed and have at least one known descendant,
     // the type must be abstract,
     // the type must have a companion symbol
@@ -169,6 +170,9 @@ object TypeBinderRegistry {
     // all direct known descendants must be enclosed within the companion object of the type
     // all descendants must be module classes (i.e. object definitions that extend the runtimeType)
     // and there must exist a getter/param accessor method for said int argument which is either public or protected
+    if (!runtimeType.typeSymbol.isClass)
+      return false
+
     val classSymbol = runtimeType.typeSymbol.asClass
     val allKnownDescendants = classSymbol.knownDirectSubclasses.map(_.asClass).toVector
 

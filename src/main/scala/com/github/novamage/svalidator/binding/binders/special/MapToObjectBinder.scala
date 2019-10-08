@@ -61,8 +61,10 @@ object MapToObjectBinder {
     if (constructorMethodOption.isEmpty) {
       throw new NoDirectBinderNorConstructorForBindingException(runtimeType)
     }
+
     val primaryConstructorMethod = constructorMethodOption.get
-    val paramSymbols = primaryConstructorMethod.paramLists
+    val constructorTypeSignature = primaryConstructorMethod.typeSignatureIn(runtimeType)
+    val paramSymbols = constructorTypeSignature.paramLists
     val reflectiveParamsInfo = paramSymbols.flatten.map {
       symbol =>
         val paramTermSymbol = symbol.asTerm

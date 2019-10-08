@@ -188,6 +188,14 @@ case class AClassWithAnIndexedList(anIndexedList: List[AnIndexedListValue])
 
 case class AnIndexedListValue(stringField: String, longField: Long)
 
+case class AClassUsedInAGenericClass(intField: Int)
+
+case class AnotherClassUsedInAGenericClass(stringField: String)
+
+case class AClassWithAGeneric[A](genericField: A)
+
+case class AClassWithMultipleGenerics[A, B](genericField: A, anotherGenericField: B)
+
 class MapToObjectBinderSpecs extends Observes {
 
   val sut: MapToObjectBinder.type = MapToObjectBinder
@@ -595,6 +603,49 @@ class MapToObjectBinderSpecs extends Observes {
     it("should have returned the result done by the direct binder") {
       result should be theSameInstanceAs direct_bind_result
     }
+
+  }
+
+  describe("when binding a class with a defined concrete generic") {
+
+    describe("and there's a single generic") {
+
+      val values_map = Map(
+        "genericField.intField" -> List("5")
+      )
+      val metadata = mock[Map[String, Any]]
+      TypeBinderRegistry.allowRecursiveBindingForType[AClassUsedInAGenericClass]()
+
+      val expected_result = BindingPass(AClassWithAGeneric(AClassUsedInAGenericClass(5)))
+
+      val result = MapToObjectBinder.bind[AClassWithAGeneric[AClassUsedInAGenericClass]](values_map, bindingMetadata = metadata)
+
+      it("should have returned a successful binding result with the expected generic value") {
+        result should equal(expected_result)
+      }
+
+    }
+
+    describe("and there are multiple generics") {
+
+      val values_map = Map(
+        "genericField.intField" -> List("5"),
+        "anotherGenericField.stringField" -> List("Hello")
+      )
+      val metadata = mock[Map[String, Any]]
+      TypeBinderRegistry.allowRecursiveBindingForType[AClassUsedInAGenericClass]()
+      TypeBinderRegistry.allowRecursiveBindingForType[AnotherClassUsedInAGenericClass]()
+
+      val expected_result = BindingPass(AClassWithMultipleGenerics(AClassUsedInAGenericClass(5), AnotherClassUsedInAGenericClass("Hello")))
+
+      val result = MapToObjectBinder.bind[AClassWithMultipleGenerics[AClassUsedInAGenericClass, AnotherClassUsedInAGenericClass]](values_map, bindingMetadata = metadata)
+
+      it("should have returned a successful binding result with the expected generic value") {
+        result should equal(expected_result)
+      }
+
+    }
+
 
   }
 
