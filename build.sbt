@@ -30,8 +30,11 @@ developers := List(
 
 publishMavenStyle := true
 
+publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
+
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
+  println(isSnapshot.value)
   if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
