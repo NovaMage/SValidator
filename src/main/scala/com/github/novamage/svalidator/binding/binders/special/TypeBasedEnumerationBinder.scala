@@ -1,17 +1,29 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
+import io.circe.ACursor
 
 import scala.reflect.runtime.{universe => ru}
 
 /** Binder for classes that follow the case-object style described in
   * [[https://github.com/NovaMage/SValidator/wiki/Type-Based-Enumerations Type Based Enumerations]].
   */
-class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig) extends TypedBinder[Any] {
+class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: BindingConfig)
+  extends TypedBinder[Any] with JsonTypedBinder[Any] {
 
   override def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Any] = {
     val receivedValue = valueMap.getOrElse(fieldName, Nil).headOption.map(_.trim).filterNot(_.isEmpty)
+    parseTypeBasedEnumerationFromReceivedValue(fieldName, receivedValue)
+  }
+
+  override def bind(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Any] = {
+
+    val receivedValue = currentCursor.as[Option[String]].toOption.flatten.map(_.trim).filterNot(_.isEmpty)
+    parseTypeBasedEnumerationFromReceivedValue(fieldName, receivedValue)
+  }
+
+  private def parseTypeBasedEnumerationFromReceivedValue(fieldName: String, receivedValue: Option[String]): BindingResult[Any] = {
     try {
       val intValue = receivedValue.map(_.toInt).get
       val classSymbol = runtimeType.typeSymbol.asClass

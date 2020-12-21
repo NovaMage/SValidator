@@ -6,7 +6,7 @@ name := "SValidator"
 
 description := "A library for validation and data binding of scala objects in a fluent and concise manner"
 
-version := "2.4.0"
+version := "2.4.6"
 
 scalaVersion := "2.12.7"
 
@@ -32,6 +32,8 @@ publishMavenStyle := true
 
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 
+useGpg := true
+
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (isSnapshot.value)
@@ -47,6 +49,14 @@ scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
 exportJars := true
 
 parallelExecution in Test := false
+
+val circeVersion = "0.12.3"
+
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.12.7"
 

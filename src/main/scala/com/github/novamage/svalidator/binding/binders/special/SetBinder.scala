@@ -1,7 +1,8 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import com.github.novamage.svalidator.binding.binders.TypedBinder
-import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, BindingResult, FieldError}
+import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
+import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult, FieldError}
+import io.circe.ACursor
 
 import scala.collection.mutable.ListBuffer
 
@@ -40,3 +41,35 @@ class SetBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[Set[Any]] {
   }
 }
 
+
+class JsonSetBinder(wrappedBinder: JsonTypedBinder[_], config: BindingConfig) extends JsonTypedBinder[Set[Any]] {
+
+  override def bind(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Set[Any]] = {
+    val firstIndexCursor = currentCursor.downArray
+    if (firstIndexCursor.succeeded) {
+      val values = currentCursor.values.getOrElse(Nil)
+      val fieldErrors = new ListBuffer[FieldError]
+      val validValues = new ListBuffer[Any]
+      values.zipWithIndex.foreach { case (json, index) =>
+        wrappedBinder.bind(json.hcursor, s"$fieldName[$index]", bindingMetadata) match {
+          case BindingPass(boundValue) => validValues.append(boundValue)
+          case BindingFailure(errors, _) => fieldErrors.appendAll(errors)
+        }
+      }
+      if (fieldErrors.isEmpty)
+        BindingPass(validValues.toSet)
+      else
+        BindingFailure(fieldErrors.toList, None)
+    } else {
+      val targetCursorContent = currentCursor.as[Option[String]]
+      targetCursorContent match {
+        case Left(value) =>
+          BindingFailure(fieldName, config.languageConfig.invalidSequenceMessage(fieldName, ""), Some(value))
+        case Right(value) => value.map(_.trim).filter(_.nonEmpty) match {
+          case Some(invalidValue) => BindingFailure(fieldName, config.languageConfig.invalidSequenceMessage(fieldName, invalidValue), None)
+          case None => BindingPass(Set.empty)
+        }
+      }
+    }
+  }
+}

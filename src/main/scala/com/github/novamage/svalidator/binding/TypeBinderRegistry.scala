@@ -1,6 +1,6 @@
 package com.github.novamage.svalidator.binding
 
-import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.binders.special._
 import com.github.novamage.svalidator.binding.binders.typed._
 import com.github.novamage.svalidator.binding.hooks.{BeforeBindingAndValidatingHook, FailedBindingHook, SuccessfulBindingAndValidationHook, SuccessfulBindingFailedValidationHook}
@@ -13,8 +13,9 @@ import scala.reflect.runtime.{universe => ru}
 object TypeBinderRegistry {
 
   private val directBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
-  private val recursiveBinders = ListBuffer[ru.TypeTag[_]]()
-  private var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
+  private val directJsonBinders = ListBuffer[(JsonTypedBinder[_], ru.TypeTag[_])]()
+  private val allowedRecursiveBinders = ListBuffer[ru.TypeTag[_]]()
+  protected[binding] var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
 
   protected[svalidator] val beforeBindingAndValidationHooks: ListBuffer[BeforeBindingAndValidatingHook] = ListBuffer[BeforeBindingAndValidatingHook]()
   protected[svalidator] val failedBindingHooks: ListBuffer[FailedBindingHook] = ListBuffer[FailedBindingHook]()
@@ -50,6 +51,16 @@ object TypeBinderRegistry {
     */
   def registerBinder[A](binder: TypedBinder[A])(implicit tag: ru.TypeTag[A]): Unit = {
     directBinders.prepend((binder, tag))
+  }
+
+  /** Adds the given binder to the list of registered json binders, taking priority over any previously registered json binders of
+    * the same type
+    *
+    * @param binder Json binder to register
+    * @tparam A The type of instances bindable by the binder
+    */
+  def registerBinder[A](binder: JsonTypedBinder[A])(implicit tag: ru.TypeTag[A]): Unit = {
+    directJsonBinders.prepend((binder, tag))
   }
 
   /** Registers the given hook to be called globally before the binding step of
@@ -120,7 +131,7 @@ object TypeBinderRegistry {
     * @tparam A Type that will be allowed to reflectively bind.
     */
   def allowRecursiveBindingForType[A]()(implicit tag: ru.TypeTag[A]): Unit = {
-    recursiveBinders.prepend(tag)
+    allowedRecursiveBinders.prepend(tag)
   }
 
   protected[binding] def getBinderForType(runtimeType: ru.Type, mirror: ru.Mirror, allowRecursiveBinders: Boolean = true): Option[TypedBinder[_]] = {
@@ -144,19 +155,49 @@ object TypeBinderRegistry {
     else if (isTypeATypeBasedEnum(runtimeType)) {
       Some(new TypeBasedEnumerationBinder(runtimeType, mirror, currentBindingConfig))
     } else if (allowRecursiveBinders) {
-      recursiveBinders collectFirst {
+      allowedRecursiveBinders collectFirst {
         case tag if tag.tpe =:= runtimeType => MapToObjectBinder.buildAndRegisterReflectiveBinderFor(tag)
       }
     } else {
       None
     }
 
+  }
+
+  protected[binding] def getJsonBinderForType(runtimeType: ru.Type, mirror: ru.Mirror, allowRecursiveBinders: Boolean = true): Option[JsonTypedBinder[_]] = {
+    val directJsonBinderOption = directJsonBinders collectFirst {
+      case (binder, tag) if tag.tpe =:= runtimeType => binder
+    }
+    if (directJsonBinderOption.isDefined) {
+      directJsonBinderOption
+    } else if (runtimeType.asInstanceOf[ru.TypeRef].pre.baseClasses.contains(ru.typeOf[Enumeration].typeSymbol.asClass)) {
+      Some(new EnumerationBinder(runtimeType, mirror, currentBindingConfig))
+    }
+    else if (runtimeType.erasure =:= ru.typeOf[Option[_]].erasure) {
+      getJsonBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new JsonOptionBinder(_))
+    }
+    else if (runtimeType.erasure =:= ru.typeOf[List[_]].erasure) {
+      getJsonBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new JsonListBinder(_, currentBindingConfig))
+    }
+    else if (runtimeType.erasure =:= ru.typeOf[Set[_]].erasure) {
+      getJsonBinderForType(runtimeType.asInstanceOf[ru.TypeRef].args.head, mirror).map(new JsonSetBinder(_, currentBindingConfig))
+    }
+    else if (isTypeATypeBasedEnum(runtimeType)) {
+      Some(new TypeBasedEnumerationBinder(runtimeType, mirror, currentBindingConfig))
+    } else if (allowRecursiveBinders) {
+      allowedRecursiveBinders collectFirst {
+        case tag if tag.tpe =:= runtimeType => MapToObjectBinder.buildAndRegisterJsonReflectiveBinderFor(tag)
+      }
+    } else {
+      None
+    }
 
   }
 
+
   private def clearBinderBuffers() {
     directBinders.clear()
-    recursiveBinders.clear()
+    allowedRecursiveBinders.clear()
   }
 
   private def isTypeATypeBasedEnum(runtimeType: ru.Type): Boolean = {

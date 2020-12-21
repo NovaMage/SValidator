@@ -81,5 +81,21 @@ trait BindingLanguageConfig {
     */
   def invalidEnumerationMessage(fieldName: String, fieldValue: String): MessageParts
 
+  /** Returns message parts to use when a sequence binding fails because the passed json string wasn't valid
+    *
+    * @param fieldName The passed in field name, if any
+    * @param fieldValue The passed in json string of the target array
+    * @return The error message to report when binding fails due to the specified reason
+    */
+  def invalidSequenceMessage(fieldName: String, fieldValue: String): MessageParts
+
+  /** Returns message parts to use when json binding fails because the passed json string couldn't be parsed
+    *
+    * @param fieldName The passed in field name, if any
+    * @param fieldValue The passed in json string for parsing
+    * @return The error message to report when binding fails due to the specified reason
+    */
+  def invalidJsonMessage(fieldName: Option[String], fieldValue: String): MessageParts
+
 }
 

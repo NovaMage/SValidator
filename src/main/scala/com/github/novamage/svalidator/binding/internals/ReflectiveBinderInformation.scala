@@ -6,3 +6,8 @@ class ReflectiveBinderInformation(val constructorMirror: ru.MethodMirror,
                                   val paramsInfo: List[ReflectiveParamInformation]) {
 
 }
+
+class JsonReflectiveBinderInformation(val constructorMirror: ru.MethodMirror,
+                                      val paramsInfo: List[JsonReflectiveParamInformation]) {
+
+}

@@ -1,9 +1,10 @@
 package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding._
-import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.exceptions.{NoBinderFoundException, NoDirectBinderNorConstructorForBindingException}
-import com.github.novamage.svalidator.binding.internals.{ReflectiveBinderInformation, ReflectiveParamInformation}
+import com.github.novamage.svalidator.binding.internals.{JsonReflectiveBinderInformation, JsonReflectiveParamInformation, ReflectiveBinderInformation, ReflectiveParamInformation}
+import io.circe.ACursor
 
 import scala.reflect.runtime.{universe => ru}
 
@@ -27,7 +28,18 @@ object MapToObjectBinder {
   def bind[A](dataMap: Map[String, Seq[String]], globalFieldName: Option[String] = None, bindingMetadata: Map[String, Any] = Map.empty)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
     val normalizedMap = normalizeKeys(dataMap)
     val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror, allowRecursiveBinders = false)
-    typeBinderOption.map(_.asInstanceOf[TypedBinder[A]].bind(globalFieldName.getOrElse(""), normalizedMap, bindingMetadata)).getOrElse(bind[A](globalFieldName.filterNot(_.isEmpty), normalizedMap, bindingMetadata))
+    typeBinderOption.map(_.asInstanceOf[TypedBinder[A]].bind(globalFieldName.getOrElse(""), normalizedMap, bindingMetadata)).getOrElse(bind[A](globalFieldName.map(_.trim).filterNot(_.isEmpty), normalizedMap, bindingMetadata))
+  }
+
+  def bind[A](inputJson: String, globalFieldName: Option[String] = None, bindingMetadata: Map[String, Any] = Map.empty)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
+    val parsingResult = io.circe.parser.parse(inputJson)
+    parsingResult match {
+      case Left(parsingFailure) =>
+        BindingFailure(globalFieldName.getOrElse(""), TypeBinderRegistry.currentBindingConfig.languageConfig.invalidJsonMessage(globalFieldName, inputJson), Some(parsingFailure))
+      case Right(json) =>
+        val typeBinderOption = TypeBinderRegistry.getJsonBinderForType(tag.tpe, tag.mirror, allowRecursiveBinders = false)
+        typeBinderOption.map(_.asInstanceOf[JsonTypedBinder[A]].bind(json.hcursor, globalFieldName.getOrElse(""), bindingMetadata)).getOrElse(bind[A](json.hcursor, globalFieldName.map(_.trim).filterNot(_.isEmpty), bindingMetadata))
+    }
   }
 
   private def normalizeKeys(valuesMap: Map[String, Seq[String]]): Map[String, Seq[String]] = {
@@ -46,6 +58,11 @@ object MapToObjectBinder {
   protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
     val reflectiveBinder = buildAndRegisterReflectiveBinderFor(tag)
     reflectiveBinder.bind(fieldPrefix.getOrElse(""), normalizedMap, bindingMetadata)
+  }
+
+  protected[special] def bind[T](currentCursor: ACursor, fieldPrefix: Option[String], bindingMetadata: Map[String, Any])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+    val reflectiveBinder = buildAndRegisterJsonReflectiveBinderFor(tag)
+    reflectiveBinder.bind(currentCursor, fieldPrefix.getOrElse(""), bindingMetadata)
   }
 
   protected[binding] def buildAndRegisterReflectiveBinderFor[T](tag: ru.TypeTag[T]): ReflectivelyBuiltDirectBinder[T] = {
@@ -85,5 +102,44 @@ object MapToObjectBinder {
     val reflectiveBinder = new ReflectivelyBuiltDirectBinder[T](binderInformation)
     TypeBinderRegistry.registerBinder[T](reflectiveBinder)(tag)
     reflectiveBinder
+  }
+
+  protected[binding] def buildAndRegisterJsonReflectiveBinderFor[T](tag: ru.TypeTag[T]): JsonReflectivelyBuiltDirectBinder[T] = {
+    val runtimeMirror = tag.mirror
+    val runtimeType = tag.tpe
+    val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)
+    if (!constructorSymbols.isTerm) {
+      throw new NoDirectBinderNorConstructorForBindingException(runtimeType)
+    }
+    val constructorMethodOption = constructorSymbols.asTerm.alternatives.collectFirst {
+      case ctor if ctor.asMethod.isPrimaryConstructor => ctor.asMethod
+    }
+    if (constructorMethodOption.isEmpty) {
+      throw new NoDirectBinderNorConstructorForBindingException(runtimeType)
+    }
+
+    val primaryConstructorMethod = constructorMethodOption.get
+    val constructorTypeSignature = primaryConstructorMethod.typeSignatureIn(runtimeType)
+    val paramSymbols = constructorTypeSignature.paramLists
+    val reflectiveParamsInfo = paramSymbols.flatten.map {
+      symbol =>
+        val paramTermSymbol = symbol.asTerm
+        val constructorParamName = paramTermSymbol.name.decodedName.toString
+        val parameterType = paramTermSymbol.typeSignature
+        val typeBinder = TypeBinderRegistry.getJsonBinderForType(parameterType, runtimeMirror)
+        typeBinder match {
+          case Some(binder) =>
+            new JsonReflectiveParamInformation(constructorParamName, binder)
+          case None => throw new NoBinderFoundException(parameterType)
+        }
+    }
+
+    val classToBind = runtimeType.typeSymbol.asClass
+    val reflectClass = runtimeMirror.reflectClass(classToBind)
+    val constructorMirror = reflectClass.reflectConstructor(primaryConstructorMethod)
+    val binderInformation = new JsonReflectiveBinderInformation(constructorMirror, reflectiveParamsInfo)
+    val jsonReflectiveBinder = new JsonReflectivelyBuiltDirectBinder[T](binderInformation)
+    TypeBinderRegistry.registerBinder[T](jsonReflectiveBinder)(tag)
+    jsonReflectiveBinder
   }
 }
