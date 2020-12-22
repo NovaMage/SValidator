@@ -20,7 +20,7 @@ trait JsonTypedBinder[A] {
     * @param bindingMetadata Additional values passed as metadata for binding
     * @return BindingPass with the bound value if successful, BindingFailure with errors and throwable cause otherwise
     */
-  def bind(currentCursor: ACursor,
-           fieldName: String,
-           bindingMetadata: Map[String, Any]): BindingResult[A]
+  def bindJson(currentCursor: ACursor,
+               fieldName: String,
+               bindingMetadata: Map[String, Any]): BindingResult[A]
 }

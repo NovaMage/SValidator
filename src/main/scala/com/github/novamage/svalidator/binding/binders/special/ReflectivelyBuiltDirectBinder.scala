@@ -49,7 +49,7 @@ class ReflectivelyBuiltDirectBinder[A](information: ReflectiveBinderInformation)
 
 class JsonReflectivelyBuiltDirectBinder[A](information: JsonReflectiveBinderInformation) extends JsonTypedBinder[A] {
 
-  override def bind(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[A] = {
+  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[A] = {
 
 
     val argList = ListBuffer[Any]()
@@ -65,7 +65,7 @@ class JsonReflectivelyBuiltDirectBinder[A](information: JsonReflectiveBinderInfo
 
     information.paramsInfo.foreach { info =>
       val fieldNameWithPrefix = if (fieldName.trim.isEmpty) info.parameterName else fieldName.trim + "." + info.parameterName
-      info.binder.bind(initialCursor.downField(info.parameterName), fieldNameWithPrefix, bindingMetadata) match {
+      info.binder.bindJson(initialCursor.downField(info.parameterName), fieldNameWithPrefix, bindingMetadata) match {
         case BindingPass(value) => argList.append(value)
         case BindingFailure(errors, cause) =>
           errorList.appendAll(errors)

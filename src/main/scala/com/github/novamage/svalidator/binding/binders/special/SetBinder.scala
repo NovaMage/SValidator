@@ -44,14 +44,14 @@ class SetBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[Set[Any]] {
 
 class JsonSetBinder(wrappedBinder: JsonTypedBinder[_], config: BindingConfig) extends JsonTypedBinder[Set[Any]] {
 
-  override def bind(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Set[Any]] = {
+  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Set[Any]] = {
     val firstIndexCursor = currentCursor.downArray
     if (firstIndexCursor.succeeded) {
       val values = currentCursor.values.getOrElse(Nil)
       val fieldErrors = new ListBuffer[FieldError]
       val validValues = new ListBuffer[Any]
       values.zipWithIndex.foreach { case (json, index) =>
-        wrappedBinder.bind(json.hcursor, s"$fieldName[$index]", bindingMetadata) match {
+        wrappedBinder.bindJson(json.hcursor, s"$fieldName[$index]", bindingMetadata) match {
           case BindingPass(boundValue) => validValues.append(boundValue)
           case BindingFailure(errors, _) => fieldErrors.appendAll(errors)
         }

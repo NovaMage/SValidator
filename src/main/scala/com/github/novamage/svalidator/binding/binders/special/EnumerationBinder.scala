@@ -1,10 +1,10 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import java.lang.reflect.InvocationTargetException
 import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
-import io.circe.{DecodingFailure, HCursor}
+import io.circe.ACursor
 
+import java.lang.reflect.InvocationTargetException
 import scala.reflect.runtime.{universe => ru}
 
 /** Binder for values extending [[scala.Enumeration]]
@@ -28,7 +28,7 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
     }
   }
 
-  override def bind(currentCursor: HCursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Any] = {
+  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Any] = {
     try {
       currentCursor.as[Int] match {
         case Left(decodingFailure) =>

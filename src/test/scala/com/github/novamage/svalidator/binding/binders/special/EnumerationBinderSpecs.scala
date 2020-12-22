@@ -25,7 +25,7 @@ class EnumerationBinderSpecs extends Observes {
 
     describe("and the field name is not present in the map") {
 
-      val result = sut.bind(field_name, Map(), Map.empty)
+      val result = sut.bind(field_name, Map.empty, Map.empty)
 
       it("should return a bind failure as the result with no such element exception as the cause") {
         val failure = result.asInstanceOf[BindingFailure[ATestEnumeration.Value]]

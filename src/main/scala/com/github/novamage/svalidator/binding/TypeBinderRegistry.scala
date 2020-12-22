@@ -32,14 +32,30 @@ object TypeBinderRegistry {
     */
   def initializeBinders(config: BindingConfig): Unit = {
     clearBinderBuffers()
-    registerBinder(new StringBinder(config))
-    registerBinder(new IntBinder(config))
-    registerBinder(new LongBinder(config))
-    registerBinder(new FloatBinder(config))
-    registerBinder(new DoubleBinder(config))
-    registerBinder(new BigDecimalBinder(config))
-    registerBinder(new BooleanBinder(config))
-    registerBinder(new TimestampBinder(config))
+    val stringBinder = new StringBinder(config)
+    val intBinder = new IntBinder(config)
+    val longBinder = new LongBinder(config)
+    val floatBinder = new FloatBinder(config)
+    val doubleBinder = new DoubleBinder(config)
+    val bigDecimalBinder = new BigDecimalBinder(config)
+    val booleanBinder = new BooleanBinder(config)
+    val timestampBinder = new TimestampBinder(config)
+    registerBinder(stringBinder)
+    registerBinder(intBinder)
+    registerBinder(longBinder)
+    registerBinder(floatBinder)
+    registerBinder(doubleBinder)
+    registerBinder(bigDecimalBinder)
+    registerJsonBinder(booleanBinder)
+    registerBinder(timestampBinder)
+    registerBinder(stringBinder)
+    registerBinder(intBinder)
+    registerBinder(longBinder)
+    registerBinder(floatBinder)
+    registerBinder(doubleBinder)
+    registerJsonBinder(bigDecimalBinder)
+    registerBinder(booleanBinder)
+    registerBinder(timestampBinder)
     currentBindingConfig = config
   }
 
@@ -59,7 +75,7 @@ object TypeBinderRegistry {
     * @param binder Json binder to register
     * @tparam A The type of instances bindable by the binder
     */
-  def registerBinder[A](binder: JsonTypedBinder[A])(implicit tag: ru.TypeTag[A]): Unit = {
+  def registerJsonBinder[A](binder: JsonTypedBinder[A])(implicit tag: ru.TypeTag[A]): Unit = {
     directJsonBinders.prepend((binder, tag))
   }
 
@@ -186,7 +202,7 @@ object TypeBinderRegistry {
       Some(new TypeBasedEnumerationBinder(runtimeType, mirror, currentBindingConfig))
     } else if (allowRecursiveBinders) {
       allowedRecursiveBinders collectFirst {
-        case tag if tag.tpe =:= runtimeType => MapToObjectBinder.buildAndRegisterJsonReflectiveBinderFor(tag)
+        case tag if tag.tpe =:= runtimeType => JsonToObjectBinder.buildAndRegisterJsonReflectiveBinderFor(tag)
       }
     } else {
       None
@@ -197,6 +213,7 @@ object TypeBinderRegistry {
 
   private def clearBinderBuffers() {
     directBinders.clear()
+    directJsonBinders.clear()
     allowedRecursiveBinders.clear()
   }
 

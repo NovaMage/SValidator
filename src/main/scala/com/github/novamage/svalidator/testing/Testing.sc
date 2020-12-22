@@ -1,9 +1,14 @@
 import io.circe.parser
+import io.circe.generic.auto._, io.circe.syntax._
 
-val jsonObject = parser.parse("{\"juana\":[18]}")
-jsonObject match {
-  case Left(value) =>
-    println(value)
-  case Right(value) =>
-    println("The number is:" + value.hcursor.downField("juana").downArray.succeeded)
-}
+case class Test(a: BigDecimal)
+
+
+val test = Test(BigDecimal("5"))
+
+
+val serialized = test.asJson
+
+
+serialized.hcursor.downField("a").as[BigDecimal]
+

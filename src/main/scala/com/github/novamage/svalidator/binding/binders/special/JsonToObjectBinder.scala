@@ -1,9 +1,10 @@
 package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding._
-import com.github.novamage.svalidator.binding.binders.TypedBinder
+import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.exceptions.{NoBinderFoundException, NoDirectBinderNorConstructorForBindingException}
-import com.github.novamage.svalidator.binding.internals.{ReflectiveBinderInformation, ReflectiveParamInformation}
+import com.github.novamage.svalidator.binding.internals.{JsonReflectiveBinderInformation, JsonReflectiveParamInformation, ReflectiveBinderInformation, ReflectiveParamInformation}
+import io.circe.ACursor
 
 import scala.reflect.runtime.{universe => ru}
 
@@ -19,41 +20,28 @@ object JsonToObjectBinder {
     * successful, the information gained through runtime reflection is stored in a special json binder and will be used for any
     * future bindings of the same type, to avoid incurring the cost of repeated reflection.
     *
-    * @param json            The json string containing the object information to be bound
+    * @param inputJson Json string to parse and bind values from
     * @param globalFieldName Prefix to be prepended to all field names when scanning for values
     * @tparam A Type being bound
     * @return BindingPass with the bound value if successful, BindingFailure with errors and throwable cause otherwise
     */
-  def bind[A](json: String, globalFieldName: Option[String] = None, bindingMetadata: Map[String, Any] = Map.empty)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
-    val jsonObject = io.circe.parser.parse(json)
-    jsonObject match {
+  def bind[A](inputJson: String, globalFieldName: Option[String] = None, bindingMetadata: Map[String, Any] = Map.empty)(implicit tag: ru.TypeTag[A]): BindingResult[A] = {
+    val parsingResult = io.circe.parser.parse(inputJson)
+    parsingResult match {
       case Left(parsingFailure) =>
-        BindingFailure(globalFieldName.getOrElse(""), TypeBinderRegistry.currentBindingConfig.languageConfig.invalidJsonMessage(globalFieldName, json), Some(parsingFailure))
-      case Right(value) =>
-        val typeBinderOption = TypeBinderRegistry.getBinderForType(tag.tpe, tag.mirror, allowRecursiveBinders = false)
-        typeBinderOption.map(_.asInstanceOf[TypedBinder[A]].bind(globalFieldName.getOrElse(""), normalizedMap, bindingMetadata)).getOrElse(bind[A](globalFieldName.filterNot(_.isEmpty), normalizedMap, bindingMetadata))
+        BindingFailure(globalFieldName.getOrElse(""), TypeBinderRegistry.currentBindingConfig.languageConfig.invalidJsonMessage(globalFieldName, inputJson), Some(parsingFailure))
+      case Right(json) =>
+        val typeBinderOption = TypeBinderRegistry.getJsonBinderForType(tag.tpe, tag.mirror, allowRecursiveBinders = false)
+        typeBinderOption.map(_.asInstanceOf[JsonTypedBinder[A]].bindJson(json.hcursor, globalFieldName.getOrElse(""), bindingMetadata)).getOrElse(bind[A](json.hcursor, globalFieldName.map(_.trim).filterNot(_.isEmpty), bindingMetadata))
     }
   }
 
-  private def normalizeKeys(valuesMap: Map[String, Seq[String]]): Map[String, Seq[String]] = {
-    valuesMap map {
-      case (key, value) if key.contains("[") =>
-        val dotNotationKey = key.replace("]", "").replace("[", ".")
-        val tokens = dotNotationKey.split("\\.")
-        val normalizedKey = tokens.zipWithIndex map {
-          case (element, index) => if (index == 0) element else if (element.forall(_.isDigit)) "[" + element + "]" else "." + element
-        } mkString ""
-        (normalizedKey, value)
-      case (key, value) => (key, value)
-    }
+  protected[special] def bind[T](currentCursor: ACursor, fieldPrefix: Option[String], bindingMetadata: Map[String, Any])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
+    val reflectiveBinder = buildAndRegisterJsonReflectiveBinderFor(tag)
+    reflectiveBinder.bindJson(currentCursor, fieldPrefix.getOrElse(""), bindingMetadata)
   }
 
-  protected[special] def bind[T](fieldPrefix: Option[String], normalizedMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any])(implicit tag: ru.TypeTag[T]): BindingResult[T] = {
-    val reflectiveBinder = buildAndRegisterReflectiveBinderFor(tag)
-    reflectiveBinder.bind(fieldPrefix.getOrElse(""), normalizedMap, bindingMetadata)
-  }
-
-  protected[binding] def buildAndRegisterReflectiveBinderFor[T](tag: ru.TypeTag[T]): ReflectivelyBuiltDirectBinder[T] = {
+  protected[binding] def buildAndRegisterJsonReflectiveBinderFor[T](tag: ru.TypeTag[T]): JsonReflectivelyBuiltDirectBinder[T] = {
     val runtimeMirror = tag.mirror
     val runtimeType = tag.tpe
     val constructorSymbols = runtimeType.decl(ru.termNames.CONSTRUCTOR)
@@ -75,10 +63,10 @@ object JsonToObjectBinder {
         val paramTermSymbol = symbol.asTerm
         val constructorParamName = paramTermSymbol.name.decodedName.toString
         val parameterType = paramTermSymbol.typeSignature
-        val typeBinder = TypeBinderRegistry.getBinderForType(parameterType, runtimeMirror)
+        val typeBinder = TypeBinderRegistry.getJsonBinderForType(parameterType, runtimeMirror)
         typeBinder match {
           case Some(binder) =>
-            new ReflectiveParamInformation(constructorParamName, binder)
+            new JsonReflectiveParamInformation(constructorParamName, binder)
           case None => throw new NoBinderFoundException(parameterType)
         }
     }
@@ -86,9 +74,10 @@ object JsonToObjectBinder {
     val classToBind = runtimeType.typeSymbol.asClass
     val reflectClass = runtimeMirror.reflectClass(classToBind)
     val constructorMirror = reflectClass.reflectConstructor(primaryConstructorMethod)
-    val binderInformation = new ReflectiveBinderInformation(constructorMirror, reflectiveParamsInfo)
-    val reflectiveBinder = new ReflectivelyBuiltDirectBinder[T](binderInformation)
-    TypeBinderRegistry.registerBinder[T](reflectiveBinder)(tag)
-    reflectiveBinder
+    val binderInformation = new JsonReflectiveBinderInformation(constructorMirror, reflectiveParamsInfo)
+    val jsonReflectiveBinder = new JsonReflectivelyBuiltDirectBinder[T](binderInformation)
+    TypeBinderRegistry.registerJsonBinder[T](jsonReflectiveBinder)(tag)
+    jsonReflectiveBinder
   }
+
 }

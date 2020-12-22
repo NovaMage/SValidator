@@ -2,7 +2,7 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.{BindingFailure, BindingPass, BindingResult}
-import io.circe.HCursor
+import io.circe.{ACursor, HCursor}
 
 /** Binds options of a given type, provided that a binder for the type parameter is provided.
   */
@@ -24,8 +24,8 @@ class OptionBinder(wrappedBinder: TypedBinder[_])
 class JsonOptionBinder(wrappedBinder: JsonTypedBinder[_])
   extends JsonTypedBinder[Option[Any]] {
 
-  override def bind(currentCursor: HCursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Option[Any]] = {
-    wrappedBinder.bind(currentCursor, fieldName, bindingMetadata) match {
+  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Option[Any]] = {
+    wrappedBinder.bindJson(currentCursor, fieldName, bindingMetadata) match {
       case BindingPass(value) => BindingPass(Option(value))
       case BindingFailure(errors, cause) => cause match {
         case Some(x) if x.isInstanceOf[NoSuchElementException] => BindingPass(None)
