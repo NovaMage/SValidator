@@ -7,8 +7,6 @@ name := "SValidator"
 
 description := "A library for validation and data binding of scala objects in a fluent and concise manner"
 
-version := "2.4.6"
-
 scalaVersion := "2.12.7"
 
 licenses := Seq("MIT" -> url("https://github.com/NovaMage/SValidator/blob/master/LICENSE.txt"))
@@ -29,6 +27,8 @@ developers := List(
   )
 )
 
+releaseUseGlobalVersion := false
+
 publishMavenStyle := true
 
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
@@ -40,8 +40,6 @@ publishTo := {
   else
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
-
-releaseVersionBump := Bump.Minor
 
 publishArtifact in Test := false
 
