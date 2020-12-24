@@ -1,4 +1,5 @@
 import ReleaseTransformations._
+import sbtrelease.Version.Bump
 
 organization := "com.github.novamage"
 
@@ -39,6 +40,8 @@ publishTo := {
   else
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
+
+releaseVersionBump := Bump.Minor
 
 publishArtifact in Test := false
 
