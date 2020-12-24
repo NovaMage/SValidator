@@ -1,5 +1,4 @@
 import ReleaseTransformations._
-import sbtrelease.Version.Bump
 
 organization := "com.github.novamage"
 
