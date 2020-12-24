@@ -20,7 +20,7 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
 
   override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Any] = {
 
-    val receivedValue = currentCursor.as[Option[String]].toOption.flatten.map(_.trim).filterNot(_.isEmpty)
+    val receivedValue = currentCursor.focus.map(_.toString().trim).filterNot(_.isEmpty)
     parseTypeBasedEnumerationFromReceivedValue(fieldName, receivedValue)
   }
 

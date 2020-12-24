@@ -31,5 +31,11 @@ class Observes extends path.FunSpec with MockitoSugar with scalatest.Matchers wi
     }
   }
 
+  implicit class StringExtensions[A](aString: String) {
+
+    def quoted: String = StringBuilder.newBuilder.append('"').append(aString).append('"').mkString
+
+  }
+
 }
 

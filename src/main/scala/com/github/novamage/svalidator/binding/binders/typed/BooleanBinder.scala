@@ -22,7 +22,7 @@ class BooleanBinder(config: BindingConfig)
   override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Boolean] = {
     currentCursor.as[Option[Boolean]] match {
       case Left(parsingFailure) =>
-        BindingFailure(fieldName, config.languageConfig.invalidBooleanMessage(fieldName, currentCursor.as[Option[String]].toOption.flatten.getOrElse("")), Some(parsingFailure))
+        BindingFailure(fieldName, config.languageConfig.invalidBooleanMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
       case Right(value) =>
         try {
           BindingPass(value.getOrElse(false))

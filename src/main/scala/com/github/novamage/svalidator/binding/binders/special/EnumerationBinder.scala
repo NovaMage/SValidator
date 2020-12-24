@@ -32,7 +32,7 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
     try {
       currentCursor.as[Int] match {
         case Left(decodingFailure) =>
-          val errorValue = currentCursor.as[Option[String]].toOption.flatten.get
+          val errorValue = currentCursor.focus.map(_.toString()).getOrElse("")
           BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, errorValue), Some(decodingFailure))
         case Right(value) =>
           val enumType = runtimeType.asInstanceOf[ru.TypeRef].pre
@@ -44,7 +44,7 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
           BindingPass(applyMethod(value))
       }
     } catch {
-      case ex: InvocationTargetException => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, currentCursor.as[Option[String]].toOption.flatten.getOrElse("")), Some(ex))
+      case ex: InvocationTargetException => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(ex))
       case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
     }
   }

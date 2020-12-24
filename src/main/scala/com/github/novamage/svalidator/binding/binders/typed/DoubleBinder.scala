@@ -23,7 +23,7 @@ class DoubleBinder(config: BindingConfig)
   override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Double] = {
     currentCursor.as[Option[Double]] match {
       case Left(parsingFailure) =>
-        BindingFailure(fieldName, config.languageConfig.invalidDoubleMessage(fieldName, currentCursor.as[Option[String]].toOption.flatten.getOrElse("")), Some(parsingFailure))
+        BindingFailure(fieldName, config.languageConfig.invalidDoubleMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
       case Right(value) =>
         try {
           BindingPass(value.get)

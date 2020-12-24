@@ -24,7 +24,7 @@ class BigDecimalBinder(config: BindingConfig)
   override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[BigDecimal] = {
     currentCursor.as[Option[BigDecimal]] match {
       case Left(parsingFailure) =>
-        BindingFailure(fieldName, config.languageConfig.invalidDecimalMessage(fieldName, currentCursor.as[Option[String]].toOption.flatten.getOrElse("")), Some(parsingFailure))
+        BindingFailure(fieldName, config.languageConfig.invalidDecimalMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
       case Right(value) =>
         try {
           BindingPass(value.get)

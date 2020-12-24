@@ -70,6 +70,14 @@ trait BindingLanguageConfig {
     */
   def invalidTimestampMessage(fieldName: String, fieldValue: String): MessageParts
 
+  /** Returns message parts to use when binding a string field using the json method but it is invalid (not a string)
+    *
+    * @param fieldName The passed in field name, if any
+    * @param fieldValue The passed in json string for parsing
+    * @return The error message to report when binding fails due to the specified reason
+    */
+  def invalidJsonStringMessage(fieldName: String, fieldValue: String): MessageParts
+
   /** Returns message parts to use when binding fails for an object that follows the case-object enumeration pattern
     * described in [[https://github.com/NovaMage/SValidator/wiki/Type-Based-Enumerations Type Based Enumerations]].
     *

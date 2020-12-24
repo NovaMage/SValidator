@@ -32,30 +32,34 @@ object TypeBinderRegistry {
     */
   def initializeBinders(config: BindingConfig): Unit = {
     clearBinderBuffers()
-    val stringBinder = new StringBinder(config)
-    val intBinder = new IntBinder(config)
-    val longBinder = new LongBinder(config)
-    val floatBinder = new FloatBinder(config)
-    val doubleBinder = new DoubleBinder(config)
+
     val bigDecimalBinder = new BigDecimalBinder(config)
     val booleanBinder = new BooleanBinder(config)
+    val doubleBinder = new DoubleBinder(config)
+    val intBinder = new IntBinder(config)
+    val floatBinder = new FloatBinder(config)
+    val longBinder = new LongBinder(config)
+    val stringBinder = new StringBinder(config)
     val timestampBinder = new TimestampBinder(config)
-    registerBinder(stringBinder)
-    registerBinder(intBinder)
-    registerBinder(longBinder)
-    registerBinder(floatBinder)
-    registerBinder(doubleBinder)
+
     registerBinder(bigDecimalBinder)
-    registerJsonBinder(booleanBinder)
-    registerBinder(timestampBinder)
-    registerBinder(stringBinder)
-    registerBinder(intBinder)
-    registerBinder(longBinder)
-    registerBinder(floatBinder)
-    registerBinder(doubleBinder)
-    registerJsonBinder(bigDecimalBinder)
     registerBinder(booleanBinder)
+    registerBinder(doubleBinder)
+    registerBinder(intBinder)
+    registerBinder(floatBinder)
+    registerBinder(longBinder)
+    registerBinder(stringBinder)
     registerBinder(timestampBinder)
+
+    registerJsonBinder(bigDecimalBinder)
+    registerJsonBinder(booleanBinder)
+    registerJsonBinder(doubleBinder)
+    registerJsonBinder(intBinder)
+    registerJsonBinder(floatBinder)
+    registerJsonBinder(longBinder)
+    registerJsonBinder(stringBinder)
+    registerJsonBinder(timestampBinder)
+
     currentBindingConfig = config
   }
 

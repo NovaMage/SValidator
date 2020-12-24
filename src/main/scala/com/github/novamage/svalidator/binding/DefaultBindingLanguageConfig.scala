@@ -55,6 +55,10 @@ object DefaultBindingLanguageConfig extends BindingLanguageConfig {
     MessageParts("invalid.enumeration", List(fieldValue))
   }
 
+  override def invalidJsonStringMessage(fieldName: String, fieldValue: String): MessageParts = {
+    MessageParts("invalid.string", List(fieldValue))
+  }
+
   override def invalidSequenceMessage(fieldName: String, fieldValue: String): MessageParts = {
     MessageParts("invalid.sequence", List(fieldValue))
   }
@@ -62,5 +66,6 @@ object DefaultBindingLanguageConfig extends BindingLanguageConfig {
   override def invalidJsonMessage(fieldName: Option[String], fieldValue: String): MessageParts = {
     MessageParts("invalid.json", List(fieldValue))
   }
+
 }
 

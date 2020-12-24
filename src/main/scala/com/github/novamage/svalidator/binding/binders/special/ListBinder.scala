@@ -61,14 +61,10 @@ class JsonListBinder(wrappedBinder: JsonTypedBinder[_], config: BindingConfig) e
       else
         BindingFailure(fieldErrors.toList, None)
     } else {
-      val targetCursorContent = currentCursor.as[Option[String]]
-      targetCursorContent match {
-        case Left(value) =>
-          BindingFailure(fieldName, config.languageConfig.invalidSequenceMessage(fieldName, ""), Some(value))
-        case Right(value) => value.map(_.trim).filter(_.nonEmpty) match {
-          case Some(invalidValue) => BindingFailure(fieldName, config.languageConfig.invalidSequenceMessage(fieldName, invalidValue), None)
-          case None => BindingPass(Nil)
-        }
+      val value = currentCursor.focus.map(_.toString())
+      value.map(_.trim).filter(_.nonEmpty) match {
+        case Some(invalidValue) => BindingFailure(fieldName, config.languageConfig.invalidSequenceMessage(fieldName, invalidValue), None)
+        case None => BindingPass(Nil)
       }
     }
   }

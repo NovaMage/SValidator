@@ -37,7 +37,7 @@ case class BindingPass[+A](private val boundValue: A) extends BindingResult[A] {
 
   override def isValid = true
 
-  override def value = Option(boundValue)
+  override def value: Option[A] = Option(boundValue)
 
   override def fieldErrors: List[FieldError] = Nil
 
@@ -46,20 +46,18 @@ case class BindingPass[+A](private val boundValue: A) extends BindingResult[A] {
 
 /** Represents binding results that failed binding.  It is safely sealed for pattern matching.
   *
-  * @param errors Errors that occurred during binding
+  * @param fieldErrors Errors that occurred during binding
   * @param cause The exception that was thrown and caused the binding to fail, if any
   * @tparam A Type of the value that was attempted to bind
   */
-case class BindingFailure[+A](private val errors: List[FieldError], cause: Option[Throwable]) extends BindingResult[A] {
+case class BindingFailure[+A](fieldErrors: List[FieldError], cause: Option[Throwable]) extends BindingResult[A] {
 
 
   override def isValid = false
 
   override def value: Option[A] = None
 
-  override def fieldErrors: List[FieldError] = errors
-
-  override def localized(implicit localizer: Localizer): BindingResult[A] = BindingFailure(errors.map(_.localize), cause)
+  override def localized(implicit localizer: Localizer): BindingResult[A] = BindingFailure(fieldErrors.map(_.localize), cause)
 
 }
 
