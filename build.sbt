@@ -32,8 +32,6 @@ publishMavenStyle := true
 
 publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 
-useGpg := true
-
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (isSnapshot.value)
