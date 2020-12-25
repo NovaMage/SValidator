@@ -30,7 +30,7 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
 
   override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Any] = {
     try {
-      currentCursor.as[Int] match {
+      currentCursor.as[Option[Int]] match {
         case Left(decodingFailure) =>
           val errorValue = currentCursor.focus.map(_.toString()).getOrElse("")
           BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, errorValue), Some(decodingFailure))
@@ -41,7 +41,7 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
           val objectInstance = mirror.reflectModule(companionSymbol).instance
           val applySymbol = enumType.member(ru.TermName("apply")).asMethod
           val applyMethod = mirror.reflect(objectInstance).reflectMethod(applySymbol)
-          BindingPass(applyMethod(value))
+          BindingPass(applyMethod(value.get))
       }
     } catch {
       case ex: InvocationTargetException => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(ex))

@@ -1,19 +1,19 @@
 package com.github.novamage.svalidator.binding.binders.special
 
-import com.github.novamage.svalidator.binding.binders.typed.LongBinder
-import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, FieldError}
+import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
+import com.github.novamage.svalidator.binding.binders.typed.LongBinder
 import com.github.novamage.svalidator.validation.MessageParts
 import io.circe.Json
 import testUtils.Observes
 
-class ListBinderWrapperSpecs extends Observes {
+class SetBinderWrapperSpecs extends Observes {
 
 
   describe("when binding a list of values using the values map method of binding") {
 
     val wrappedBinder = mock[TypedBinder[Long]]
-    val sut: TypedBinder[List[_]] = new ListBinder(wrappedBinder)
+    val sut: TypedBinder[Set[Any]] = new SetBinder(wrappedBinder)
 
     describe("and the list of values is of a specific type with a single non indexed field name") {
 
@@ -73,7 +73,7 @@ class ListBinderWrapperSpecs extends Observes {
         val result = sut.bind(fieldName, valueMap, metadata)
 
         it("should have returned BindingPass with a list with all BindingPass values bound to it") {
-          result should equal(BindingPass(List(1L, 2L, 3L, 4L)))
+          result should equal(BindingPass(Set(1L, 2L, 3L, 4L)))
         }
       }
 
@@ -136,7 +136,7 @@ class ListBinderWrapperSpecs extends Observes {
         val metadata = mock[Map[String, Any]]
 
         when(wrappedBinder.bind(fieldName + "[0]", valueMap, metadata)) thenReturn BindingPass(1L)
-        when(wrappedBinder.bind(fieldName + "[2]", valueMap, metadata)) thenReturn BindingPass(3L)
+        when(wrappedBinder.bind(fieldName + "[2]", valueMap, metadata)) thenReturn BindingPass(2L)
 
         when(wrappedBinder.bind(fieldName + "[1]", valueMap, metadata)) thenReturn BindingPass(2L)
         when(wrappedBinder.bind(fieldName + "[3]", valueMap, metadata)) thenReturn BindingPass(4L)
@@ -144,7 +144,7 @@ class ListBinderWrapperSpecs extends Observes {
         val result = sut.bind(fieldName, valueMap, metadata)
 
         it("should have returned BindingPass with a list with all BindingPass values bound to it") {
-          result should equal(BindingPass(List(1L, 2L, 3L, 4L)))
+          result should equal(BindingPass(Set(1L, 2L, 4L)))
         }
       }
     }
@@ -155,8 +155,7 @@ class ListBinderWrapperSpecs extends Observes {
   describe("when binding a list of values using the json method of binding") {
 
     val wrappedBinder = new LongBinder(BindingConfig.defaultConfig)
-    val sut: JsonTypedBinder[List[_]] = new JsonListBinder(wrappedBinder, BindingConfig.defaultConfig)
-
+    val sut: JsonTypedBinder[Set[Any]] = new JsonSetBinder(wrappedBinder, BindingConfig.defaultConfig)
 
     val fieldName = "someRandomFieldName"
     val metadata = mock[Map[String, Any]]
@@ -188,7 +187,7 @@ class ListBinderWrapperSpecs extends Observes {
         List(
           Json.fromLong(1),
           Json.fromLong(2),
-          Json.fromLong(3),
+          Json.fromLong(2),
           Json.fromLong(4)
         )))
 
@@ -197,7 +196,7 @@ class ListBinderWrapperSpecs extends Observes {
       val result = sut.bindJson(arrayFieldCursor, fieldName, metadata)
 
       it("should have returned BindingPass with a list with all BindingPass values bound to it") {
-        result should equal(BindingPass(List(1L, 2L, 3L, 4L)))
+        result should equal(BindingPass(Set(1L, 2L, 4L)))
       }
     }
 

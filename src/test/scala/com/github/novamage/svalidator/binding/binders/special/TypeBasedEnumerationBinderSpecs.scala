@@ -1,6 +1,8 @@
 package com.github.novamage.svalidator.binding.binders.special
 
+import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass}
+import io.circe.Json
 import testUtils.Observes
 
 import scala.reflect.runtime.{universe => ru}
@@ -32,84 +34,179 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
   private val tag = ru.typeTag[ATestCaseObjectEnum]
 
-  val sut = new TypeBasedEnumerationBinder(tag.tpe, tag.mirror, BindingConfig.defaultConfig)
-
   describe("when binding an object that is a case object enum") {
 
-    val field_name = "someFieldName"
+    val fieldName = "someFieldName"
     val metadata = mock[Map[String, Any]]
 
-    describe("and no value is provided") {
+    describe("and the values map method of binding is used") {
 
-      val result = sut.bind(field_name, Map("someOtherFieldName" -> List("3")), metadata)
+      val sut: TypedBinder[Any] = new TypeBasedEnumerationBinder(tag.tpe, tag.mirror, BindingConfig.defaultConfig)
 
-      it("should have return a bind failure with no such element exception as the cause") {
-        val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
-        failure.cause.get.getClass should equal(classOf[NoSuchElementException])
-      }
-    }
+      describe("and no value is provided") {
 
-    describe("and a value is provided") {
+        val result = sut.bind(fieldName, Map("someOtherFieldName" -> List("3")), metadata)
 
-      describe("and it is not a valid int") {
-
-        val result = sut.bind(field_name, Map(field_name -> List("b")), metadata)
-
-        it("should have return a bind failure with an exception that is not no such element exception as the cause") {
+        it("should have return a bind failure with no such element exception as the cause") {
           val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
-          failure.cause.get.getClass should not equal classOf[NoSuchElementException]
+          failure.cause.get.getClass should equal(classOf[NoSuchElementException])
         }
-
       }
 
-      describe("and it is a valid int") {
+      describe("and a value is provided") {
 
-        describe("and it is not within the list of valid identifiers") {
+        describe("and it is not a valid int") {
 
-          val result = sut.bind(field_name, Map(field_name -> List("200")), metadata)
+          val result = sut.bind(fieldName, Map(fieldName -> List("b")), metadata)
 
-          it("should have return a bind failure with no cause") {
+          it("should have return a bind failure with an exception that is not no such element exception as the cause") {
             val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
-            failure.cause should be(None)
+            failure.cause.get.getClass should not equal classOf[NoSuchElementException]
           }
 
         }
 
-        describe("and it is within the list of valid identifiers") {
+        describe("and it is a valid int") {
 
-          describe("and the first value is tested") {
+          describe("and it is not within the list of valid identifiers") {
 
-            val result = sut.bind(field_name, Map(field_name -> List("1")), metadata)
+            val result = sut.bind(fieldName, Map(fieldName -> List("200")), metadata)
 
-            it("should have return a binding pass with the right value") {
-              result should equal(BindingPass(ATestCaseObjectEnum.FirstValue))
+            it("should have return a bind failure with no cause") {
+              val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
+              failure.cause should be(None)
             }
+
           }
 
-          describe("and the second value is tested") {
+          describe("and it is within the list of valid identifiers") {
 
-            val result = sut.bind(field_name, Map(field_name -> List("2")), metadata)
+            describe("and the first value is tested") {
 
-            it("should have return a binding pass with the right value") {
-              result should equal(BindingPass(ATestCaseObjectEnum.SecondValue))
+              val result = sut.bind(fieldName, Map(fieldName -> List("1")), metadata)
+
+              it("should have return a binding pass with the right value") {
+                result should equal(BindingPass(ATestCaseObjectEnum.FirstValue))
+              }
             }
-          }
 
-          describe("and the third value is tested") {
+            describe("and the second value is tested") {
 
-            val result = sut.bind(field_name, Map(field_name -> List("3")), metadata)
+              val result = sut.bind(fieldName, Map(fieldName -> List("2")), metadata)
 
-            it("should have return a binding pass with the right value") {
-              result should equal(BindingPass(ATestCaseObjectEnum.ThirdValue))
+              it("should have return a binding pass with the right value") {
+                result should equal(BindingPass(ATestCaseObjectEnum.SecondValue))
+              }
             }
-          }
 
+            describe("and the third value is tested") {
+
+              val result = sut.bind(fieldName, Map(fieldName -> List("3")), metadata)
+
+              it("should have return a binding pass with the right value") {
+                result should equal(BindingPass(ATestCaseObjectEnum.ThirdValue))
+              }
+            }
+
+
+          }
 
         }
 
       }
 
     }
+
+    describe("and the json method of binding is used") {
+
+      val sut: JsonTypedBinder[Any] = new TypeBasedEnumerationBinder(tag.tpe, tag.mirror, BindingConfig.defaultConfig)
+
+      describe("and no value is provided") {
+
+        val json = Json.obj("someOtherFieldName" -> Json.fromInt(3))
+
+        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+
+        it("should have return a bind failure with no such element exception as the cause") {
+          val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
+          failure.cause.get.getClass should equal(classOf[NoSuchElementException])
+        }
+      }
+
+      describe("and a value is provided") {
+
+        describe("and it is not a valid int") {
+
+          val json = Json.obj(fieldName -> Json.fromString("b"))
+
+          val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+
+          it("should have return a bind failure with an exception that is not no such element exception as the cause") {
+            val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
+            failure.cause.get.getClass should not equal classOf[NoSuchElementException]
+          }
+
+        }
+
+        describe("and it is a valid int") {
+
+          describe("and it is not within the list of valid identifiers") {
+
+            val json = Json.obj(fieldName -> Json.fromInt(200))
+
+            val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+
+            it("should have return a bind failure with no cause") {
+              val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
+              failure.cause should be(None)
+            }
+
+          }
+
+          describe("and it is within the list of valid identifiers") {
+
+            describe("and the first value is tested") {
+
+              val json = Json.obj(fieldName -> Json.fromInt(ATestCaseObjectEnum.FirstValue.identifier))
+
+              val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+
+              it("should have return a binding pass with the right value") {
+                result should equal(BindingPass(ATestCaseObjectEnum.FirstValue))
+              }
+            }
+
+            describe("and the second value is tested") {
+
+              val json = Json.obj(fieldName -> Json.fromInt(ATestCaseObjectEnum.SecondValue.identifier))
+
+              val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+
+              it("should have return a binding pass with the right value") {
+                result should equal(BindingPass(ATestCaseObjectEnum.SecondValue))
+              }
+            }
+
+            describe("and the third value is tested") {
+
+              val json = Json.obj(fieldName -> Json.fromInt(ATestCaseObjectEnum.ThirdValue.identifier))
+
+              val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+
+              it("should have return a binding pass with the right value") {
+                result should equal(BindingPass(ATestCaseObjectEnum.ThirdValue))
+              }
+            }
+
+
+          }
+
+        }
+
+      }
+
+    }
+
 
   }
 
