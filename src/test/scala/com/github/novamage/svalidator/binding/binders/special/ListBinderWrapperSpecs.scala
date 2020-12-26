@@ -15,6 +15,19 @@ class ListBinderWrapperSpecs extends Observes {
     val wrappedBinder = mock[TypedBinder[Long]]
     val sut: TypedBinder[List[_]] = new ListBinder(wrappedBinder)
 
+    describe("and the list is empty") {
+      val fieldName = "fieldName"
+      val valueMap: Map[String, Seq[String]] = Map()
+      val metadata = mock[Map[String, Any]]
+
+      val result = sut.bind(fieldName, valueMap, metadata)
+
+      it("should bind the empty list properly") {
+        result should equal(BindingPass(Nil))
+      }
+    }
+
+
     describe("and the list of values is of a specific type with a single non indexed field name") {
 
       describe("and some of the values return binding failures") {
@@ -160,6 +173,17 @@ class ListBinderWrapperSpecs extends Observes {
 
     val fieldName = "someRandomFieldName"
     val metadata = mock[Map[String, Any]]
+
+    describe("and the collection is empty") {
+      val json = Json.obj(fieldName -> Json.fromValues(Nil))
+      val arrayFieldCursor = json.hcursor.downField(fieldName)
+
+      val result = sut.bindJson(arrayFieldCursor, Some(fieldName), metadata)
+
+      it("should have bound the collection properly") {
+        result should equal(BindingPass(Nil))
+      }
+    }
 
     describe("and some of the values return binding failures") {
 
