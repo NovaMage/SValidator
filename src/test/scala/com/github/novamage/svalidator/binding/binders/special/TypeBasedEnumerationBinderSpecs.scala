@@ -135,6 +135,18 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
       describe("and a value is provided") {
 
+        describe("and the value provided is null") {
+
+          val json = Json.obj(fieldName -> Json.Null)
+
+          val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
+
+          it("should have return a bind failure with no such element exception as the cause") {
+            val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
+            failure.cause.get.getClass should equal(classOf[NoSuchElementException])
+          }
+        }
+
         describe("and it is not a valid int") {
 
           val json = Json.obj(fieldName -> Json.fromString("b"))

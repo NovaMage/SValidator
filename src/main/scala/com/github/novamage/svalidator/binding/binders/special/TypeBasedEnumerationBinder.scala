@@ -14,19 +14,24 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
   extends TypedBinder[Any] with JsonTypedBinder[Any] {
 
   override def bind(fieldName: String, valueMap: Map[String, Seq[String]], bindingMetadata: Map[String, Any]): BindingResult[Any] = {
-    val receivedValue = valueMap.getOrElse(fieldName, Nil).headOption.map(_.trim).filterNot(_.isEmpty)
-    parseTypeBasedEnumerationFromReceivedValue(fieldName, receivedValue)
+    val receivedStringValue = valueMap.getOrElse(fieldName, Nil).headOption
+    parseTypeBasedEnumerationFromReceivedValue(fieldName, receivedStringValue.getOrElse(""), () => receivedStringValue.map(_.trim).filterNot(_.isEmpty).map(_.toInt).get)
   }
 
   override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[Any] = {
 
-    val receivedValue = currentCursor.focus.map(_.toString().trim).filterNot(_.isEmpty)
-    parseTypeBasedEnumerationFromReceivedValue(fieldName.getOrElse(""), receivedValue)
+    val receivedStringValue = currentCursor.focus.map(_.toString()).getOrElse("")
+    currentCursor.as[Option[Int]] match {
+      case Left(decodingFailure) =>
+        BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName.getOrElse(""), receivedStringValue), Some(decodingFailure))
+      case Right(value) =>
+        parseTypeBasedEnumerationFromReceivedValue(fieldName.getOrElse(""), receivedStringValue, () => value.get)
+    }
   }
 
-  private def parseTypeBasedEnumerationFromReceivedValue(fieldName: String, receivedValue: Option[String]): BindingResult[Any] = {
+  private def parseTypeBasedEnumerationFromReceivedValue(fieldName: String, receivedStringValue: String, valueGetter: () => Int): BindingResult[Any] = {
     try {
-      val intValue = receivedValue.map(_.toInt).get
+      val intValue = valueGetter()
       val optionsFromCache = TypeBasedEnumerationBinder.typeBasedEnumValueCache.collectFirst {
         case (cachedType, cachedValuesMap) if cachedType =:= runtimeType => cachedValuesMap
       }
@@ -54,7 +59,9 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
               val companionObjectSymbol = innerObjectModule.moduleClass.asClass
               val singleIntParamGetterMethodSymbol = (innerObjectModule.typeSignature.members filter {
                 x => x.name == leadingIntTermName && x.isMethod
-              } map { _.asMethod } find {
+              } map {
+                _.asMethod
+              } find {
                 x => (x.isPublic || x.isProtected) && x.isGetter && x.isParamAccessor
               }).get
               val reflectedCompanion = mirror.reflectClass(companionObjectSymbol)
@@ -70,10 +77,10 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
       val matchedCaseObjectOption = optionsToUse.get(intValue)
       matchedCaseObjectOption match {
         case Some(caseObjectEnum) => BindingPass(caseObjectEnum)
-        case None => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, receivedValue.getOrElse("")), None)
+        case None => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, receivedStringValue), None)
       }
     } catch {
-      case ex: NumberFormatException => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, receivedValue.getOrElse("")), Some(ex))
+      case ex: NumberFormatException => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, receivedStringValue), Some(ex))
       case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
     }
   }
