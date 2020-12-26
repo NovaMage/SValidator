@@ -394,7 +394,7 @@ class HtmlFactory[A](converter: String => A,
                                name: String): Option[String] = {
     summary.instance.map(valueGetter) match {
       case Some(value) => presenter.getValueToPresentFor(value)
-      case None => summary.valuesMap.get(name) match {
+      case None => summary.valuesMap.getOrElse(Map.empty).get(name) match {
         case None => None
         case Some(listOfValues) => listOfValues.headOption.map(_.trim)
       }
@@ -404,7 +404,7 @@ class HtmlFactory[A](converter: String => A,
   private def getValuesListUsing[B, C](summary: BindingAndValidationWithData[B, _], valueGetter: B => List[C], name: String): List[String] = {
     summary.instance.map(valueGetter).map(_.flatMap(listValue => presenter.getValueToPresentFor(listValue))) match {
       case Some(list) => list
-      case None => summary.valuesMap.get(name) match {
+      case None => summary.valuesMap.getOrElse(Map.empty).get(name) match {
         case None => Nil
         case Some(listOfValues) => listOfValues.toList
       }

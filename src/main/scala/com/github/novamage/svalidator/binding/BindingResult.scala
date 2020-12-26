@@ -69,6 +69,9 @@ object BindingFailure {
 
   def apply(fieldName: String, error: MessageParts, cause: Option[Throwable]): BindingFailure[Nothing] = BindingFailure(List(FieldError(fieldName, error)), cause)
 
+  def apply(fieldName: Option[String], error: String, cause: Option[Throwable]): BindingFailure[Nothing] = BindingFailure(List(FieldError(fieldName.getOrElse(""), MessageParts(error))), cause)
+
   def apply(fieldName: Option[String], error: MessageParts, cause: Option[Throwable]): BindingFailure[Nothing] = BindingFailure(List(FieldError(fieldName.getOrElse(""), error)), cause)
+
 
 }

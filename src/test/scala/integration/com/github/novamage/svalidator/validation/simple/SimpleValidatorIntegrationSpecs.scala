@@ -332,7 +332,7 @@ class SimpleValidatorIntegrationSpecs extends Observes {
 
   }
 
-  val c: BindingAndValidationWithData[String, Nothing] = Success.apply("Hola", Map.empty, None)
+  val c: BindingAndValidationWithData[String, Nothing] = Success.apply("Hola", None, None, None)
 
   //This is just sort of a compile time test to ensure binding validation summaries can be unapplied properly.
   c match {

@@ -12,10 +12,14 @@ case class ATestingClass(aString: String, anInt: Int, aFloat: Float, aDecimal: B
 class ATestingClassValidator extends BindingValidator[ATestingClass] {
 
   def validate(implicit instance: ATestingClass): ValidationSummary = WithRules(
-    For { _.aString } ForField 'aString
+    For {
+      _.aString
+    } ForField 'aString
       must have minLength 6 withMessage "A string must have at least 6 characters",
 
-    For { _.anInt } ForField 'anInt
+    For {
+      _.anInt
+    } ForField 'anInt
       must be greaterThan 8 withMessage "An int must be greater than 8"
 
   )
@@ -23,9 +27,9 @@ class ATestingClassValidator extends BindingValidator[ATestingClass] {
 
 class BindingValidatorSpecs extends Observes {
 
-  val sut: BindingValidator[ATestingClass] = new ATestingClassValidator
+  private val sut: BindingValidator[ATestingClass] = new ATestingClassValidator
 
-  val full_map = Map(
+  private val full_map: Map[String, Seq[String]] = Map(
     "aString" -> List("someString"),
     "anInt" -> List("90"),
     "aFloat" -> List("88.5"),
@@ -36,9 +40,11 @@ class BindingValidatorSpecs extends Observes {
 
   TypeBinderRegistry.initializeBinders()
 
+  private val metadata = Map.empty[String, Any]
+
   describe("when binding and validating a testing class and all values are provided and valid") {
 
-    val result = sut.bindAndValidate(full_map, Map.empty)
+    val result = sut.bindAndValidate(full_map, metadata)
 
     it("should have returned a valid summary") {
       result.isValid should be(true)
@@ -51,7 +57,7 @@ class BindingValidatorSpecs extends Observes {
 
   describe("when binding and validating a testing class and some invalid values are provided in the bind") {
 
-    val result = sut.bindAndValidate(full_map.updated("anInt", List("90.9")), Map.empty)
+    val result = sut.bindAndValidate(full_map.updated("anInt", List("90.9")), metadata)
 
     it("should have returned an error for the anInt field") {
       result shouldHaveValidationErrorFor "anInt"
@@ -61,7 +67,7 @@ class BindingValidatorSpecs extends Observes {
 
   describe("when binding and validating a testing class and some invalid values are provided to the validation phase") {
 
-    val result = sut.bindAndValidate(full_map.updated("anInt", List("5")).updated("aString", List("error")), Map.empty)
+    val result = sut.bindAndValidate(full_map.updated("anInt", List("5")).updated("aString", List("error")), metadata)
 
     it("should have returned the aString field") {
       result shouldHaveValidationErrorFor "aString"

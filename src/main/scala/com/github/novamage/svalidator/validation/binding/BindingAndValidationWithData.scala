@@ -1,6 +1,7 @@
 package com.github.novamage.svalidator.validation.binding
 
 import com.github.novamage.svalidator.validation.{Localizer, ValidationFailure, ValidationWithData}
+import io.circe.Json
 
 import scala.language.implicitConversions
 
@@ -11,15 +12,22 @@ import scala.language.implicitConversions
   * @tparam A Type of the validated instance
   */
 sealed abstract class BindingAndValidationWithData[+A, +B](validationFailures: List[ValidationFailure],
-                                                          data: Option[B]) extends ValidationWithData(validationFailures, data) {
+                                                           data: Option[B]) extends ValidationWithData(validationFailures, data) {
 
-  /** Returns the bound and validated instance.  Will only be present if binding was successful.
+  /**
+    * @return The bound and validated instance.  Will only be present if binding was successful.
     */
   def instance: Option[A]
 
-  /** Returns the map of values that was provided when binding was performed
+  /**
+    * @return The map of values that was provided when binding was performed, or None if binding was done via json
     */
-  def valuesMap: Map[String, Seq[String]]
+  def valuesMap: Option[Map[String, Seq[String]]]
+
+  /**
+    * @return The json that was provided when binding was performed, or None if binding was done via values map
+    */
+  def json: Option[Json]
 
   /** Generates a new summary by applying the given function to this summary's <code>instance</code>
     *
@@ -28,8 +36,8 @@ sealed abstract class BindingAndValidationWithData[+A, +B](validationFailures: L
     */
   def map[C](f: A => C): BindingAndValidationWithData[C, B] = {
     this match {
-      case Success(value) => Success(f(value), valuesMap, data)
-      case Failure(failures) => Failure(failures, valuesMap, instance.map(f), data)
+      case Success(value) => Success(f(value), valuesMap, json, data)
+      case Failure(failures) => Failure(failures, valuesMap, json, instance.map(f), data)
     }
   }
 
@@ -42,7 +50,7 @@ sealed abstract class BindingAndValidationWithData[+A, +B](validationFailures: L
   override def localize(implicit localizer: Localizer): BindingAndValidationWithData[A, B] = {
     this match {
       case Success(_) => this
-      case Failure(failures) => Failure(failures.map(_.localize(localizer)), valuesMap, instance, data)
+      case Failure(failures) => Failure(failures.map(_.localize(localizer)), valuesMap, json, instance, data)
     }
   }
 
@@ -57,13 +65,13 @@ object BindingAndValidationWithData {
     *
     * @tparam A Type of the instance of the summary
     */
-  def empty[A]: BindingAndValidationWithData[A, Nothing] = Failure(Nil, Map.empty, None, None)
+  def empty[A]: BindingAndValidationWithData[A, Nothing] = Failure(Nil, None, None, None, None)
 
   /** Generates a summary with the given instance, no failures and no values map
     *
     * @tparam A Type of the instance of the summary
     */
-  def filled[A](instance: A): BindingAndValidationWithData[A, Nothing] = Success(instance, Map.empty, None)
+  def filled[A](instance: A): BindingAndValidationWithData[A, Nothing] = Success(instance, None, None, None)
 
 }
 
@@ -75,12 +83,19 @@ object BindingAndValidationWithData {
 sealed class Success[+A, B] private(val instanceValue: A,
                                     data: Option[B]) extends BindingAndValidationWithData[A, B](Nil, data) {
 
-  private var _valuesMap: Map[String, Seq[String]] = _
+  private var _valuesMap: Option[Map[String, Seq[String]]] = None
+  private var _json: Option[Json] = None
 
-  def valuesMap: Map[String, Seq[String]] = _valuesMap
+  def valuesMap: Option[Map[String, Seq[String]]] = _valuesMap
 
-  protected[Success] def valuesMap_=(value: Map[String, Seq[String]]): Unit = {
+  def json: Option[Json] = _json
+
+  protected[Success] def valuesMap_=(value: Option[Map[String, Seq[String]]]): Unit = {
     _valuesMap = value
+  }
+
+  protected[Success] def json_=(value: Option[Json]): Unit = {
+    _json = value
   }
 
   def instance: Option[A] = Some(instanceValue)
@@ -104,9 +119,10 @@ object Success {
     * @param valuesMap     Values map used when binding the instance
     * @tparam A Type of the validated instance
     */
-  def apply[A, B](instanceValue: A, valuesMap: Map[String, Seq[String]], data: Option[B]): Success[A, B] = {
+  def apply[A, B](instanceValue: A, valuesMap: Option[Map[String, Seq[String]]], json: Option[Json], data: Option[B]): Success[A, B] = {
     val result = new Success[A, B](instanceValue, data)
     result.valuesMap = valuesMap
+    result.json = json
     result
   }
 
@@ -129,12 +145,19 @@ sealed class Failure[+A, B] private(failures: List[ValidationFailure],
                                     val instance: Option[A],
                                     data: Option[B]) extends BindingAndValidationWithData[A, B](failures, data) {
 
-  private var _valuesMap: Map[String, Seq[String]] = _
+  private var _valuesMap: Option[Map[String, Seq[String]]] = _
+  private var _json: Option[Json] = _
 
-  def valuesMap: Map[String, Seq[String]] = _valuesMap
+  def valuesMap: Option[Map[String, Seq[String]]] = _valuesMap
 
-  protected[Failure] def valuesMap_=(value: Map[String, Seq[String]]): Unit = {
+  def json: Option[Json] = _json
+
+  protected[Failure] def valuesMap_=(value: Option[Map[String, Seq[String]]]): Unit = {
     _valuesMap = value
+  }
+
+  protected[Failure] def json_=(value: Option[Json]): Unit = {
+    _json = value
   }
 
   override def equals(obj: Any): Boolean = obj match {
@@ -153,12 +176,14 @@ object Failure {
   /** Builds a failing summary with the given failures, values map and instance option
     *
     * @param failures  Failures that ocurred when validating the instance
-    * @param valuesMap Values map used when binding the instance
+    * @param valuesMap Values map used when binding the instance, or None if binding was done through Json
+    * @param json      Json used when binding the instance, or None if binding was done through values map
     * @param instance  Instance that was bound and validated
     * @tparam A Type of the bound and validated instance
     */
   def apply[A, B](failures: List[ValidationFailure],
-                  valuesMap: Map[String, Seq[String]],
+                  valuesMap: Option[Map[String, Seq[String]]],
+                  json: Option[Json],
                   instance: Option[A],
                   data: Option[B]): Failure[A, B] = {
     val result = new Failure(failures, instance, data)

@@ -1,6 +1,7 @@
 package com.github.novamage.svalidator.binding.hooks
 
 import com.github.novamage.svalidator.validation.ValidationFailure
+import io.circe.Json
 
 trait SuccessfulBindingFailedValidationHook {
 
@@ -11,7 +12,8 @@ trait SuccessfulBindingFailedValidationHook {
     */
   def onFailedValidation(instance: Any,
                          failures: List[ValidationFailure],
-                         valuesMap: Map[String, Seq[String]],
+                         valuesMap: Option[Map[String, Seq[String]]],
+                         json: Option[Json],
                          bindingMetadata: Map[String, Any]): Unit
 
 

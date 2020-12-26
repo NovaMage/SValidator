@@ -14,10 +14,16 @@ case class AMappedTestingClass(aMappedString: String, aMappedInt: Int, aMappedFl
 class AMappedTestingClassValidator extends MappingBindingValidator[AMappedTestingClass] {
 
   def validate(implicit instance: AMappedTestingClass): ValidationSummary = WithRules(
-    For { _.aMappedString } ForField 'aString
-      must { _.contains("K") } withMessage "A string must contain at least a 'K'",
+    For {
+      _.aMappedString
+    } ForField 'aString
+      must {
+      _.contains("K")
+    } withMessage "A string must contain at least a 'K'",
 
-    For { _.aMappedInt } ForField 'anInt
+    For {
+      _.aMappedInt
+    } ForField 'anInt
       must be greaterThan 8 withMessage "An int must be greater than 8"
   )
 }
@@ -26,7 +32,7 @@ class MappingBindingValidatorWithDataWithDataSpecs extends Observes {
 
   val sut: MappingBindingValidator[AMappedTestingClass] = new AMappedTestingClassValidator
 
-  val full_map = Map(
+  val full_map: Map[String, Seq[String]] = Map(
     "aString" -> List("someString"),
     "anInt" -> List("5"),
     "aFloat" -> List("88.5"),
@@ -35,13 +41,15 @@ class MappingBindingValidatorWithDataWithDataSpecs extends Observes {
     "anOptionalString" -> List("anotherString")
   )
 
+  private val metadata: Map[String, Any] = Map.empty
+
   TypeBinderRegistry.initializeBinders()
 
   val mapOp: ADifferentTestingClass => AMappedTestingClass = x => AMappedTestingClass(x.aString + "SomethingWithTheLetterK", x.anInt + 1000, x.aFloat, x.aDecimal, x.anOptionalDouble, x.anOptionalString)
 
   describe("when binding and validating a testing class and all values are provided and valid") {
 
-    val result = sut.bindAndValidate(full_map,mapOp, Map.empty)
+    val result = sut.bindAndValidate(full_map, mapOp, metadata)
 
     it("should have returned a valid summary") {
       result.isValid should be(true)
@@ -54,7 +62,7 @@ class MappingBindingValidatorWithDataWithDataSpecs extends Observes {
 
   describe("when binding and validating a testing class and some invalid values are provided in the bind") {
 
-    val result = sut.bindAndValidate(full_map.updated("anInt", List("90.9")), mapOp, Map.empty)
+    val result = sut.bindAndValidate(full_map.updated("anInt", List("90.9")), mapOp, metadata)
 
     it("should have returned an error for the anInt field") {
       result shouldHaveValidationErrorFor "anInt"
@@ -64,7 +72,7 @@ class MappingBindingValidatorWithDataWithDataSpecs extends Observes {
 
   describe("when binding and validating a testing class and some invalid values are provided to the validation phase") {
 
-    val result = sut.bindAndValidate(full_map.updated("anInt", List("-2000")), mapOp, Map.empty)
+    val result = sut.bindAndValidate(full_map.updated("anInt", List("-2000")), mapOp, metadata)
 
     it("should have returned an error for the anInt field") {
       result shouldHaveValidationErrorFor "anInt"
