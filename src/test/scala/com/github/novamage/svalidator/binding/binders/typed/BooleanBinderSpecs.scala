@@ -67,7 +67,7 @@ class BooleanBinderSpecs extends Observes {
 
         val json = Json.obj("someOtherBoolean" -> Json.fromBoolean(true))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Pass with the value set to false") {
           result should equal(BindingPass(false))
@@ -77,7 +77,7 @@ class BooleanBinderSpecs extends Observes {
       describe("and the argument is present in the json with a false value") {
         val json = Json.obj(fieldName -> Json.fromBoolean(false))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Pass with the value set to false") {
           result should equal(BindingPass(false))
@@ -88,7 +88,7 @@ class BooleanBinderSpecs extends Observes {
 
         val json = Json.obj(fieldName -> Json.fromBoolean(true))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Pass with the value set to false") {
           result should equal(BindingPass(true))
@@ -100,7 +100,7 @@ class BooleanBinderSpecs extends Observes {
         val invalidFieldValue = 18
         val json = Json.obj(fieldName -> Json.fromInt(invalidFieldValue))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Pass with the value set to false") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1

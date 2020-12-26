@@ -93,7 +93,7 @@ class EnumerationBinderSpecs extends Observes {
 
         val json = Json.obj()
 
-        val result = sut.bindJson(json.hcursor.downField(field_name), field_name, Map.empty)
+        val result = sut.bindJson(json.hcursor.downField(field_name), Some(field_name), Map.empty)
 
         it("should return a bind failure as the result with no such element exception as the cause") {
           val failure = result.asInstanceOf[BindingFailure[ATestEnumeration.Value]]
@@ -111,7 +111,7 @@ class EnumerationBinderSpecs extends Observes {
 
             val json = Json.obj(field_name -> Json.fromString("notAnInt"))
 
-            val result = sut.bindJson(json.hcursor.downField(field_name), field_name, Map.empty)
+            val result = sut.bindJson(json.hcursor.downField(field_name), Some(field_name), Map.empty)
 
             it("should return a bind failure as the result and the cause should not equal a no such element exception") {
               val failure = result.asInstanceOf[BindingFailure[ATestEnumeration.Value]]
@@ -123,7 +123,7 @@ class EnumerationBinderSpecs extends Observes {
 
             val json = Json.obj(field_name -> Json.fromString("1000"))
 
-            val result = sut.bindJson(json.hcursor.downField(field_name), field_name, Map.empty)
+            val result = sut.bindJson(json.hcursor.downField(field_name), Some(field_name), Map.empty)
 
             it("should return a bind failure as the result and the cause should not equal a no such element exception") {
               val failure = result.asInstanceOf[BindingFailure[ATestEnumeration.Value]]
@@ -136,7 +136,7 @@ class EnumerationBinderSpecs extends Observes {
 
             val json = Json.obj(field_name -> Json.fromInt(ATestEnumeration.anotherEnumValue.id))
 
-            val result = sut.bindJson(json.hcursor.downField(field_name), field_name, Map.empty)
+            val result = sut.bindJson(json.hcursor.downField(field_name), Some(field_name), Map.empty)
 
             it("should return a successful binding with the return value") {
               val boundValue = result.asInstanceOf[BindingPass[ATestEnumeration.Value]]

@@ -172,7 +172,7 @@ class ListBinderWrapperSpecs extends Observes {
         )))
       val arrayFieldCursor = json.hcursor.downField(fieldName)
 
-      val result = sut.bindJson(arrayFieldCursor, fieldName, metadata)
+      val result = sut.bindJson(arrayFieldCursor, Some(fieldName), metadata)
 
       it("should have a list of binding failures for each failure encountered, with the name of list field instead of the" +
         " name of sub-field returned by the wrappedBinder") {
@@ -194,7 +194,7 @@ class ListBinderWrapperSpecs extends Observes {
 
       val arrayFieldCursor = json.hcursor.downField(fieldName)
 
-      val result = sut.bindJson(arrayFieldCursor, fieldName, metadata)
+      val result = sut.bindJson(arrayFieldCursor, Some(fieldName), metadata)
 
       it("should have returned BindingPass with a list with all BindingPass values bound to it") {
         result should equal(BindingPass(List(1L, 2L, 3L, 4L)))

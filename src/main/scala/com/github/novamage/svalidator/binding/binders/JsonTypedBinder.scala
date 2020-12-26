@@ -21,6 +21,6 @@ trait JsonTypedBinder[A] {
     * @return BindingPass with the bound value if successful, BindingFailure with errors and throwable cause otherwise
     */
   def bindJson(currentCursor: ACursor,
-               fieldName: String,
+               fieldName: Option[String],
                bindingMetadata: Map[String, Any]): BindingResult[A]
 }

@@ -44,14 +44,14 @@ class ListBinder(wrappedBinder: TypedBinder[_]) extends TypedBinder[List[Any]] {
 
 class JsonListBinder(wrappedBinder: JsonTypedBinder[_], config: BindingConfig) extends JsonTypedBinder[List[Any]] {
 
-  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[List[Any]] = {
+  override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[List[Any]] = {
     val firstIndexCursor = currentCursor.downArray
     if (firstIndexCursor.succeeded) {
       val values = currentCursor.values.getOrElse(Nil)
       val fieldErrors = new ListBuffer[FieldError]
       val validValues = new ListBuffer[Any]
       values.zipWithIndex.foreach { case (json, index) =>
-        wrappedBinder.bindJson(json.hcursor, s"$fieldName[$index]", bindingMetadata) match {
+        wrappedBinder.bindJson(json.hcursor, Some(s"$fieldName[$index]"), bindingMetadata) match {
           case BindingPass(boundValue) => validValues.append(boundValue)
           case BindingFailure(errors, _) => fieldErrors.appendAll(errors)
         }
@@ -63,7 +63,7 @@ class JsonListBinder(wrappedBinder: JsonTypedBinder[_], config: BindingConfig) e
     } else {
       val value = currentCursor.focus.map(_.toString())
       value.map(_.trim).filter(_.nonEmpty) match {
-        case Some(invalidValue) => BindingFailure(fieldName, config.languageConfig.invalidSequenceMessage(fieldName, invalidValue), None)
+        case Some(invalidValue) => BindingFailure(fieldName, config.languageConfig.invalidSequenceMessage(fieldName.getOrElse(""), invalidValue), None)
         case None => BindingPass(Nil)
       }
     }

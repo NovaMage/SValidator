@@ -21,15 +21,15 @@ class BigDecimalBinder(config: BindingConfig)
     }
   }
 
-  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[BigDecimal] = {
+  override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[BigDecimal] = {
     currentCursor.as[Option[BigDecimal]] match {
       case Left(parsingFailure) =>
-        BindingFailure(fieldName, config.languageConfig.invalidDecimalMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
+        BindingFailure(fieldName, config.languageConfig.invalidDecimalMessage(fieldName.getOrElse(""), currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
       case Right(value) =>
         try {
           BindingPass(value.get)
         } catch {
-          case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
+          case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName.getOrElse("")), Some(ex))
         }
     }
   }

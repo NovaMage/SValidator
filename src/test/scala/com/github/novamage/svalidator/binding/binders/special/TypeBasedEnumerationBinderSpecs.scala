@@ -125,7 +125,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
         val json = Json.obj("someOtherFieldName" -> Json.fromInt(3))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have return a bind failure with no such element exception as the cause") {
           val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
@@ -139,7 +139,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
           val json = Json.obj(fieldName -> Json.fromString("b"))
 
-          val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+          val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
           it("should have return a bind failure with an exception that is not no such element exception as the cause") {
             val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
@@ -154,7 +154,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
             val json = Json.obj(fieldName -> Json.fromInt(200))
 
-            val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+            val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
             it("should have return a bind failure with no cause") {
               val failure = result.asInstanceOf[BindingFailure[ATestCaseObjectEnum]]
@@ -169,7 +169,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
               val json = Json.obj(fieldName -> Json.fromInt(ATestCaseObjectEnum.FirstValue.identifier))
 
-              val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+              val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
               it("should have return a binding pass with the right value") {
                 result should equal(BindingPass(ATestCaseObjectEnum.FirstValue))
@@ -180,7 +180,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
               val json = Json.obj(fieldName -> Json.fromInt(ATestCaseObjectEnum.SecondValue.identifier))
 
-              val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+              val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
               it("should have return a binding pass with the right value") {
                 result should equal(BindingPass(ATestCaseObjectEnum.SecondValue))
@@ -191,7 +191,7 @@ class TypeBasedEnumerationBinderSpecs extends Observes {
 
               val json = Json.obj(fieldName -> Json.fromInt(ATestCaseObjectEnum.ThirdValue.identifier))
 
-              val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+              val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
               it("should have return a binding pass with the right value") {
                 result should equal(BindingPass(ATestCaseObjectEnum.ThirdValue))

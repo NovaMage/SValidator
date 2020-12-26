@@ -61,7 +61,7 @@ class BigDecimalBinderSpecs extends Observes {
 
         val json = Json.obj("someOtherDouble" -> Json.fromString("315.00"))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the decimal field") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -77,7 +77,7 @@ class BigDecimalBinderSpecs extends Observes {
         val invalidFieldValue = "aStringThatCanNotBeParsedAsDecimal"
         val json = Json.obj(fieldName -> Json.fromString(invalidFieldValue))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the decimal field") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -92,7 +92,7 @@ class BigDecimalBinderSpecs extends Observes {
         val targetValue = "170.5000"
         val json = Json.obj(fieldName -> Json.fromString(targetValue))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have bound the valueGetter  properly") {
           result should equal(BindingPass(BigDecimal(targetValue)))

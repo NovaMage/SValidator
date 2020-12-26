@@ -19,15 +19,15 @@ class BooleanBinder(config: BindingConfig)
     }
   }
 
-  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Boolean] = {
+  override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[Boolean] = {
     currentCursor.as[Option[Boolean]] match {
       case Left(parsingFailure) =>
-        BindingFailure(fieldName, config.languageConfig.invalidBooleanMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
+        BindingFailure(fieldName, config.languageConfig.invalidBooleanMessage(fieldName.getOrElse(""), currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
       case Right(value) =>
         try {
           BindingPass(value.getOrElse(false))
         } catch {
-          case ex: IllegalArgumentException => BindingFailure(fieldName, config.languageConfig.invalidBooleanMessage(fieldName, value.map(_.toString).getOrElse("")), Some(ex))
+          case ex: IllegalArgumentException => BindingFailure(fieldName, config.languageConfig.invalidBooleanMessage(fieldName.getOrElse(""), value.map(_.toString).getOrElse("")), Some(ex))
         }
     }
   }

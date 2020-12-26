@@ -1,33 +1,35 @@
 package integration.com.github.novamage.svalidator.binding
 
-import com.github.novamage.svalidator.binding.binders.TypedBinder
-import com.github.novamage.svalidator.binding.binders.special.MapToObjectBinder
+import com.github.novamage.svalidator.binding.binders.JsonTypedBinder
+import com.github.novamage.svalidator.binding.binders.special.JsonToObjectBinder
 import com.github.novamage.svalidator.binding.exceptions.{NoBinderFoundException, NoDirectBinderNorConstructorForBindingException}
 import com.github.novamage.svalidator.binding.{BindingPass, BindingResult, TypeBinderRegistry}
+import io.circe.{HCursor, Json}
 import testUtils.Observes
 
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
-class MapToObjectBinderSpecs extends Observes {
+class JsonToObjectBinderSpecs extends Observes {
 
-  val sut: MapToObjectBinder.type = MapToObjectBinder
+  private val sut: JsonToObjectBinder.type = JsonToObjectBinder
 
   TypeBinderRegistry.initializeBinders()
 
-  private val fullMap = Map(
-    "aString" -> List("someValue"),
-    "anInt" -> List("5"),
-    "aLong" -> List("8"),
-    "aBoolean" -> List("true"),
-    "aTimestamp" -> List("2008-09-05"),
-    "optionalText" -> List("someText"),
-    "optionalInt" -> List("9"),
-    "intList" -> List("10", "20", "30"),
-    "enumeratedValue" -> List("1"),
-    "aSimpleObjectBasedEnum" -> List("3"),
-    "aTypeBasedEnum" -> List("2")
+  private val fullJson = Json.obj(
+    "aString" -> Json.fromString("someValue"),
+    "anInt" -> Json.fromInt(5),
+    "aLong" -> Json.fromLong(8),
+    "aBoolean" -> Json.fromBoolean(true),
+    "aTimestamp" -> Json.fromString("2008-09-05"),
+    "optionalText" -> Json.fromString("someText"),
+    "optionalInt" -> Json.fromInt(9),
+    "intList" -> Json.fromValues(List(10, 20, 30).map(Json.fromInt)),
+    "enumeratedValue" -> Json.fromInt(1),
+    "aSimpleObjectBasedEnum" -> Json.fromInt(3),
+    "aTypeBasedEnum" -> Json.fromInt(2)
   )
+  val metadata = Map.empty[String, Any]
 
   private val formatter = new SimpleDateFormat("yyyy-MM-dd")
 
@@ -37,7 +39,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and all values are provided") {
 
-      val result = sut.bind[AComplexClass](fullMap)
+      val result = sut.bind[AComplexClass](fullJson, metadata)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it via constructor") {
         //Testing values individually for granularity purposes on test failure
@@ -57,7 +59,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required string is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "aString")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("aString").delete, metadata)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -67,7 +69,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required int is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "anInt")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("anInt").delete, metadata)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -77,7 +79,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required long is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "aLong")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("aLong").delete, metadata)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -87,7 +89,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required boolean is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "aBoolean")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("aBoolean").delete, metadata)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it " +
         "via constructor and use false for the missing boolean") {
@@ -97,7 +99,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required timestamp is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "aTimestamp")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("aTimestamp").delete, metadata)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -107,7 +109,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required enum is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "enumeratedValue")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("enumeratedValue").delete, metadata)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -117,7 +119,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required simple object based enum is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "aSimpleObjectBasedEnum")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("aSimpleObjectBasedEnum").delete, metadata)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -127,7 +129,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the required type based enum is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "aTypeBasedEnum")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("aTypeBasedEnum").delete, metadata)
 
       it("should return a binding failure for the missing required field") {
         result.fieldErrors should have size 1
@@ -137,7 +139,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the optional text is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "optionalText")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("optionalText").delete, metadata)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it via constructor") {
         result should equal(BindingPass(fullClass.copy(optionalText = None)))
@@ -146,7 +148,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the optional int is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "optionalInt")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("optionalInt").delete, metadata)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it via constructor") {
         result should equal(BindingPass(fullClass.copy(optionalInt = None)))
@@ -155,7 +157,7 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and the list of integers is missing") {
 
-      val result = sut.bind[AComplexClass](fullMap - "intList")
+      val result = sut.bind[AComplexClass](fullJson.hcursor.downField("intList").delete, metadata)
 
       it("should return a binding result with a class instantiated with all the values in the map bound to it via constructor") {
         result should equal(BindingPass(fullClass.copy(intList = List())))
@@ -168,15 +170,18 @@ class MapToObjectBinderSpecs extends Observes {
 
 
     describe("and recursion into the type is allowed") {
+
       TypeBinderRegistry.allowRecursiveBindingForType[ClassUsedInRecursiveClass]()
 
-      val value_map = Map(
-        "anotherString" -> List("anotherValue"),
-        "recursiveClass.someInt" -> List("8"),
-        "recursiveClass.someBoolean" -> List("true")
+      val json = Json.obj(
+        "anotherString" -> Json.fromString("anotherValue"),
+        "recursiveClass" -> Json.obj(
+          "someInt" -> Json.fromInt(8),
+          "someBoolean" -> Json.fromBoolean(true)
+        )
       )
 
-      val result = sut.bind[ASimpleRecursiveClass](value_map)
+      val result = sut.bind[ASimpleRecursiveClass](json, metadata)
 
       it("should have bound properly the top class and the recursively bound class") {
         result should equal(BindingPass(ASimpleRecursiveClass("anotherValue", new ClassUsedInRecursiveClass(8, true))))
@@ -185,16 +190,17 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and recursion into the type is not allowed") {
 
-      val value_map = Map(
-        "anotherString" -> List("anotherValue"),
-        "recursiveClass.someInt" -> List("8"),
-        "recursiveClass.someBoolean" -> List("true")
+      val json = Json.obj(
+        "anotherString" -> Json.fromString("anotherValue"),
+        "recursiveClass" -> Json.obj(
+          "someInt" -> Json.fromInt(8),
+          "someBoolean" -> Json.fromBoolean(true)
+        )
       )
-
 
       it("should have bound properly the top class and the recursively bound class") {
         intercept[NoBinderFoundException] {
-          sut.bind[ASimpleRecursiveClass](value_map)
+          sut.bind[ASimpleRecursiveClass](json, metadata)
         }
       }
     }
@@ -203,45 +209,32 @@ class MapToObjectBinderSpecs extends Observes {
 
       TypeBinderRegistry.allowRecursiveBindingForType[AnIndexedListValue]()
 
-      val value_map = Map(
-        "anIndexedList[0].stringField" -> List("alpha"),
-        "anIndexedList[0].longField" -> List("3"),
-        "anIndexedList[1].stringField" -> List("beta"),
-        "anIndexedList[1].longField" -> List("9"),
-        "anIndexedList[2].stringField" -> List("gamma"),
-        "anIndexedList[2].longField" -> List("1"),
-        "anIndexedList[3].stringField" -> List("lambda"),
-        "anIndexedList[3].longField" -> List("39")
-      )
+      val json =
+        Json.obj(
+          "anIndexedList" ->
+            Json.fromValues(
+              List(
+                Json.obj(
+                  "stringField" -> Json.fromString("alpha"),
+                  "longField" -> Json.fromLong(3)
+                ),
+                Json.obj(
+                  "stringField" -> Json.fromString("beta"),
+                  "longField" -> Json.fromLong(9)
+                ),
+                Json.obj(
+                  "stringField" -> Json.fromString("gamma"),
+                  "longField" -> Json.fromLong(1)
+                ),
+                Json.obj(
+                  "stringField" -> Json.fromString("lambda"),
+                  "longField" -> Json.fromLong(39)
+                )
+              )
+            )
+        )
 
-      val result = sut.bind[AClassWithAnIndexedList](value_map)
-
-      it("should have bound properly the list and the recursive values") {
-        result should equal(BindingPass(AClassWithAnIndexedList(List(
-          AnIndexedListValue("alpha", 3),
-          AnIndexedListValue("beta", 9),
-          AnIndexedListValue("gamma", 1),
-          AnIndexedListValue("lambda", 39)
-        ))))
-      }
-    }
-
-    describe("when binding a class that has a list of a custom type and it is indexed and the value map is not normalized") {
-
-      TypeBinderRegistry.allowRecursiveBindingForType[AnIndexedListValue]()
-
-      val value_map = Map(
-        "anIndexedList[0][stringField]" -> List("alpha"),
-        "anIndexedList[0][longField]" -> List("3"),
-        "anIndexedList[1][stringField]" -> List("beta"),
-        "anIndexedList[1][longField]" -> List("9"),
-        "anIndexedList[2][stringField]" -> List("gamma"),
-        "anIndexedList[2][longField]" -> List("1"),
-        "anIndexedList[3][stringField]" -> List("lambda"),
-        "anIndexedList[3][longField]" -> List("39")
-      )
-
-      val result = sut.bind[AClassWithAnIndexedList](value_map)
+      val result = sut.bind[AClassWithAnIndexedList](json, metadata)
 
       it("should have bound properly the list and the recursive values") {
         result should equal(BindingPass(AClassWithAnIndexedList(List(
@@ -252,15 +245,17 @@ class MapToObjectBinderSpecs extends Observes {
         ))))
       }
     }
+
   }
 
   describe("when binding a type based enum") {
     val fieldName = "someFieldName"
-    val values_map = Map(fieldName -> List("1"))
+    val json = Json.obj(fieldName -> Json.fromInt(1))
+    val cursorAtTargetField = json.hcursor.downField(fieldName)
 
     describe("and the type based enum has an alternate constructor") {
 
-      val result = sut.bind[AnotherObjectBasedEnumWithAnAlternativeConstructor](values_map, Some(fieldName))
+      val result = sut.bind[AnotherObjectBasedEnumWithAnAlternativeConstructor](cursorAtTargetField, metadata)
 
       it("should have successfully bound the enum using the primary constructor") {
         result should equal(BindingPass(AnotherObjectBasedEnumWithAnAlternativeConstructor.AnotherFirstOption))
@@ -272,7 +267,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor](values_map, Some(fieldName))
+          sut.bind[AnotherObjectBasedEnumWithAnNonIntFirstArgumentConstructor](cursorAtTargetField, metadata)
         }
       }
 
@@ -282,7 +277,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor](values_map, Some(fieldName))
+          sut.bind[AnotherObjectBasedEnumWithAPrivateGetterFirstArgumentConstructor](cursorAtTargetField, metadata)
         }
       }
 
@@ -292,7 +287,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectEnumWithAnEnumValueOutsideCompanionObject](values_map, Some(fieldName))
+          sut.bind[AnObjectEnumWithAnEnumValueOutsideCompanionObject](cursorAtTargetField, metadata)
         }
       }
 
@@ -302,7 +297,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectEnumWithAnEnumValueThatIsNotAModuleClass](values_map, Some(fieldName))
+          sut.bind[AnObjectEnumWithAnEnumValueThatIsNotAModuleClass](cursorAtTargetField, metadata)
         }
       }
 
@@ -312,7 +307,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[ANonSealedObjectBasedEnum](values_map, Some(fieldName))
+          sut.bind[ANonSealedObjectBasedEnum](cursorAtTargetField, metadata)
         }
       }
 
@@ -322,7 +317,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[ANonAbstractBaseClassObjectBasedEnum](values_map, Some(fieldName))
+          sut.bind[ANonAbstractBaseClassObjectBasedEnum](cursorAtTargetField, metadata)
         }
       }
 
@@ -332,7 +327,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectBasedEnumWithNoCompanionObject](values_map, Some(fieldName))
+          sut.bind[AnObjectBasedEnumWithNoCompanionObject](cursorAtTargetField, metadata)
         }
       }
 
@@ -342,7 +337,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       it("should have thrown a no binder found exception") {
         intercept[NoBinderFoundException] {
-          sut.bind[AnObjectBasedEnumWithNoDescendants](values_map, Some(fieldName))
+          sut.bind[AnObjectBasedEnumWithNoDescendants](cursorAtTargetField, metadata)
         }
       }
 
@@ -352,17 +347,15 @@ class MapToObjectBinderSpecs extends Observes {
 
   describe("when binding a class that has a direct binder for it") {
 
-    val values_map = Map(
-      "someField" -> List("someValue")
-    )
     val metadata = mock[Map[String, Any]]
 
-    val direct_binder = mock[TypedBinder[AComplexClass]]
+    val direct_binder = mock[JsonTypedBinder[AComplexClass]]
     val direct_bind_result = mock[BindingResult[AComplexClass]]
-    when(direct_binder.bind("", values_map, metadata)) thenReturn direct_bind_result
-    TypeBinderRegistry.registerBinder(direct_binder)
+    val cursor = mock[HCursor]
+    when(direct_binder.bindJson(cursor, None, metadata)) thenReturn direct_bind_result
+    TypeBinderRegistry.registerJsonBinder(direct_binder)
 
-    val result = sut.bind[AComplexClass](values_map, bindingMetadata = metadata)
+    val result = sut.bind[AComplexClass](cursor, metadata)
 
     it("should have returned the result done by the direct binder") {
       result should be theSameInstanceAs direct_bind_result
@@ -372,12 +365,12 @@ class MapToObjectBinderSpecs extends Observes {
 
   describe("when binding to a class that has multiple constructors") {
 
-    val values_map = Map(
-      "someIntField" -> List("5"),
-      "aString" -> List("aVeryRidiculouslyLongString")
+    val json = Json.obj(
+      "someIntField" -> Json.fromInt(5),
+      "aString" -> Json.fromString("aVeryRidiculouslyLongString")
     )
 
-    val result = sut.bind[AClassWithMultipleConstructors](values_map)
+    val result = sut.bind[AClassWithMultipleConstructors](json, metadata)
 
     it("should have properly bound the class using its primary constructor") {
       result should equal(BindingPass(new AClassWithMultipleConstructors(5)))
@@ -387,13 +380,13 @@ class MapToObjectBinderSpecs extends Observes {
 
   describe("when binding to a trait, and no direct binder exists for it") {
 
-    val values_map = Map(
-      "someField" -> List("someValue")
+    val json = Json.obj(
+      "someField" -> Json.fromString("someValue")
     )
 
     it("should have thrown an exception complaining about the lack of a constructor or direct binder for the trait") {
       intercept[NoDirectBinderNorConstructorForBindingException] {
-        sut.bind[SomeTrait](values_map)
+        sut.bind[SomeTrait](json, metadata)
       }
     }
 
@@ -401,17 +394,16 @@ class MapToObjectBinderSpecs extends Observes {
 
   describe("when binding to a trait, and a direct binder exists for it") {
 
-    val values_map = Map(
-      "someField" -> List("someValue")
-    )
     val metadata = mock[Map[String, Any]]
 
-    val direct_binder = mock[TypedBinder[SomeTrait]]
+    val direct_binder = mock[JsonTypedBinder[SomeTrait]]
     val direct_bind_result = mock[BindingResult[SomeTrait]]
-    when(direct_binder.bind("", values_map, metadata)) thenReturn direct_bind_result
-    TypeBinderRegistry.registerBinder(direct_binder)
+    val cursor = mock[HCursor]
 
-    val result = sut.bind[SomeTrait](values_map, bindingMetadata = metadata)
+    when(direct_binder.bindJson(cursor, None, metadata)) thenReturn direct_bind_result
+    TypeBinderRegistry.registerJsonBinder(direct_binder)
+
+    val result = sut.bind[SomeTrait](cursor, metadata)
 
     it("should have returned the result done by the direct binder") {
       result should be theSameInstanceAs direct_bind_result
@@ -423,15 +415,17 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and there's a single generic") {
 
-      val values_map = Map(
-        "genericField.intField" -> List("5")
+      val json = Json.obj(
+        "genericField" -> Json.obj(
+          "intField" -> Json.fromInt(5)
+        )
       )
       val metadata = mock[Map[String, Any]]
       TypeBinderRegistry.allowRecursiveBindingForType[AClassUsedInAGenericClass]()
 
       val expected_result = BindingPass(AClassWithAGeneric(AClassUsedInAGenericClass(5)))
 
-      val result = sut.bind[AClassWithAGeneric[AClassUsedInAGenericClass]](values_map, bindingMetadata = metadata)
+      val result = sut.bind[AClassWithAGeneric[AClassUsedInAGenericClass]](json, bindingMetadata = metadata)
 
       it("should have returned a successful binding result with the expected generic value") {
         result should equal(expected_result)
@@ -441,9 +435,13 @@ class MapToObjectBinderSpecs extends Observes {
 
     describe("and there are multiple generics") {
 
-      val values_map = Map(
-        "genericField.intField" -> List("5"),
-        "anotherGenericField.stringField" -> List("Hello")
+      val json = Json.obj(
+        "genericField" -> Json.obj(
+          "intField" -> Json.fromInt(5)
+        ),
+        "anotherGenericField" -> Json.obj(
+          "stringField" -> Json.fromString("Hello")
+        )
       )
       val metadata = mock[Map[String, Any]]
       TypeBinderRegistry.allowRecursiveBindingForType[AClassUsedInAGenericClass]()
@@ -451,7 +449,7 @@ class MapToObjectBinderSpecs extends Observes {
 
       val expected_result = BindingPass(AClassWithMultipleGenerics(AClassUsedInAGenericClass(5), AnotherClassUsedInAGenericClass("Hello")))
 
-      val result = sut.bind[AClassWithMultipleGenerics[AClassUsedInAGenericClass, AnotherClassUsedInAGenericClass]](values_map, bindingMetadata = metadata)
+      val result = sut.bind[AClassWithMultipleGenerics[AClassUsedInAGenericClass, AnotherClassUsedInAGenericClass]](json, bindingMetadata = metadata)
 
       it("should have returned a successful binding result with the expected generic value") {
         result should equal(expected_result)

@@ -24,7 +24,7 @@ class OptionBinder(wrappedBinder: TypedBinder[_])
 class JsonOptionBinder(wrappedBinder: JsonTypedBinder[_])
   extends JsonTypedBinder[Option[Any]] {
 
-  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Option[Any]] = {
+  override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[Option[Any]] = {
     wrappedBinder.bindJson(currentCursor, fieldName, bindingMetadata) match {
       case BindingPass(value) => BindingPass(Option(value))
       case BindingFailure(errors, cause) => cause match {

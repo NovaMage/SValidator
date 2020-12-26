@@ -79,7 +79,7 @@ class StringBinderSpecs extends Observes {
 
         val json = Json.obj("aDifferentField" -> Json.fromString("someValue"))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with a field error for the string field") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -96,7 +96,7 @@ class StringBinderSpecs extends Observes {
 
           val json = Json.obj(fieldName -> Json.fromString(""))
 
-          val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+          val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
           it("should have returned a Binding Failure with a field error for the string field") {
             result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -111,7 +111,7 @@ class StringBinderSpecs extends Observes {
 
           val json = Json.obj(fieldName -> Json.fromString("             "))
 
-          val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+          val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
           it("should have returned a Binding Failure with a field error for the string field") {
             result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -128,7 +128,7 @@ class StringBinderSpecs extends Observes {
 
           val json = Json.obj(fieldName -> Json.fromString(fieldValue))
 
-          val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+          val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
           it("should have bound the property including its spaces properly") {
             result should equal(BindingPass(fieldValue))

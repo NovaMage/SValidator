@@ -61,7 +61,7 @@ class FloatBinderSpecs extends Observes {
 
         val json = Json.obj("someOtherFloat" -> Json.fromFloat(5.6F).get)
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the float field with NoSuchElementException as the cause") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -77,7 +77,7 @@ class FloatBinderSpecs extends Observes {
         val invalidFieldValue = "aStringThatCanNotBeParsedAsFloat"
         val json = Json.obj(fieldName -> Json.fromString(invalidFieldValue))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the float field") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -91,7 +91,7 @@ class FloatBinderSpecs extends Observes {
 
         val json = Json.obj(fieldName -> Json.fromFloat(90.8F).get)
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have bound the valueGetter  properly") {
           result should equal(BindingPass(90.8F))

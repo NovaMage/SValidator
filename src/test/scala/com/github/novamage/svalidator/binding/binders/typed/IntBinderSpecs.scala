@@ -63,7 +63,7 @@ class IntBinderSpecs extends Observes {
 
         val json = Json.obj("someOtherInt" -> Json.fromInt(5))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the int field with a NoSuchElementException as the cause") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -80,7 +80,7 @@ class IntBinderSpecs extends Observes {
 
         val json = Json.obj(fieldName -> Json.fromDouble(invalidFieldValue).get)
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the int field") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -96,7 +96,7 @@ class IntBinderSpecs extends Observes {
 
         val json = Json.obj(fieldName -> Json.fromInt(validValue))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have bound the valueGetter  properly") {
           result should equal(BindingPass(validValue))

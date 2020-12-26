@@ -25,19 +25,19 @@ class TimestampBinder(config: BindingConfig)
     }
   }
 
-  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Timestamp] = {
+  override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[Timestamp] = {
     currentCursor.as[Option[String]] match {
       case Left(parsingFailure) =>
-        BindingFailure(fieldName, config.languageConfig.invalidJsonStringMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
+        BindingFailure(fieldName, config.languageConfig.invalidJsonStringMessage(fieldName.getOrElse(""), currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
       case Right(value) =>
         try {
           value.map(_.trim).filterNot(_.isEmpty) match {
-            case None => BindingFailure(fieldName, config.languageConfig.invalidNonEmptyTextMessage(fieldName), Some(new NoSuchElementException))
+            case None => BindingFailure(fieldName, config.languageConfig.invalidNonEmptyTextMessage(fieldName.getOrElse("")), Some(new NoSuchElementException))
             case Some(trimmedString) => BindingPass(new Timestamp(formatter.parse(trimmedString).getTime))
           }
         } catch {
-          case ex: ParseException => BindingFailure(fieldName, config.languageConfig.invalidTimestampMessage(fieldName, value.getOrElse("")), Some(ex))
-          case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.invalidNonEmptyTextMessage(fieldName), Some(ex))
+          case ex: ParseException => BindingFailure(fieldName, config.languageConfig.invalidTimestampMessage(fieldName.getOrElse(""), value.getOrElse("")), Some(ex))
+          case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.invalidNonEmptyTextMessage(fieldName.getOrElse("")), Some(ex))
         }
     }
   }

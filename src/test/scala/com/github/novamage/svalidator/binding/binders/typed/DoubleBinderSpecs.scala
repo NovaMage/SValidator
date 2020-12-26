@@ -62,7 +62,7 @@ class DoubleBinderSpecs extends Observes {
 
         val json = Json.obj("someOtherDouble" -> Json.fromDouble(8.8D).get)
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the double field") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -78,7 +78,7 @@ class DoubleBinderSpecs extends Observes {
         val invalidFieldValue = "aStringThatCanNotBeParsedAsDouble"
         val json = Json.obj(fieldName -> Json.fromString(invalidFieldValue))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the double field") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -93,7 +93,7 @@ class DoubleBinderSpecs extends Observes {
 
         val json = Json.obj(fieldName -> Json.fromDouble(170.5D).get)
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have bound the valueGetter  properly") {
           result should equal(BindingPass(170.5D))

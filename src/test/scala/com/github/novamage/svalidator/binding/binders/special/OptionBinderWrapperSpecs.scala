@@ -11,7 +11,7 @@ class OptionBinderWrapperSpecs extends Observes {
 
   describe("when performing the binding of an option type") {
 
-    describe("and the values map method of binding is used"){
+    describe("and the values map method of binding is used") {
 
       val wrappedBinder = mock[TypedBinder[Long]]
       val sut: TypedBinder[Option[_]] = new OptionBinder(wrappedBinder)
@@ -68,7 +68,7 @@ class OptionBinderWrapperSpecs extends Observes {
 
     }
 
-    describe("and the json method of binding is used"){
+    describe("and the json method of binding is used") {
 
       val wrappedBinder = new LongBinder(BindingConfig.defaultConfig)
       val sut: JsonTypedBinder[Option[_]] = new JsonOptionBinder(wrappedBinder)
@@ -81,7 +81,7 @@ class OptionBinderWrapperSpecs extends Observes {
 
           val json = Json.obj()
 
-          val result = sut.bindJson(json.hcursor.downField(fieldName),fieldName, metadata)
+          val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
           it("should return a Binding Pass with a value of None") {
             result should equal(BindingPass(None))
@@ -93,7 +93,7 @@ class OptionBinderWrapperSpecs extends Observes {
 
           val json = Json.obj(fieldName -> Json.Null)
 
-          val result = sut.bindJson(json.hcursor.downField(fieldName),fieldName, metadata)
+          val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
           it("should return a Binding Pass with a value of None") {
             result should equal(BindingPass(None))
@@ -105,7 +105,7 @@ class OptionBinderWrapperSpecs extends Observes {
 
           val json = Json.obj(fieldName -> Json.fromString("a"))
 
-          val result = sut.bindJson(json.hcursor.downField(fieldName),fieldName, metadata)
+          val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
           it("should return a Binding failure with the error and exception provided") {
             result.fieldErrors.size should equal(1)
@@ -120,7 +120,7 @@ class OptionBinderWrapperSpecs extends Observes {
         val fieldValue = 8L
         val json = Json.obj(fieldName -> Json.fromLong(fieldValue))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName),fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should return a BindingPass with the valueGetter returned from the wrapped binder wrapped in Option") {
           result should equal(BindingPass(Option(fieldValue)))

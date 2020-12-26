@@ -20,15 +20,15 @@ class DoubleBinder(config: BindingConfig)
     }
   }
 
-  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Double] = {
+  override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[Double] = {
     currentCursor.as[Option[Double]] match {
       case Left(parsingFailure) =>
-        BindingFailure(fieldName, config.languageConfig.invalidDoubleMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
+        BindingFailure(fieldName, config.languageConfig.invalidDoubleMessage(fieldName.getOrElse(""), currentCursor.focus.map(_.toString()).getOrElse("")), Some(parsingFailure))
       case Right(value) =>
         try {
           BindingPass(value.get)
         } catch {
-          case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
+          case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName.getOrElse("")), Some(ex))
         }
     }
   }

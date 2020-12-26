@@ -66,7 +66,7 @@ class TimestampBinderSpecs extends Observes {
 
         val json = Json.obj("someOtherTimestamp" -> Json.fromString("2013-06-08"))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Failure with an error for the field") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -83,7 +83,7 @@ class TimestampBinderSpecs extends Observes {
 
         val json = Json.obj(fieldName -> Json.fromString(invalidFieldValue))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Pass with the value set to false") {
           result.fieldErrors.filter(_.fieldName == fieldName) should have size 1
@@ -100,7 +100,7 @@ class TimestampBinderSpecs extends Observes {
 
         val json = Json.obj(fieldName -> Json.fromString(dateString))
 
-        val result = sut.bindJson(json.hcursor.downField(fieldName), fieldName, metadata)
+        val result = sut.bindJson(json.hcursor.downField(fieldName), Some(fieldName), metadata)
 
         it("should have returned a Binding Pass with the value set to the parsed date") {
           result should equal(BindingPass(new Timestamp(formatter.parse(dateString).getTime)))

@@ -18,10 +18,10 @@ class TypeBasedEnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config
     parseTypeBasedEnumerationFromReceivedValue(fieldName, receivedValue)
   }
 
-  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Any] = {
+  override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[Any] = {
 
     val receivedValue = currentCursor.focus.map(_.toString().trim).filterNot(_.isEmpty)
-    parseTypeBasedEnumerationFromReceivedValue(fieldName, receivedValue)
+    parseTypeBasedEnumerationFromReceivedValue(fieldName.getOrElse(""), receivedValue)
   }
 
   private def parseTypeBasedEnumerationFromReceivedValue(fieldName: String, receivedValue: Option[String]): BindingResult[Any] = {

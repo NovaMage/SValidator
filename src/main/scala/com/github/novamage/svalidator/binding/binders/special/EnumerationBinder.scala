@@ -2,7 +2,8 @@ package com.github.novamage.svalidator.binding.binders.special
 
 import com.github.novamage.svalidator.binding.binders.{JsonTypedBinder, TypedBinder}
 import com.github.novamage.svalidator.binding.{BindingConfig, BindingFailure, BindingPass, BindingResult}
-import io.circe.ACursor
+import com.github.novamage.svalidator.validation.MessageParts
+import io.circe.{ACursor, DecodingFailure}
 
 import java.lang.reflect.InvocationTargetException
 import scala.reflect.runtime.{universe => ru}
@@ -28,12 +29,12 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
     }
   }
 
-  override def bindJson(currentCursor: ACursor, fieldName: String, bindingMetadata: Map[String, Any]): BindingResult[Any] = {
+  override def bindJson(currentCursor: ACursor, fieldName: Option[String], bindingMetadata: Map[String, Any]): BindingResult[Any] = {
     try {
       currentCursor.as[Option[Int]] match {
         case Left(decodingFailure) =>
           val errorValue = currentCursor.focus.map(_.toString()).getOrElse("")
-          BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, errorValue), Some(decodingFailure))
+          BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName.getOrElse(""), errorValue), Some(decodingFailure))
         case Right(value) =>
           val enumType = runtimeType.asInstanceOf[ru.TypeRef].pre
           val classSymbol = enumType.typeSymbol.asClass
@@ -44,8 +45,8 @@ class EnumerationBinder(runtimeType: ru.Type, mirror: ru.Mirror, config: Binding
           BindingPass(applyMethod(value.get))
       }
     } catch {
-      case ex: InvocationTargetException => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName, currentCursor.focus.map(_.toString()).getOrElse("")), Some(ex))
-      case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName), Some(ex))
+      case ex: InvocationTargetException => BindingFailure(fieldName, config.languageConfig.invalidEnumerationMessage(fieldName.getOrElse(""), currentCursor.focus.map(_.toString()).getOrElse("")), Some(ex))
+      case ex: NoSuchElementException => BindingFailure(fieldName, config.languageConfig.noValueProvidedMessage(fieldName.getOrElse("")), Some(ex))
     }
   }
 }
