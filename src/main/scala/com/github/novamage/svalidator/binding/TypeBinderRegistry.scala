@@ -15,7 +15,7 @@ object TypeBinderRegistry {
   private val directBinders = ListBuffer[(TypedBinder[_], ru.TypeTag[_])]()
   private val directJsonBinders = ListBuffer[(JsonTypedBinder[_], ru.TypeTag[_])]()
   private val allowedRecursiveBinders = ListBuffer[ru.TypeTag[_]]()
-  protected[binding] var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
+  protected[svalidator] var currentBindingConfig: BindingConfig = BindingConfig.defaultConfig
 
   protected[svalidator] val beforeBindingAndValidationHooks: ListBuffer[BeforeBindingAndValidatingHook] = ListBuffer[BeforeBindingAndValidatingHook]()
   protected[svalidator] val failedBindingHooks: ListBuffer[FailedBindingHook] = ListBuffer[FailedBindingHook]()
